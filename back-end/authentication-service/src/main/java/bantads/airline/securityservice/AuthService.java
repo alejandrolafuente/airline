@@ -13,12 +13,25 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired//.config bean
+    @Autowired // .config bean
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     public String saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return "user added to the system";
     }
+
+    public String generateToken(String username) {
+        return jwtService.generateToken(username);
+    }
+
+    public void validateToken(String token) {
+        jwtService.validateToken(token);
+    }
+
+    // paramos em 26:11, continuar na construcao do controlador
 }
