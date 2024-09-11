@@ -7,8 +7,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +28,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @Autowired  // in .config bean
+    @Autowired // in .config bean
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -70,4 +72,10 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/validate")
+    public String validateToken(@RequestHeader("x-access-token") String token) {
+        System.out.println("Request has come with token: " + token);
+        authService.validateToken(token);
+        return "Token is valid";
+    }
 }
