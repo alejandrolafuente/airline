@@ -37,11 +37,13 @@ public class Flight {
     @Column(name = "flight_date")
     private Date flightDate;
 
-    @Column(name = "departure_airport")
-    private String departureAirport;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "departure_airport_id", referencedColumnName = "airport_id", nullable = false)
+    private Airport departureAirport;
 
-    @Column(name = "arrival_airport")
-    private String arrivalAirport;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "arrival_airport_id", referencedColumnName = "airport_id", nullable = false)
+    private Airport arrivalAirport;
 
     @Column(name = "flight_price")
     private BigDecimal flightPrice;
@@ -55,7 +57,4 @@ public class Flight {
     @Column(name = "flight_status")
     private String flightStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "airport_id", referencedColumnName = "airport_id", nullable = false)
-    private Airport airport;
 }
