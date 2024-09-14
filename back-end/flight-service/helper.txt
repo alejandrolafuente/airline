@@ -1,0 +1,3 @@
+database container:
+
+docker run --name flight-db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=password -e POSTGRES_DB=flight -p 5432:5432 -d postgres:latest
