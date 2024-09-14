@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "flight_table")
+@Table(name = "airport_table")
 public class Airport {
 
     @Id
