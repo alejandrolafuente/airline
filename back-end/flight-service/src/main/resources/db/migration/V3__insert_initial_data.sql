@@ -15,7 +15,7 @@ VALUES
     (
         uuid_generate_v4 (),
         'TADS2568',
-        '2024-09-15 10:00:00+00',
+        '2024-09-15T10:00:00+00:00', -- Usando o formato ISO 8601 com fuso horário
         (
             SELECT
                 airport_id
@@ -55,7 +55,7 @@ VALUES
     (
         uuid_generate_v4 (),
         'TADS2569',
-        '2024-09-15 14:00:00+00',
+        '2024-09-15T14:00:00+00:00', -- Usando o formato ISO 8601 com fuso horário
         (
             SELECT
                 airport_id
@@ -95,7 +95,7 @@ VALUES
     (
         uuid_generate_v4 (),
         'TADS2570',
-        '2024-09-16 08:00:00+00',
+        '2024-09-16T08:00:00+00:00', -- Usando o formato ISO 8601 com fuso horário
         (
             SELECT
                 airport_id
@@ -135,7 +135,7 @@ VALUES
     (
         uuid_generate_v4 (),
         'TADS2571',
-        '2024-09-16 12:00:00+00',
+        '2024-09-16T12:00:00+00:00', -- Usando o formato ISO 8601 com fuso horário
         (
             SELECT
                 airport_id
@@ -175,7 +175,7 @@ VALUES
     (
         uuid_generate_v4 (),
         'TADS2572',
-        '2024-09-16 16:00:00+00',
+        '2024-09-16T16:00:00+00:00', -- Usando o formato ISO 8601 com fuso horário
         (
             SELECT
                 airport_id
@@ -215,7 +215,7 @@ VALUES
     (
         uuid_generate_v4 (),
         'TADS2573',
-        '2024-09-17 08:00:00+00',
+        '2024-09-17T08:00:00+00:00', -- Usando o formato ISO 8601 com fuso horário
         (
             SELECT
                 airport_id
@@ -255,7 +255,7 @@ VALUES
     (
         uuid_generate_v4 (),
         'TADS2574',
-        '2024-09-17 10:00:00+00',
+        '2024-09-17T10:00:00+00:00', -- Usando o formato ISO 8601 com fuso horário
         (
             SELECT
                 airport_id
@@ -295,7 +295,7 @@ VALUES
     (
         uuid_generate_v4 (),
         'TADS2575',
-        '2024-09-17 14:00:00+00',
+        '2024-09-17T14:00:00+00:00', -- Usando o formato ISO 8601 com fuso horário
         (
             SELECT
                 airport_id
