@@ -1,7 +1,7 @@
 package bantads.airline.model;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -35,7 +35,7 @@ public class Flight {
     private String code;
 
     @Column(name = "flight_date")
-    private Date flightDate;
+    private LocalDateTime flightDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "departure_airport_id", referencedColumnName = "airport_id", nullable = false)

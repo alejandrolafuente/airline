@@ -13,7 +13,7 @@ CREATE TABLE
     flight_table (
         flight_id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
         code VARCHAR(8),
-        flight_date TIMESTAMP,
+        flight_date TIMESTAMP WITH TIME ZONE,
         departure_airport_id UUID NOT NULL,
         arrival_airport_id UUID NOT NULL,
         flight_price NUMERIC(10, 2),

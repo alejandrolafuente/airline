@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class R11ResDTO {
-    private String flightDate;
-    private String flighTime;
-    private AirportDTO departureAirport;
-    private AirportDTO arrivalAirport;
+public class AirportDTO {
+    private String code;
+    private String name;
+    private String city;
+    private String state;
 }

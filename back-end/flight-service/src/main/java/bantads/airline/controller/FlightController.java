@@ -8,5 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @RequestMapping("flight")
 public class FlightController {
+
+    
     
 }
