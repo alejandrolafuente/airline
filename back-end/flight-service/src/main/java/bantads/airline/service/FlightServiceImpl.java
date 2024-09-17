@@ -3,6 +3,7 @@ package bantads.airline.service;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,41 +19,60 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     private FlightRepository flightRepository;
 
+    // R11
     @Override
     public List<R11ResDTO> getflights() {
 
-        // Gets the current date in UTC
+        // gets the current date in UTC
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of("UTC"));
 
-        // Calculates the next 48 hours
+        // calculates the next 48 hours
         ZonedDateTime futureDate = currentDate.plusHours(48);
 
-        // Fetches the flights
+        // fetches the flights
         List<Flight> flightsList = flightRepository.getNext48HoursFlights(currentDate, futureDate);
 
-        // Defines the São Paulo time zone
+        // defines the São Paulo time zone
         ZoneId saoPauloZoneId = ZoneId.of("America/Sao_Paulo");
 
-
-        // Adjusts the flight dates to São Paulo time zone
+        // adjusts the flight dates to São Paulo time zone
         flightsList.forEach(flight -> {
+
             ZonedDateTime utcDateTime = flight.getFlightDate();
-            // Ensure utcDateTime is in UTC before converting
+
+            // ensure utcDateTime is in UTC before converting
             if (utcDateTime.getZone().equals(ZoneId.of("UTC"))) {
+
                 ZonedDateTime localDateTime = utcDateTime.withZoneSameInstant(saoPauloZoneId);
+
                 flight.setFlightDate(localDateTime);
-            } else {
-                System.out.println("Unexpected time zone for flight date: " + utcDateTime.getZone());
+
             }
+            // else {
+            // System.out.println("Unexpected time zone for flight date: " +
+            // utcDateTime.getZone());
+            // }
         });
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        // Prints the flight dates in São Paulo time zone
-        flightsList.forEach(
-                flight -> System.out.println("Flight Date Local: " + flight.getFlightDate().format(formatter)));
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-        return null; // Kept as null as requested
+
+        List<R11ResDTO> listR11ResDTO = new ArrayList<>();
+
+        for (Flight flight : flightsList) {
+
+            R11ResDTO dto = R11ResDTO.builder()
+                    .flightId(flight.getFlightId())
+                    .flightDate(flight.getFlightDate().format(dateFormatter))
+                    .flighTime(flight.getFlightDate().format(timeFormatter))
+                    .build();
+
+            listR11ResDTO.add(dto);
+        }
+
+        return listR11ResDTO;
     }
 
 }
