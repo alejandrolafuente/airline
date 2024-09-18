@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import bantads.airline.dto.response.AirportDTO;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.model.Flight;
 import bantads.airline.repository.FlightRepository;
@@ -58,15 +59,20 @@ public class FlightServiceImpl implements FlightService {
 
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-
         List<R11ResDTO> listR11ResDTO = new ArrayList<>();
 
         for (Flight flight : flightsList) {
+
+            AirportDTO departureAirportDTO = new AirportDTO(flight.getDepartureAirport());
+
+            AirportDTO arrivalAirportDTO = new AirportDTO(flight.getArrivalAirport());
 
             R11ResDTO dto = R11ResDTO.builder()
                     .flightId(flight.getFlightId())
                     .flightDate(flight.getFlightDate().format(dateFormatter))
                     .flighTime(flight.getFlightDate().format(timeFormatter))
+                    .departureAirport(departureAirportDTO)
+                    .arrivalAirport(arrivalAirportDTO)
                     .build();
 
             listR11ResDTO.add(dto);
