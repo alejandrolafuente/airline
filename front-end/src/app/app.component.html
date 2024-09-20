@@ -1,0 +1,74 @@
+<div class="conteiner-fluid">
+    <div>
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  
+        <a class="navbar-brand nav-link ms-2" href="#" routerLink="/login">
+          <i class="fa fa-user-edit"></i> {{ title }} </a>
+  
+        <div *ngIf="loggedUser" class="navbar-collapse collapsed justify-content-between" id="navbarContent">
+          <ul class="navbar-nav mr-auto">
+  
+  
+            <li *ngIf="loggedUser.role==='ADMIN' || loggedUser.role==='GERENTE'" class="nav-item">
+              <a class="nav-link" href="#" routerLink="/enderecos">Endereços</a>
+            </li>
+  
+            <li *ngIf="loggedUser.role==='CLIENT'" class="nav-item">
+              <a class="nav-link" href="#" routerLink="/">Profile</a>
+            </li>
+  
+            <li *ngIf="loggedUser.role==='CLIENT'" class="nav-item">
+              <a class="nav-link" href="#">Deposit</a>
+            </li>
+  
+            <li *ngIf="loggedUser.role==='CLIENT'" class="nav-item">
+              <a class="nav-link" href="#" routerLink="/">Transfer</a>
+            </li>
+  
+            <li *ngIf="loggedUser.role==='CLIENT'" class="nav-item">
+              <a class="nav-link" href="#" routerLink="/">Withdrawal</a>
+            </li>
+  
+            <li class="nav-item">
+              <a class="nav-link" href="#" routerLink="/home">Home</a>
+            </li>
+  
+            <li class="nav-item" ngbDropdown>
+  
+              <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown1" role="button">
+                dropdown </a>
+              <div ngbDropdownMenu aria-labelledby="navbarDropdown1" class="dropdown-menu">
+                <a ngbDropdownItem href="#" routerLink="/pessoas" (click)="$event.preventDefault()">Pessoas</a>
+                <a *ngIf="loggedUser.role==='ADMIN' || loggedUser.role==='GERENTE'" ngbDropdownItem href="#"
+                  routerLink="/enderecos" (click)="$event.preventDefault()">Endereços</a>
+                <a *ngIf="loggedUser.role==='GERENTE'" ngbDropdownItem href="#" routerLink="/cidades"
+                  (click)="$event.preventDefault()">Cidades</a>
+                <a *ngIf="loggedUser.role==='ADMIN' || loggedUser.role==='FUNC'" ngbDropdownItem href="#"
+                  routerLink="/estados" (click)="$event.preventDefault()">Estados</a>
+                <a *ngIf="loggedUser.role==='CLIENT'" ngbDropdownItem href="#" routerLink="/usuarios"
+                  (click)="$event.preventDefault()">Usuários</a>
+              </div>
+            </li>
+  
+          </ul>
+  
+          <ul *ngIf="loggedUser" class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link me-2" href="#" >Logout</a>
+            </li>
+            <li class="nav-item me-2">
+              <p class="navbar-text mb-0 text-white">
+                <i class="fa fa-user me-2"></i>
+              </p>
+            </li>
+          </ul>
+  
+        </div>
+        <div *ngIf="!loggedUser" class="ml-auto d-flex">
+          <a class="me-2">login</a>
+          <a >register</a>
+        </div>
+      </nav><br>
+    </div>
+    <router-outlet></router-outlet>
+  </div>
