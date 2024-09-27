@@ -19,6 +19,16 @@
             "projectName": "flight-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SagasApplication<sagas>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "bantads.airline.SagasApplication",
+            "projectName": "sagas",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

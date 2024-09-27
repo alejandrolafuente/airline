@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbit_definitions.json:/etc/rabbitmq/definitions.json
+    command: >
+      bash -c "rabbitmq-server & 
+               sleep 10 && 
+               rabbitmqctl import_definitions /etc/rabbitmq/definitions.json &&
+               tail -f /dev/null"

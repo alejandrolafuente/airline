@@ -1,0 +1,65 @@
+package bantads.airline.controller;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import bantads.airline.dto.SelfRegDTO;
+import bantads.airline.sagas.selfregistersaga.ManageRegisterQuery;
+import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
+import bantads.airline.sagas.selfregistersaga.dto.ManageRegisterRes;
+import bantads.airline.utils.ValidateCPF;
+
+@RestController
+@CrossOrigin
+@RequestMapping("saga")
+public class SagasController {
+
+    @Autowired
+    private ValidateCPF validateCPF;
+
+    @Autowired
+    private SelfRegisterSAGA selfRegisterSAGA;
+
+    @Autowired
+    private ManageRegisterQuery manageRegisterQuery;
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerRequest(@RequestBody SelfRegDTO selfRegDTO)
+            throws JsonProcessingException, InterruptedException, ExecutionException {
+
+        if (!validateCPF.validateCPF(selfRegDTO.getCpf())) {// if cpf not valid...
+
+            return new ResponseEntity<>("Invalid CPF!", HttpStatus.BAD_REQUEST);
+        }
+        // else {
+        // return new ResponseEntity<>("CPF is valid!", HttpStatus.OK);
+        // }
+        CompletableFuture<ManageRegisterRes> future = manageRegisterQuery.manageQuery(selfRegDTO.getCpf(),
+                selfRegDTO.getEmail());
+
+        // awaits for response in blocking mode
+        ManageRegisterRes res = future.get();
+
+        if (res.getStartSaga()) {
+
+            this.selfRegisterSAGA.handleRequest(selfRegDTO);
+
+            return new ResponseEntity<>("Your request has been sent, check your email", HttpStatus.OK);
+        } else {
+
+            return new ResponseEntity<>(res.getResponse(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+}
