@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>bantads.airline</groupId>
-	<artifactId>flight-service</artifactId>
+	<artifactId>client-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>flight-service</name>
-	<description>flight service</description>
+	<name>client-service</name>
+	<description>client service for arline</description>
 	<url/>
 	<licenses>
 		<license/>
