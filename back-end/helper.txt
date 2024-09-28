@@ -1,0 +1,60 @@
+1. Verifique as permissões do script Maven Wrapper (mvnw):
+
+Primeiro, assegure-se de que o arquivo mvnw tenha permissão de execução. Caso ainda não tenha, execute:
+
+bash
+
+chmod +x mvnw
+
+2. Rodar a aplicação diretamente com o Maven Wrapper:
+
+Utilize o seguinte comando para compilar e iniciar a aplicação Spring Boot:
+
+bash
+
+./mvnw spring-boot:run
+
+Esse comando utiliza o Maven Wrapper (mvnw) para baixar as dependências necessárias, compilar o projeto e iniciar a aplicação.
+
+3. (Opcional) Compilar o projeto e executar o JAR gerado:
+
+Se preferir construir o projeto e executar o arquivo JAR manualmente, siga estes passos:
+
+a. Compilar o projeto e gerar o pacote:
+
+bash
+
+./mvnw clean package
+
+Esse comando limpará quaisquer builds anteriores, compilará o projeto e criará um arquivo JAR na pasta target.
+
+b. Executar o JAR gerado:
+
+Após a compilação bem-sucedida, execute o JAR com o seguinte comando:
+
+bash
+
+java -jar target/demo-0.0.1-SNAPSHOT.jar
+
+Nota: Substitua demo-0.0.1-SNAPSHOT.jar pelo nome correto do arquivo JAR gerado, caso seja diferente.
+
+*********************************************************************************************************************************
+
+
+=> chat, explique  o que é "Compilar o projeto e executar o JAR gerado" da maneira mais simples como se fosse para uma criança:
+
+Claro! Vamos pensar no projeto como se fosse uma receita de bolo.
+
+1. Compilar o projeto é como pegar todos os ingredientes da receita (código) e misturá-los, fazendo a massa do bolo. O resultado é 
+algo que o computador entende, assim como a massa crua que pode ser assada para virar um bolo.
+
+2. Gerar o JAR é como colocar essa massa em uma forma e assar o bolo. O JAR é como o bolo pronto — ele já tem tudo que precisa 
+dentro para funcionar.
+
+3. Executar o JAR é como pegar o bolo pronto e comê-lo! Quando você executa o JAR, está fazendo o programa funcionar de verdade, 
+assim como você aproveita o bolo depois de pronto.
+
+Então, quando dizemos "compilar o projeto e executar o JAR gerado", estamos basicamente falando sobre transformar o código em algo que o computador pode "ler" (misturando os ingredientes), e depois fazer o programa rodar (como assar o bolo e comê-lo).
+
+************************************************************************************************
+
