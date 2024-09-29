@@ -32,8 +32,58 @@ const authServiceProxy = httpProxy('http://localhost:8082');
 const flightServiceProxy = httpProxy('http://localhost:8084');
 
 
+// Middleware para validar o token
+function validateToken(req, res, next) {
+    const token = req.headers['x-access-token'];
+
+    if (!token) {
+        return res.status(403).send({ message: 'No token provided.' });
+    }
+
+    // Realiza uma requisição HTTP ao serviço de autenticação para validar o token
+    const authServiceProxy = httpProxy('http://localhost:8082');
+
+    // Envia a requisição de validação de token
+    const validateReq = http.request({
+        hostname: 'localhost',
+        port: 8082,
+        path: '/auth/validate',
+        method: 'GET',
+        headers: { 'x-access-token': token }
+    }, (authRes) => {
+        let data = '';
+
+        // Coleta os dados de resposta do serviço de autenticação
+        authRes.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        authRes.on('end', () => {
+            if (authRes.statusCode === 200) {
+                // Se o token for válido, continua para o próximo middleware (o serviço de voos)
+                next();
+            } else {
+                // Se a validação falhar, responde com o erro apropriado
+                res.status(authRes.statusCode).send({ message: 'Invalid token' });
+            }
+        });
+    });
+
+    validateReq.on('error', (err) => {
+        res.status(500).send({ message: 'Error validating token' });
+    });
+
+    validateReq.end();
+}
+
+
+
+
+
 //************************************** SYSTEM REQUIREMENTS ENDPOINTS ***************************
 
+
+// AUTHTENTICATION SERVICE
 
 // R2 - login
 app.post('/auth/login', (req, res, next) => {
@@ -43,6 +93,13 @@ app.post('/auth/login', (req, res, next) => {
 // Test method for Token validation
 app.get('/auth/validate', (req, res, next) => {
     authServiceProxy(req, res, next);
+});
+
+
+// FLIGHT SERVICE
+
+app.get('/flight/airports', validateToken, (req, res, next) => {
+    flightServiceProxy(req, res, next);
 });
 
 
