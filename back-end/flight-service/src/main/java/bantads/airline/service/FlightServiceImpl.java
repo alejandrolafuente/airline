@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import bantads.airline.dto.response.AirportDTO;
 import bantads.airline.dto.response.R11ResDTO;
+import bantads.airline.model.Airport;
 import bantads.airline.model.Flight;
+import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;
 
 @Service
@@ -19,6 +21,9 @@ public class FlightServiceImpl implements FlightService {
 
     @Autowired
     private FlightRepository flightRepository;
+
+    @Autowired
+    private AirportRepository airportRepository;
 
     // R11
     @Override
@@ -79,6 +84,12 @@ public class FlightServiceImpl implements FlightService {
         }
 
         return listR11ResDTO;
+    }
+
+    // api composition teste - deletar
+    @Override
+    public List<Airport> getAllAirports() {
+        return airportRepository.findAll();
     }
 
 }

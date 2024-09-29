@@ -5,13 +5,13 @@ services:
     container_name: java_app
     image: al-flight-java_app:1.0.0 
     build: .
-    ports: # caractere '-' serve para especificar listas
+    ports: 
       - 8084:8084
     environment:
       - DATABASE_URL=jdbc:postgresql://java_db:5432/flight
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
-    depends_on: # garantir que o db já subiu
+    depends_on: 
       - java_db
   java_db:
     container_name: java_db
