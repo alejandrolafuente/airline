@@ -83,7 +83,7 @@ function validateToken(req, res, next) {
 //************************************** SYSTEM REQUIREMENTS ENDPOINTS ***************************
 
 
-// AUTHTENTICATION SERVICE
+// ------------------ AUTHTENTICATION SERVICE
 
 // R2 - login
 app.post('/auth/login', (req, res, next) => {
@@ -96,7 +96,7 @@ app.get('/auth/validate', (req, res, next) => {
 });
 
 
-// FLIGHT SERVICE
+// ------------------- FLIGHT SERVICE
 
 app.get('/flight/airports', validateToken, (req, res, next) => {
     flightServiceProxy(req, res, next);
