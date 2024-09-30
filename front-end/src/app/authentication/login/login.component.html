@@ -1,4 +1,4 @@
-<!-- <p>login works!</p> -->
+
 <div class="container">
 <h1 class="text-center">Login</h1>
 <div class="row justify-content-center">
@@ -16,7 +16,7 @@
             <form #formLogin="ngForm">
 
                 <div class="form-group">
-                    <label for="user">User:</label>
+                    <label for="user">Email:</label>
                     <input type="text" class="form-control" id="user" name="user" [(ngModel)]="login.login"
                         #user="ngModel" required>
                     <div *ngIf="user.errors && (user.dirty || user.touched)" class="alert alert-danger">
@@ -28,7 +28,7 @@
                 <br>
                 <div class="form-group">
                     <label for="senha">Password:</label>
-                    <input type="text" class="form-control" id="password" name="password" [(ngModel)]="login.password"
+                    <input type="password" class="form-control" id="password" name="password" [(ngModel)]="login.password"
                         #password="ngModel" required>
                     <div *ngIf="password.errors && (password.dirty || password.touched)" class="alert alert-danger">
                         <div [hidden]="!password.errors?.['required']">

@@ -1,12 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm, FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { Login } from '../../shared/models/login/login.model';
+import { LoginService } from '../services/login.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule, HttpClientModule, CommonModule],
+  providers: [LoginService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -19,7 +23,9 @@ export class LoginComponent implements OnInit {
   loading: boolean = false;
   message!: string;
 
+
   constructor(
+    private loginService: LoginService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -29,6 +35,33 @@ export class LoginComponent implements OnInit {
     this.route.queryParams.subscribe(params => { this.message = params['error'] });
   }
 
-  doLogin(): void { }
+  doLogin(): void {
+
+    this.loading = true;
+
+    if (this.formLogin.form.valid) {
+      let observable = this.loginService.login(this.login);
+
+      observable.subscribe(
+        (user) => {
+          if (user != null) {
+
+            this.loginService.loggedUser = user; //*** setting LoginObject in LS
+            this.loading = false;
+            if (user.role == "EMPLOYEE") {
+              this.router.navigate(["/flight/flights"]);
+            } 
+            // else if (user.role == "CLIENT") {//goes to account-read service
+            //   this.router.navigate(["/client/" + user.userId]);
+            // }
+            // calls auth.guard.ts when activating route
+          }                                     // replace by /home later
+          else {
+            this.message = "invalid user/password";
+          }
+        });
+    }
+    else { this.loading = false; }
+  }
 
 }
