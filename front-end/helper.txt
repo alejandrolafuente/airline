@@ -1,0 +1,3 @@
+* video 6: como centralizar usando classes no css
+
+- ng g class shared/models/login/login --type=model
