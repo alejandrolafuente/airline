@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE
-    client_table (
+    IF NOT EXISTS client_table (
         client_id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
         user_id VARCHAR(24) NOT NULL UNIQUE, --e.g. "66e09f6ce9f42c7ea80ec9b6"
         cpf VARCHAR(11) NOT NULL UNIQUE,
@@ -14,4 +14,16 @@ CREATE TABLE
         city VARCHAR(50) NOT NULL, -- e.g "São Paulo"
         state VARCHAR(2) NOT NULL, -- e.g "SP"
         miles INT NOT NULL
+    );
+
+CREATE TABLE
+    IF NOT EXISTS transaction_table (
+        transaction_id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+        client_id UUID NOT NULL,
+        transaction_date TIMESTAMP WITH TIME ZONE NOT NULL,
+        miles_quantity INT NOT NULL,
+        money_input NUMERIC(19, 2) NOT NULL,
+        miles_output INT NOT NULL,
+        t_description VARCHAR(25) NOT NULL,
+        FOREIGN KEY (client_id) REFERENCES client_table (client_id)
     );

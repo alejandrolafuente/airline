@@ -1,3 +1,10 @@
 database container:
 
 docker run --name client-db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=password -e POSTGRES_DB=client -p 5434:5432 -d postgres:latest    
+
+Guia de alterações : 1 / 10 /2024
+
+1.Cria MilesTransaction.java (nao esquecer spring.jpa.properties.hibernate.jdbc.time_zone=UTC
+ no .properties)
+
+2. Corrigir as duas migrações
