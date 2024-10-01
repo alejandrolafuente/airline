@@ -97,7 +97,10 @@ app.get('/auth/validate', (req, res, next) => {
 
 
 // ------------------- FLIGHT SERVICE
-
+// este é um endoint de teste para que o usuario antes de acessar o serviço de
+// listagem de aeroportos passe antes pelo serviço de autenticação e seu token seja
+// autenticado. feita a autenticação o usuario é encaminhado para o serviço de voos
+// e obtem a listagem dos aeroportos
 app.get('/flight/airports', validateToken, (req, res, next) => {
     flightServiceProxy(req, res, next);
 });
