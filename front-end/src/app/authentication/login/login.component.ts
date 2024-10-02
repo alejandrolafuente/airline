@@ -49,8 +49,8 @@ export class LoginComponent implements OnInit {
             this.loginService.loggedUser = user; //*** setting LoginObject in LS
             this.loading = false;
             if (user.role == "CLIENT") {
-              this.router.navigate(["/flight/flights"]);
-            } 
+              this.router.navigate(["/client/" + user.userId]);
+            }
             // else if (user.role == "CLIENT") {//goes to account-read service
             //   this.router.navigate(["/client/" + user.userId]);
             // }

@@ -35,4 +35,15 @@ export class LoginService {
     let loggedUser = this.httpClient.post<LoginObject>(this.BASE_URL + '/auth/login', JSON.stringify(login), this.httpOptions);
     return loggedUser;
   }
+
+  logout() {
+    let token = this.loggedUser.token;
+
+    this.httpOptions.headers = this.httpOptions.headers.set('x-access-token', `${token}`);
+
+    this.httpClient.post(this.BASE_URL + '/logout', this.httpOptions);
+
+    delete localStorage[LS_LOGIN_KEY];
+
+  }
 }
