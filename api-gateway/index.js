@@ -27,54 +27,46 @@ app.options('*', cors(corsOptions));
 
 // PROXIES
 
-const authServiceProxy = httpProxy('http://localhost:8082');
+const authServiceProxy = httpProxy('http://localhost:8090');
 
-const flightServiceProxy = httpProxy('http://localhost:8084');
+const flightServiceProxy = httpProxy('http://localhost:8093');
 
 
-// Middleware para validar o token
-function validateToken(req, res, next) {
+// Middleware in order to verify token and forward to respective service
+const validateTokenProxy = (req, res, next) => {
     const token = req.headers['x-access-token'];
-
     if (!token) {
-        return res.status(403).send({ message: 'No token provided.' });
+        return res.status(401).send({ message: 'Token not provided!' });
     }
 
-    // Realiza uma requisição HTTP ao serviço de autenticação para validar o token
-    const authServiceProxy = httpProxy('http://localhost:8082');
+    const validationReqOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': token
+        },
+        method: 'GET'
+    };
 
-    // Envia a requisição de validação de token
-    const validateReq = http.request({
-        hostname: 'localhost',
-        port: 8082,
-        path: '/auth/validate',
-        method: 'GET',
-        headers: { 'x-access-token': token }
-    }, (authRes) => {
+    const validationReq = http.request('http://localhost:8090/auth/validate', validationReqOptions, (validationRes) => {
         let data = '';
-
-        // Coleta os dados de resposta do serviço de autenticação
-        authRes.on('data', (chunk) => {
+        validationRes.on('data', (chunk) => {
             data += chunk;
         });
-
-        authRes.on('end', () => {
-            if (authRes.statusCode === 200) {
-                // Se o token for válido, continua para o próximo middleware (o serviço de voos)
-                next();
+        validationRes.on('end', () => {
+            if (validationRes.statusCode === 200 && data === 'Token is valid') {
+                next(); // valid token, proceed up to next middleware
             } else {
-                // Se a validação falhar, responde com o erro apropriado
-                res.status(authRes.statusCode).send({ message: 'Invalid token' });
+                res.status(401).send({ message: 'Token inválido!' });
             }
         });
     });
 
-    validateReq.on('error', (err) => {
-        res.status(500).send({ message: 'Error validating token' });
+    validationReq.on('error', (err) => {
+        res.status(500).send({ message: 'Validation token error', error: err.message });
     });
 
-    validateReq.end();
-}
+    validationReq.end();
+};
 
 
 
@@ -101,7 +93,7 @@ app.get('/auth/validate', (req, res, next) => {
 // listagem de aeroportos passe antes pelo serviço de autenticação e seu token seja
 // autenticado. feita a autenticação o usuario é encaminhado para o serviço de voos
 // e obtem a listagem dos aeroportos
-app.get('/flight/airports', validateToken, (req, res, next) => {
+app.get('/flight/airports/:id', validateTokenProxy, (req, res, next) => {
     flightServiceProxy(req, res, next);
 });
 

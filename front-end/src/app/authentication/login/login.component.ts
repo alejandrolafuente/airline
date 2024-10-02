@@ -28,7 +28,8 @@ export class LoginComponent implements OnInit {
     private loginService: LoginService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {
+  }
 
 
   ngOnInit(): void {
@@ -40,10 +41,12 @@ export class LoginComponent implements OnInit {
     this.loading = true;
 
     if (this.formLogin.form.valid) {
+
       let observable = this.loginService.login(this.login);
 
       observable.subscribe(
         (user) => {
+          console.log(user);
           if (user != null) {
 
             this.loginService.loggedUser = user; //*** setting LoginObject in LS

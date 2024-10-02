@@ -1,0 +1,14 @@
+
+
+Guia de alterações : 1 / 10 /2024
+
+=> Client service
+
+1.Cria MilesTransaction.java (nao esquecer spring.jpa.properties.hibernate.jdbc.time_zone=UTC
+ no .properties)
+
+2. Corrigir as duas migrações
+
+==> 2 / 10 /2024
+
+correção do middleware!!

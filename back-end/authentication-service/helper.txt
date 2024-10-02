@@ -1,0 +1,8 @@
+- database:
+
+docker run -d --name=al-auth-db -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password -p 27018:27017 mongo
+
+
+- URI: 
+
+mongodb://localhost:27018
