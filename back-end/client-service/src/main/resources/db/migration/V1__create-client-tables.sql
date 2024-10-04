@@ -22,8 +22,7 @@ CREATE TABLE
         client_id UUID NOT NULL,
         transaction_date TIMESTAMP WITH TIME ZONE NOT NULL,
         miles_quantity INT NOT NULL,
-        money_input NUMERIC(19, 2) NOT NULL,
-        miles_output INT NOT NULL,
-        t_description VARCHAR(25) NOT NULL,
+        transaction_type VARCHAR(6) NOT NULL,
+        description VARCHAR(25) NOT NULL,
         FOREIGN KEY (client_id) REFERENCES client_table (client_id)
     );

@@ -1,7 +1,6 @@
 package bantads.airline.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -42,13 +41,10 @@ public class MilesTransaction implements Serializable {
     @Column(name = "miles_quantity", nullable = false)
     private Integer milesQuantity;
 
-    @Column(name = "money_input", nullable = false)
-    private BigDecimal input;
+    @Column(name = "transaction_type", nullable = false)
+    private String transactionType; // "INPUT"/"OUTPUT"
 
-    @Column(name = "miles_output", nullable = false)
-    private Integer output;
-
-    @Column(name = "t_description", nullable = false)
-    private String description;
+    @Column(name = "description", nullable = false)
+    private String description; // "MILES PURCHASE"/"TICKET BOOKING"/"MILES REFUND"
 
 }
