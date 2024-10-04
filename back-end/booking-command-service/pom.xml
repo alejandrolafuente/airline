@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.airline</groupId>
-	<artifactId>booking-write-service</artifactId>
+	<artifactId>booking-command-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>booking-write-service</name>
-	<description>Booking Command Service (CQRS)</description>
+	<name>booking-command-service</name>
+	<description>booking command cqrs service</description>
 	<url/>
 	<licenses>
 		<license/>

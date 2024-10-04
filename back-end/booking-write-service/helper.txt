@@ -1,3 +1,0 @@
-database container:
-
-docker run --name al-bookread-db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=password -e POSTGRES_DB=bookingCommand -p 5442:5432 -d postgres:latest

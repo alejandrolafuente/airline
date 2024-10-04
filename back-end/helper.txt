@@ -61,3 +61,4 @@ Então, quando dizemos "compilar o projeto e executar o JAR gerado", estamos bas
 PGADMIN:
 
 docker run --name pgadmin-container -p 5050:80 -e PGADMIN_DEFAULT_EMAIL=ale@email.com -e PGADMIN_DEFAULT_PASSWORD=password -d dpage/pgadmin4:latest
+
