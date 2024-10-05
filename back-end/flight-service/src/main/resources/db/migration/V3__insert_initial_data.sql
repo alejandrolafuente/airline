@@ -35,7 +35,7 @@ VALUES
         350.00,
         180,
         120,
-        'CONFIRMED'
+        'COMPLETED'
     );
 
 -- GRU -> CWB
@@ -75,7 +75,7 @@ VALUES
         320.00,
         180,
         110,
-        'CONFIRMED'
+        'COMPLETED'
     );
 
 -- BSB -> GIG
@@ -115,7 +115,7 @@ VALUES
         450.00,
         200,
         150,
-        'CONFIRMED'
+        'COMPLETED'
     );
 
 -- GIG -> BSB
@@ -155,7 +155,7 @@ VALUES
         460.00,
         200,
         140,
-        'CONFIRMED'
+        'CANCELLED'
     );
 
 -- GRU -> BSB
@@ -195,7 +195,7 @@ VALUES
         480.00,
         180,
         160,
-        'CONFIRMED'
+        'CANCELLED'
     );
 
 -- BSB -> GRU
@@ -235,7 +235,7 @@ VALUES
         490.00,
         180,
         165,
-        'CONFIRMED'
+        'CANCELLED'
     );
 
 -- CWB -> GIG

@@ -29,9 +29,10 @@ public class BookingQuery implements Serializable {
     @Column(name = "booking_id", nullable = false, updatable = false)
     private UUID bookingId;
 
+    @Column(name = "booking_command_id", nullable = false)
     private String bookingCommandId; // *
 
-    @Column(name = "booking_code", nullable = false, unique = true, updatable = false)
+    @Column(name = "booking_code", nullable = false)
     private String bookingCode;
 
     @Column(name = "flight_code", nullable = false)
@@ -41,18 +42,18 @@ public class BookingQuery implements Serializable {
     private ZonedDateTime bookingDate;
 
     // booking status
-    @Column(name = "status_id", nullable = false, updatable = false)
-    private String statusId; // *
+    @Column(name = "status_command_id", nullable = false)
+    private String statusCommandId; // *
 
-    @Column(name = "status_code", nullable = false, unique = true)
+    @Column(name = "status_code", nullable = false)
     private Integer statusCode;
 
-    @Column(name = "status_acronym", nullable = false, unique = true)
+    @Column(name = "status_acronym", nullable = false)
     private String statusAcronym;
 
-    @Column(name = "status_description", nullable = false, unique = true)
+    @Column(name = "status_description", nullable = false)
     private String statusDescription;
-    // booking status
+    // *******************************************************
 
     @Column(name = "money_spent", nullable = true)
     private BigDecimal moneySpent;
