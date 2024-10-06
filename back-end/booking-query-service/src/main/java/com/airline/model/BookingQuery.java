@@ -30,7 +30,7 @@ public class BookingQuery implements Serializable {
     private UUID bookingId;
 
     @Column(name = "booking_command_id", nullable = false)
-    private String bookingCommandId; // *
+    private String bookingCommandId; // * from command
 
     @Column(name = "booking_code", nullable = false)
     private String bookingCode;
@@ -43,7 +43,7 @@ public class BookingQuery implements Serializable {
 
     // booking status
     @Column(name = "status_command_id", nullable = false)
-    private String statusCommandId; // *
+    private String statusCommandId; // * from command
 
     @Column(name = "status_code", nullable = false)
     private Integer statusCode;
