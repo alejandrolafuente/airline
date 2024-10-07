@@ -18,4 +18,9 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
     // native query with native param
     @Query(value = "SELECT * FROM client_table c WHERE c.email = :email", nativeQuery = true)
     Client getClientByEmail(@Param("email") String email);
+
+    // query using JPQL
+    @Query("select c.miles from Client c where c.userId = ?1")
+    Integer getMilesBalanceByClientUserId(String userId);
+
 }
