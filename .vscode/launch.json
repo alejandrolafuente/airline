@@ -39,6 +39,16 @@
             "projectName": "client-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-BookingQueryServiceApplication<booking-query-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.airline.BookingQueryServiceApplication",
+            "projectName": "booking-query-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
