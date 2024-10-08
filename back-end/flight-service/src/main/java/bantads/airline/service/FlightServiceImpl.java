@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import bantads.airline.dto.response.AirportDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.model.Flight;
-import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;
 
 @Service
@@ -22,15 +22,54 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     private FlightRepository flightRepository;
 
-    @Autowired
-    private AirportRepository airportRepository;
+    // @Autowired
+    // private AirportRepository airportRepository;
 
     // R03
     @Override
-    public List<R03ResDTO> getBookedFlights(List<String> flightIds) {
-        
-        
-        return null;
+    public List<R03ResDTO> getBookedFlights(List<String> flightCodes) {
+
+        List<Flight> flightsList = new ArrayList<>();
+
+        for (String flightCode : flightCodes) {
+
+            flightsList.add(flightRepository.getFlightByCode(flightCode));
+        }
+
+        flightsList.sort(Comparator.comparing(Flight::getFlightDate));
+
+        ZoneId saoPauloZoneId = ZoneId.of("America/Sao_Paulo");
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        List<R03ResDTO> listR03ResDTO = new ArrayList<>();
+
+        for (Flight flight : flightsList) {
+
+            ZonedDateTime utcDateTime = flight.getFlightDate();
+
+            if (utcDateTime.getZone().equals(ZoneId.of("UTC"))) {
+
+                ZonedDateTime localDateTime = utcDateTime.withZoneSameInstant(saoPauloZoneId);
+
+                flight.setFlightDate(localDateTime);
+            }
+
+            R03ResDTO dto = R03ResDTO.builder()
+                    .flightId(flight.getFlightId())
+                    .flightCode(flight.getCode())
+                    .flightDate(flight.getFlightDate().format(dateFormatter))
+                    .flighTime(flight.getFlightDate().format(timeFormatter))
+                    .departureAirport(flight.getDepartureAirport().getCode())
+                    .arrivalAirport(flight.getArrivalAirport().getCode())
+                    .build();
+
+            listR03ResDTO.add(dto);
+        }
+
+        return listR03ResDTO;
     }
 
     // R11
