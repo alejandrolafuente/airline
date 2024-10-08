@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import bantads.airline.dto.response.AirportDTO;
+import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R11ResDTO;
-import bantads.airline.model.Airport;
 import bantads.airline.model.Flight;
 import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;
@@ -24,6 +24,14 @@ public class FlightServiceImpl implements FlightService {
 
     @Autowired
     private AirportRepository airportRepository;
+
+    // R03
+    @Override
+    public List<R03ResDTO> getBookedFlights(List<String> flightIds) {
+        
+        
+        return null;
+    }
 
     // R11
     @Override
@@ -84,12 +92,6 @@ public class FlightServiceImpl implements FlightService {
         }
 
         return listR11ResDTO;
-    }
-
-    // api composition teste - deletar
-    @Override
-    public List<Airport> getAllAirports() {
-        return airportRepository.findAll();
     }
 
 }

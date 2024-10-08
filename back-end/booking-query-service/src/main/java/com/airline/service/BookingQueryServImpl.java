@@ -15,6 +15,7 @@ public class BookingQueryServImpl implements BookingQueryService {
     @Autowired
     private BookingQueryRepository bookingQueryRepository;
 
+    // R03
     @Override
     public List<R03ResDTO> findBookedFlights(String userId) {
 

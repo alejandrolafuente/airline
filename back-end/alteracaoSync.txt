@@ -1,5 +1,6 @@
 CQRS inteiro
 
-7/10/2024
+8/10/2024
 
-- 
+- Get de saldo no serviço cliente
+- Serviços inteiros de CQRS

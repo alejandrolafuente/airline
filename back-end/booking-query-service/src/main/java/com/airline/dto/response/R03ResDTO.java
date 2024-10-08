@@ -16,9 +16,11 @@ import lombok.NoArgsConstructor;
 public class R03ResDTO {
     private UUID bookingId;
     private String bookingCode; // request key for flight service
+    private String flightCode;
 
     public R03ResDTO(BookingQuery entity) {
         bookingId = entity.getBookingId();
         bookingCode = entity.getBookingCode();
+        flightCode = entity.getFlightCode();
     }
 }

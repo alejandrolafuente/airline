@@ -14,6 +14,12 @@ import bantads.airline.model.Flight;
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, UUID> {
 
+    // R03
+    // JPQL - Java Persistence Query Language
+    @Query("select f from Flight f where f.code = ?1")
+    Flight getFlightByCode(String flightCode);
+
+    // R11
     @Query(value = "SELECT * FROM flight_table f WHERE f.flight_date BETWEEN :currentDate AND :futureDate ORDER BY f.flight_date", nativeQuery = true)
     List<Flight> getNext48HoursFlights(@Param("currentDate") ZonedDateTime currentDate,
             @Param("futureDate") ZonedDateTime futureDate);
