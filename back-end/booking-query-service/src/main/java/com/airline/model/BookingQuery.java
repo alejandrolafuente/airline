@@ -23,14 +23,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "booking_query_table")
 public class BookingQuery implements Serializable {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "booking_id", nullable = false, updatable = false)
     private UUID bookingId;
 
     @Column(name = "booking_command_id", nullable = false)
-    private String bookingCommandId; // * from command
+    private String bookingCommandId; // * id in booking command service
 
     @Column(name = "booking_code", nullable = false)
     private String bookingCode;
@@ -43,7 +43,7 @@ public class BookingQuery implements Serializable {
 
     // booking status
     @Column(name = "status_command_id", nullable = false)
-    private String statusCommandId; // * from command
+    private String statusCommandId; // * id in booking command service
 
     @Column(name = "status_code", nullable = false)
     private Integer statusCode;

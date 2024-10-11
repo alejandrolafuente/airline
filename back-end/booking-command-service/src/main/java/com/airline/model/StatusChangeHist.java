@@ -1,5 +1,6 @@
 package com.airline.model;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Table(name = "change_table")
-public class StatusChangeHist {
+public class StatusChangeHist implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

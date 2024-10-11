@@ -29,7 +29,7 @@ public class StatChangHistQuery implements Serializable {
     private UUID id;
 
     @Column(name = "command_change_id", nullable = false)
-    private String commandChangeId; // *
+    private String commandChangeId; // * id in booking command service
 
     @Column(name = "change_date", nullable = false)
     private ZonedDateTime changeDate;
@@ -39,7 +39,7 @@ public class StatChangHistQuery implements Serializable {
 
     // initial status
     @Column(name = "i_status_command_id", nullable = false)
-    private String iStatusCommandId; // *
+    private String iStatusCommandId; // * id in booking command service
 
     @Column(name = "i_status_code", nullable = false)
     private Integer iStatusCode;
@@ -52,7 +52,7 @@ public class StatChangHistQuery implements Serializable {
 
     // final status
     @Column(name = "f_status_command_id", nullable = false)
-    private String fStatusCommandId; // *
+    private String fStatusCommandId; // * id in booking command service
 
     @Column(name = "f_status_code", nullable = false)
     private Integer fStatusCode;

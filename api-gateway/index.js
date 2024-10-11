@@ -126,9 +126,10 @@ app.get('/bookingquery/bookedflights/:id', (req, res, next) => {
 
 // ------------------- API COMPOSITION
 
+
+// R03- FINAL
+
 // app.get('/api-composition/combined-info/:id', validateTokenProxy, async (req, res) => {
-
-
 app.get('/api-composition/combined-info/:id', async (req, res) => {
 
     try {
