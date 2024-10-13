@@ -24,7 +24,7 @@ a. Compilar o projeto e gerar o pacote:
 
 bash
 
-./mvnw clean package (-DskipTests)
+     (-DskipTests)
 
 Esse comando limpará quaisquer builds anteriores, compilará o projeto e criará um arquivo JAR na pasta target.
 
