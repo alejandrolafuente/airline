@@ -1,6 +1,8 @@
 package bantads.airline.service;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +39,15 @@ public class ClientServiceImpl implements ClientService {
 
         System.out.println("CLIENTE => " + client);
 
+        // Obtém a data e hora local do servidor
+        ZonedDateTime localDateTime = ZonedDateTime.now(ZoneId.systemDefault());
+
+        // Converte para UTC antes de armazenar no banco de dados
+        ZonedDateTime utcDateTime = localDateTime.withZoneSameInstant(ZoneOffset.UTC);
+
         MilesTransaction transaction = MilesTransaction.builder()
                 .client(client)
-                .transactionDate(ZonedDateTime.now())
+                .transactionDate(utcDateTime)
                 .moneyValue(r05dto.getMoneyValue())
                 .milesQuantity(r05dto.getMoneyValue().divide(BigDecimal.valueOf(5)).intValue())
                 .transactionType("INPUT")
@@ -47,6 +55,10 @@ public class ClientServiceImpl implements ClientService {
                 .build();
 
         milesTransactionRepository.save(transaction);
+
+        ZonedDateTime utc1DateTime = transaction.getTransactionDate(); // Data em UTC
+        ZonedDateTime local1DateTime = utc1DateTime.withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
+        System.out.println("Hora local: " + local1DateTime);
 
         client.setMiles(client.getMiles() + transaction.getMilesQuantity()); // Adiciona as milhas ao cliente
 
