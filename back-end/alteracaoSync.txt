@@ -1,6 +1,5 @@
-CQRS inteiro
+13 outubro
 
-8/10/2024
+- Trazer o shell spript mas nao agora
 
-- Get de saldo no serviço cliente
-- Serviços inteiros de CQRS
+- Alteracoes em cliente: tira migration de inserts, controller, service, etc

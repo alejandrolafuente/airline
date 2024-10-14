@@ -8,13 +8,19 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import bantads.airline.model.Client;
+
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
 
     Client findByCpfAndEmail(String cpf, String email);
 
+    // get client by cpf
     @Query(value = "SELECT * FROM client_table c WHERE c.cpf = ?1", nativeQuery = true)
     Client getClientByCpf(String cpf);
+
+    // get client by user id
+    @Query(value = "SELECT * FROM client_table c WHERE c.user_id = ?1", nativeQuery = true)
+    Client getClientByUserId(String userId);
 
     // native query with native param
     @Query(value = "SELECT * FROM client_table c WHERE c.email = :email", nativeQuery = true)

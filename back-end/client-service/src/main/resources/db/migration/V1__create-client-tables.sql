@@ -21,6 +21,7 @@ CREATE TABLE
         transaction_id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
         client_id UUID NOT NULL,
         transaction_date TIMESTAMP WITH TIME ZONE NOT NULL,
+        money_value NUMERIC(10, 2),
         miles_quantity INT NOT NULL,
         transaction_type VARCHAR(6) NOT NULL,
         description VARCHAR(25) NOT NULL,
