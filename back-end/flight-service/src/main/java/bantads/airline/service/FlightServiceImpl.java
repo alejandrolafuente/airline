@@ -1,6 +1,11 @@
 package bantads.airline.service;
 
+import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -10,10 +15,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import bantads.airline.dto.request.R15QueDTO;
 import bantads.airline.dto.response.AirportDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.model.Flight;
+import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;
 
 @Service
@@ -22,8 +29,8 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     private FlightRepository flightRepository;
 
-    // @Autowired
-    // private AirportRepository airportRepository;
+    @Autowired
+    private AirportRepository airportRepository;
 
     // R03
     @Override
@@ -131,6 +138,67 @@ public class FlightServiceImpl implements FlightService {
         }
 
         return listR11ResDTO;
+    }
+
+    // R15
+    @Override
+    public void insertFlight(R15QueDTO r15QueDTO) {
+
+        // generate flight code
+        String flightCode;
+
+        do {
+            flightCode = generateRandomCode();
+        } while (flightRepository.getFlightByCode(flightCode) != null);
+
+        // define flighDate
+        // ZonedDateTime convertToZonedDateTime(String flightDate, String flightTime)
+        ZonedDateTime flightDate = convertToZonedDateTime(r15QueDTO.getFlighDate(), r15QueDTO.getFlighTime());
+
+        // construindo o registro:
+
+        Flight newFlight = Flight.builder()
+                .code(flightCode)
+                .flightDate(flightDate)
+                .departureAirport(airportRepository.getAirportByCode(r15QueDTO.getDepartureAirport()))
+                .arrivalAirport(airportRepository.getAirportByCode(r15QueDTO.getArrivalAirport()))
+                .flightPrice(new BigDecimal(r15QueDTO.getFlightPrice()))
+                .totalSeats(Integer.parseInt(r15QueDTO.getTotalSeats()))
+                .occupiedSeats(0)
+                .flightStatus("CONFIRMED")
+                .build();
+
+        flightRepository.save(newFlight);
+
+    }
+
+    private String generateRandomCode() {
+
+        String prefix = "TADS";
+        String CHARACTERS = "0123456789";
+        int STRING_LENGTH = 4;
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(STRING_LENGTH);
+
+        for (int i = 0; i < STRING_LENGTH; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            sb.append(CHARACTERS.charAt(index));
+        }
+
+        return prefix + sb.toString();
+    }
+
+    public ZonedDateTime convertToZonedDateTime(String flightDate, String flightTime) {
+        // Converter as strings para LocalDate e LocalTime
+        LocalDate date = LocalDate.parse(flightDate);
+        LocalTime time = LocalTime.parse(flightTime);
+
+        // Combinar LocalDate e LocalTime em ZonedDateTime com fuso horário
+        // America/Sao_Paulo
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(date, time, ZoneId.of("America/Sao_Paulo"));
+
+        // Converter para UTC antes de armazenar
+        return zonedDateTime.withZoneSameInstant(ZoneOffset.UTC);
     }
 
 }

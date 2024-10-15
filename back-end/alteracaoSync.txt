@@ -3,3 +3,7 @@
 - Trazer o shell spript mas nao agora
 
 - Alteracoes em cliente: tira migration de inserts, controller, service, etc
+
+15 outubro
+
+- Alteração no serviço de voo - R15

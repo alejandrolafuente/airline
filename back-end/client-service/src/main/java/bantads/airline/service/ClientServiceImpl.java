@@ -57,7 +57,9 @@ public class ClientServiceImpl implements ClientService {
         milesTransactionRepository.save(transaction);
 
         ZonedDateTime utc1DateTime = transaction.getTransactionDate(); // Data em UTC
+
         ZonedDateTime local1DateTime = utc1DateTime.withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
+        
         System.out.println("Hora local: " + local1DateTime);
 
         client.setMiles(client.getMiles() + transaction.getMilesQuantity()); // Adiciona as milhas ao cliente
