@@ -7,10 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import bantads.airline.dto.request.R15QueDTO;
 import bantads.airline.service.FlightService;
 
 @RestController
@@ -33,4 +36,10 @@ public class FlightController {
         return new ResponseEntity<>(flightService.getflights(), HttpStatus.OK);
     }
 
+    // R15
+    @PostMapping("/insertflight")
+    public ResponseEntity<?> insertflight(@RequestBody R15QueDTO r15QueDTO) {
+
+        return new ResponseEntity<>(flightService.insertFlight(r15QueDTO), HttpStatus.OK);
+    }
 }

@@ -19,6 +19,7 @@ import bantads.airline.dto.request.R15QueDTO;
 import bantads.airline.dto.response.AirportDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R11ResDTO;
+import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.model.Flight;
 import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;
@@ -142,7 +143,7 @@ public class FlightServiceImpl implements FlightService {
 
     // R15
     @Override
-    public void insertFlight(R15QueDTO r15QueDTO) {
+    public R15ResDTO insertFlight(R15QueDTO r15QueDTO) {
 
         // generate flight code
         String flightCode;
@@ -168,8 +169,27 @@ public class FlightServiceImpl implements FlightService {
                 .flightStatus("CONFIRMED")
                 .build();
 
-        flightRepository.save(newFlight);
+        newFlight = flightRepository.save(newFlight);
 
+        // fazer a dto de reposta, R15ResDTO:
+
+        ZonedDateTime localTime = newFlight.getFlightDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        R15ResDTO dto = R15ResDTO.builder()
+                .departureAirport(
+                        newFlight.getDepartureAirport().getCode() + " - " + newFlight.getDepartureAirport().getName())
+                .arrivalAirport(
+                        newFlight.getArrivalAirport().getCode() + " - " + newFlight.getArrivalAirport().getName())
+                .flighDate(localTime.format(dateFormatter))
+                .flighTime(localTime.format(timeFormatter))
+                .flighCode(newFlight.getCode())
+                .build();
+
+        return dto;
     }
 
     private String generateRandomCode() {

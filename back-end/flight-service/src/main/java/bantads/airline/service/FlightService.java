@@ -5,6 +5,7 @@ import java.util.List;
 import bantads.airline.dto.request.R15QueDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R11ResDTO;
+import bantads.airline.dto.response.R15ResDTO;
 
 public interface FlightService {
 
@@ -15,6 +16,6 @@ public interface FlightService {
     List<R11ResDTO> getflights();
 
     // R15
-    void insertFlight(R15QueDTO r15QueDTO);
+    R15ResDTO insertFlight(R15QueDTO r15QueDTO);
 
 }
