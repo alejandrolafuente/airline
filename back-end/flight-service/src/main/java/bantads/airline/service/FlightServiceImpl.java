@@ -11,15 +11,19 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import bantads.airline.dto.request.R07QueDTO1;
 import bantads.airline.dto.request.R15QueDTO;
 import bantads.airline.dto.response.AirportDTO;
 import bantads.airline.dto.response.R03ResDTO;
+import bantads.airline.dto.response.R07ResDTO1;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
+import bantads.airline.model.Airport;
 import bantads.airline.model.Flight;
 import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;
@@ -78,6 +82,21 @@ public class FlightServiceImpl implements FlightService {
         }
 
         return listR03ResDTO;
+    }
+
+    // R07 - 1
+    @Override
+    public List<R07ResDTO1> getClientRequestflights(R07QueDTO1 dto) {
+
+        UUID depId = airportRepository.getAirportByCode(dto.getDepAirportCode()).getAirportId();
+        UUID arrId = airportRepository.getAirportByCode(dto.getArrAirportCode()).getAirportId();
+
+        List<Flight> flights = flightRepository.getClientRequestflights(depId, arrId,
+                ZonedDateTime.now(ZoneId.of("UTC")));
+
+        System.out.println( "VOOS PESQUISADOS NO DB"  +  flights);
+
+        return null;
     }
 
     // R11

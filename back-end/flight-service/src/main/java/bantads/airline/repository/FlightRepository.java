@@ -24,4 +24,8 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
     List<Flight> getNext48HoursFlights(@Param("currentDate") ZonedDateTime currentDate,
             @Param("futureDate") ZonedDateTime futureDate);
 
+    @Query(value = "SELECT * FROM flight_table f WHERE f.flight_date  >= :currentDate AND f.departure_airport_id = :departure AND f.arrival_airport_id = :arrival ORDER BY f.flight_date", nativeQuery = true)
+    List<Flight> getClientRequestflights(@Param("departure") UUID depAirport,
+            @Param("arrival") UUID arrAirportCode, @Param("currentDate") ZonedDateTime currentDate);
+
 }

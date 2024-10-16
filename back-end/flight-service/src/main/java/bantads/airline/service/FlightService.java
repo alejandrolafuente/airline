@@ -2,8 +2,10 @@ package bantads.airline.service;
 
 import java.util.List;
 
+import bantads.airline.dto.request.R07QueDTO1;
 import bantads.airline.dto.request.R15QueDTO;
 import bantads.airline.dto.response.R03ResDTO;
+import bantads.airline.dto.response.R07ResDTO1;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 
@@ -11,6 +13,9 @@ public interface FlightService {
 
     // R03
     List<R03ResDTO> getBookedFlights(List<String> flightCodes);
+
+    // R07 - 1
+    List<R07ResDTO1> getClientRequestflights(R07QueDTO1 dto);
 
     // R11
     List<R11ResDTO> getflights();
