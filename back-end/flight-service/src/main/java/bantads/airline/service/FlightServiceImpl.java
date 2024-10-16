@@ -23,7 +23,6 @@ import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R07ResDTO1;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
-import bantads.airline.model.Airport;
 import bantads.airline.model.Flight;
 import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;

@@ -34,6 +34,7 @@ public class FlightController {
     // R07 - 1
     @GetMapping("/searchflights")
     public ResponseEntity<?> getClientRequestflights(@RequestBody R07QueDTO1 dto) {
+        flightService.getClientRequestflights(dto);
         return null;
         // return new ResponseEntity<>(flightService.getBookedFlights(flightCodes), HttpStatus.OK);
     }
