@@ -21,6 +21,7 @@ import bantads.airline.dto.request.R15QueDTO;
 import bantads.airline.dto.response.AirportDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R07ResDTO1;
+import bantads.airline.dto.response.R07ResDTO2;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.model.Flight;
@@ -106,7 +107,6 @@ public class FlightServiceImpl implements FlightService {
         // Hora local em UTC!
         ZonedDateTime localTime = ZonedDateTime.now(ZoneId.of("UTC"));
 
-
         // 2. faz busca na tabela,
 
         List<Flight> flights;
@@ -141,6 +141,37 @@ public class FlightServiceImpl implements FlightService {
         }
 
         return listR07ResDTO1;
+    }
+
+    // R07 - 2
+    @Override
+    public R07ResDTO2 getFlight(String flightID) {
+
+        Flight flight = flightRepository.findById(UUID.fromString(flightID)).orElse(null);
+
+        if (flight != null) {
+
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+            ZonedDateTime localTimeFlight = flight.getFlightDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
+
+            R07ResDTO2 returnDTO = R07ResDTO2.builder()
+                    .flightId(flight.getFlightId().toString())
+                    .departure(flight.getDepartureAirport().getCity() + " - " + flight.getDepartureAirport().getName())
+                    .arrival(flight.getArrivalAirport().getCity() + " - " + flight.getArrivalAirport().getName())
+                    .flightDate(localTimeFlight.format(dateFormatter))
+                    .flighTime(localTimeFlight.format(timeFormatter))
+                    .seatPrice(flight.getFlightPrice().toString())
+                    .totalSeats(flight.getTotalSeats().toString())
+                    .freeSeats(String.valueOf(flight.getTotalSeats() - flight.getOccupiedSeats()))
+                    .build();
+
+            return returnDTO;
+        }
+
+        return null;
     }
 
     // R11

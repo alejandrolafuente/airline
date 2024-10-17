@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,11 +32,18 @@ public class FlightController {
         return new ResponseEntity<>(flightService.getBookedFlights(flightCodes), HttpStatus.OK);
     }
 
-    // R07 - 1
+    // R07 passo 1
     @GetMapping("/searchflights")
     public ResponseEntity<?> getClientRequestflights(@RequestBody R07QueDTO1 dto) {
 
         return new ResponseEntity<>(flightService.getClientRequestflights(dto), HttpStatus.OK);
+    }
+
+    // R07 passo 2
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getFlight(@PathVariable(value = "id") String flightId) {
+        
+        return new ResponseEntity<>(flightService.getFlight(flightId), HttpStatus.OK);
     }
 
     // R11
