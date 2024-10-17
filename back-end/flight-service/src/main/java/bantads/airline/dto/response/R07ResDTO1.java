@@ -1,6 +1,5 @@
 package bantads.airline.dto.response;
 
-import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class R07ResDTO1 {
-    private UUID flightId;
+    private String flightId;// devolver o id para o front fazer a busca ao selecionar voo
     private String flightDate;
     private String flighTime;
     private String departure; // ex g. "AEROPORTO DE GUARULHOS"
