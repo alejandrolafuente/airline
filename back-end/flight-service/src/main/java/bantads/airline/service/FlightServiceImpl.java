@@ -87,15 +87,37 @@ public class FlightServiceImpl implements FlightService {
     @Override
     public List<R07ResDTO1> getClientRequestflights(R07QueDTO1 dto) {
 
-        UUID depId = airportRepository.getAirportByCode(dto.getDepAirportCode()).getAirportId();
-        UUID arrId = airportRepository.getAirportByCode(dto.getArrAirportCode()).getAirportId();
+        UUID depId = null;
+        UUID arrId = null;
+
+        // 1. pega o id dos aeroportos
+
+        if (dto.getDepAirportCode() != null) {
+
+            depId = airportRepository.getAirportByCode(dto.getDepAirportCode()).getAirportId();
+
+        }
+
+        if (dto.getArrAirportCode() != null) {
+            arrId = airportRepository.getAirportByCode(dto.getArrAirportCode()).getAirportId();
+
+        }
 
         // Hora local em UTC!
         ZonedDateTime localTime = ZonedDateTime.now(ZoneId.of("UTC"));
 
-        System.out.println("HORA LOCAL UTC: " + localTime);
 
-        List<Flight> flights = flightRepository.getClientRequestflights(depId, arrId, localTime);
+        // 2. faz busca na tabela,
+
+        List<Flight> flights;
+
+        // Se ambos os aeroportos forem nulos, retorna todos os voos
+        if (depId == null && arrId == null) {
+            flights = flightRepository.getAllFlightsAfterDate(localTime);
+        } else {
+            // Mantém a lógica original se os aeroportos forem fornecidos
+            flights = flightRepository.getClientRequestflights(depId, arrId, localTime);
+        }
 
         List<R07ResDTO1> listR07ResDTO1 = new ArrayList<>();
 
@@ -106,9 +128,6 @@ public class FlightServiceImpl implements FlightService {
         for (Flight flight : flights) {
 
             ZonedDateTime localTimeFlight = flight.getFlightDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
-
-            System.out.println("Aeroportos de saída" + flight.getDepartureAirport().getName());
-            System.out.println();
 
             R07ResDTO1 r07ResDTO1 = R07ResDTO1.builder()
                     .flightId(flight.getFlightId().toString())
