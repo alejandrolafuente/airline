@@ -51,6 +51,9 @@ public class Booking implements Serializable {
     @Column(name = "miles_spent")
     private Integer milesSpent;
 
+    @Column(name = "seats_number", nullable = false)
+    private Integer numberOfSeats;
+
     @Column(name = "user_id", nullable = false)
     private String userId;
 }

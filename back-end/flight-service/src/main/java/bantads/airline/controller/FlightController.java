@@ -38,7 +38,7 @@ public class FlightController {
 
         return new ResponseEntity<>(flightService.getClientRequestflights(dto), HttpStatus.OK);
     }
-
+    
     // R07 passo 2
     @GetMapping("/{id}")
     public ResponseEntity<?> getFlight(@PathVariable(value = "id") String flightId) {

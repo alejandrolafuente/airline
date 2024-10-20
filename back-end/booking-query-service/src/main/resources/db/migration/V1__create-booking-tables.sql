@@ -13,6 +13,7 @@ CREATE TABLE
         status_description VARCHAR(15) NOT NULL,
         money_spent NUMERIC(10, 2),
         miles_spent INTEGER,
+        seats_number INTEGER NOT NULL,
         user_id VARCHAR(24) NOT NULL
     );
 
