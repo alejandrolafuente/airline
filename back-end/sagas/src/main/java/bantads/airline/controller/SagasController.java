@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import bantads.airline.dto.BookingQueryDTO;
 import bantads.airline.dto.SelfRegDTO;
+import bantads.airline.sagas.bookingsaga.BookingSAGA;
 import bantads.airline.sagas.selfregistersaga.ManageRegisterQuery;
 import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
 import bantads.airline.sagas.selfregistersaga.dto.ManageRegisterRes;
@@ -30,6 +32,9 @@ public class SagasController {
 
     @Autowired
     private SelfRegisterSAGA selfRegisterSAGA;
+
+    @Autowired
+    private BookingSAGA bookingSAGA;
 
     @Autowired
     private ManageRegisterQuery manageRegisterQuery;
@@ -60,6 +65,15 @@ public class SagasController {
 
             return new ResponseEntity<>(res.getResponse(), HttpStatus.BAD_REQUEST);
         }
+
+    }
+
+    @PostMapping("/booking")
+    public ResponseEntity<?> flightBooking(@RequestBody BookingQueryDTO bookingQueryDTO)
+            throws JsonProcessingException, InterruptedException, ExecutionException {
+
+        this.bookingSAGA.handleRequest(bookingQueryDTO);
+        return new ResponseEntity<>("Reserva feita ", HttpStatus.OK);
 
     }
 }

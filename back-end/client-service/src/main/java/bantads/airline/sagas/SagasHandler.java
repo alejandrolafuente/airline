@@ -12,7 +12,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.commands.CreateClientCommand;
+import bantads.airline.sagas.commands.UpdateMilesCommand;
 import bantads.airline.sagas.events.ClientCreatedEvent;
+import bantads.airline.sagas.events.MilesUpdatedEvent;
 import bantads.airline.sagas.queries.ManageRegisterRes;
 import bantads.airline.sagas.queries.VerifyClientQuery;
 
@@ -46,6 +48,19 @@ public class SagasHandler {
                 ClientCreatedEvent clientCreatedEvent = sagaService.saveNewClient(createClientCommand);
 
                 var resMsg = objectMapper.writeValueAsString(clientCreatedEvent);
+
+                rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
+
+            } else if ("UpdateMilesCommand".equals(map.get("messageType"))) {
+
+                UpdateMilesCommand updateMilesCommand = objectMapper.convertValue(map, UpdateMilesCommand.class);
+
+                System.out.println("CHEGOU MENSAGEM: " + updateMilesCommand);
+
+
+                MilesUpdatedEvent milesUpdatedEvent = sagaService.updateMiles(updateMilesCommand);
+
+                var resMsg = objectMapper.writeValueAsString(milesUpdatedEvent);
 
                 rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
 

@@ -14,6 +14,8 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
 
     Client findByCpfAndEmail(String cpf, String email);
 
+    Client findByUserId(String userId);
+
     // get client by cpf
     @Query(value = "SELECT * FROM client_table c WHERE c.cpf = ?1", nativeQuery = true)
     Client getClientByCpf(String cpf);

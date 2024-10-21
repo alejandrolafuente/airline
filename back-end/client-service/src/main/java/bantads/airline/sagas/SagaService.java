@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import bantads.airline.model.Client;
 import bantads.airline.repository.ClientRepository;
 import bantads.airline.sagas.commands.CreateClientCommand;
+import bantads.airline.sagas.commands.UpdateMilesCommand;
 import bantads.airline.sagas.events.ClientCreatedEvent;
+import bantads.airline.sagas.events.MilesUpdatedEvent;
 import bantads.airline.sagas.queries.ManageRegisterRes;
 import bantads.airline.sagas.queries.VerifyClientQuery;
 
@@ -85,5 +87,22 @@ public class SagaService {
                 .build();
 
         return clientCreatedEvent;
+    }
+
+    // R07
+    public MilesUpdatedEvent updateMiles(UpdateMilesCommand updateMilesCommand) {
+
+        Client client = clientRepository.getClientByUserId(updateMilesCommand.getUserId());
+
+        client.setMiles(client.getMiles() - updateMilesCommand.getUsedMiles());
+
+        client = clientRepository.save(client);
+
+        MilesUpdatedEvent event = MilesUpdatedEvent.builder()
+                .milesBalance(client.getMiles())
+                .messageType("MilesUpdatedEvent")
+                .build();
+
+        return event;
     }
 }
