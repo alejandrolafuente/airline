@@ -1,5 +1,7 @@
 package bantads.airline.sagas.bookingsaga;
 
+import java.util.UUID;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.dto.BookingQueryDTO;
 import bantads.airline.sagas.bookingsaga.commands.UpdateMilesCommand;
+import bantads.airline.sagas.bookingsaga.commands.UpdateSeatsCommand;
 import bantads.airline.sagas.bookingsaga.events.MilesUpdatedEvent;
 
 @Component
@@ -28,7 +31,6 @@ public class BookingSAGA {
 
         System.out.println("O QUE CHEGA DO FRONT: " + this.bookingQueryDTO);
 
-
         // 1. ir no cliente e atualizar o saldo. se usedMiles = 0 ou null
         // nao precisa atualizar o cliente
         if (bookingQueryDTO.getUsedMiles() != 0 && bookingQueryDTO.getUsedMiles() != null) {
@@ -45,9 +47,20 @@ public class BookingSAGA {
         }
     }
 
-    public void handleMilesUpdatedEvent(MilesUpdatedEvent milesUpdatedEvent) {
+    public void handleMilesUpdatedEvent(MilesUpdatedEvent milesUpdatedEvent) throws JsonProcessingException {
 
         System.out.println("O QUE FOI FEITO EM CLIENTE: " + milesUpdatedEvent);
+
+        UpdateSeatsCommand updateSeatsCommand = UpdateSeatsCommand.builder()
+                .flightId(UUID.fromString(this.bookingQueryDTO.getUserId()))
+                .totalSeats(this.bookingQueryDTO.getTotalSeats())
+                .messageType("UpdateSeatsCommand")
+                .build();
+
+        var message = objectMapper.writeValueAsString(updateSeatsCommand);
+
+        rabbitTemplate.convertAndSend("FlightRequestChannel", message);
+
     }
 
 }
