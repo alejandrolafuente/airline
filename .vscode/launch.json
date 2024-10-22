@@ -18,7 +18,8 @@
             "mainClass": "bantads.airline.FlightServiceApplication",
             "projectName": "flight-service",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=46169 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=flight-service"
         },
         {
             "type": "java",
@@ -28,7 +29,8 @@
             "mainClass": "bantads.airline.SagasApplication",
             "projectName": "sagas",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=38569 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=sagas"
         },
         {
             "type": "java",
@@ -38,7 +40,8 @@
             "mainClass": "bantads.airline.ClientServiceApplication",
             "projectName": "client-service",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=38857 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=client-service"
         },
         {
             "type": "java",
@@ -47,6 +50,16 @@
             "cwd": "${workspaceFolder}",
             "mainClass": "com.airline.BookingQueryServiceApplication",
             "projectName": "booking-query-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-BookingCommandServiceApplication<booking-command-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.airline.BookingCommandServiceApplication",
+            "projectName": "booking-command-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }

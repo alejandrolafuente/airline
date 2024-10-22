@@ -48,7 +48,7 @@ public class Booking implements Serializable {
     @Column(name = "money_spent", nullable = true)
     private BigDecimal moneySpent;
 
-    @Column(name = "miles_spent")
+    @Column(name = "miles_spent", nullable = true)
     private Integer milesSpent;
 
     @Column(name = "seats_number", nullable = false)
