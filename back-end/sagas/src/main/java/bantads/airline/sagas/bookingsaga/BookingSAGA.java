@@ -1,7 +1,5 @@
 package bantads.airline.sagas.bookingsaga;
 
-import java.util.UUID;
-
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.dto.BookingQueryDTO;
+import bantads.airline.sagas.bookingsaga.commands.CreateBookingCommand;
 import bantads.airline.sagas.bookingsaga.commands.UpdateMilesCommand;
 import bantads.airline.sagas.bookingsaga.commands.UpdateSeatsCommand;
 import bantads.airline.sagas.bookingsaga.events.MilesUpdatedEvent;
@@ -49,7 +48,7 @@ public class BookingSAGA {
     public void handleMilesUpdatedEvent(MilesUpdatedEvent milesUpdatedEvent) throws JsonProcessingException {
 
         UpdateSeatsCommand updateSeatsCommand = UpdateSeatsCommand.builder()
-                .flightId(UUID.fromString(this.bookingQueryDTO.getFlightId()))
+                .flightId(this.bookingQueryDTO.getFlightId())
                 .totalSeats(this.bookingQueryDTO.getTotalSeats())
                 .messageType("UpdateSeatsCommand")
                 .build();
@@ -60,8 +59,23 @@ public class BookingSAGA {
 
     }
 
-    public void handleSeatsUpdatedEvent(SeatsUpdatedEvent seatsUpdatedEvent) {
+    public void handleSeatsUpdatedEvent(SeatsUpdatedEvent seatsUpdatedEvent) throws JsonProcessingException {
+
         System.out.println("ALTERAÇÕES EM SERVIÇO DE VOO: " + seatsUpdatedEvent);
+
+        CreateBookingCommand createBookingCommand = CreateBookingCommand.builder()
+                .flightId(this.bookingQueryDTO.getFlightId())
+                .flightCode(seatsUpdatedEvent.getFlightCode())
+                .moneyValue(this.bookingQueryDTO.getMoneyValue())
+                .usedMiles(this.bookingQueryDTO.getUsedMiles())
+                .totalSeats(this.bookingQueryDTO.getTotalSeats()) // mudar para vir do servico voo
+                .userId(this.bookingQueryDTO.getUserId())
+                .messageType("CreateBookingCommand")
+                .build();
+
+        var message = objectMapper.writeValueAsString(createBookingCommand);
+
+        rabbitTemplate.convertAndSend("BookingCommandRequestChannel", message);
     }
 
 }
