@@ -49,7 +49,7 @@ public class BookingSAGA {
     public void handleMilesUpdatedEvent(MilesUpdatedEvent milesUpdatedEvent) throws JsonProcessingException {
 
         UpdateSeatsCommand updateSeatsCommand = UpdateSeatsCommand.builder()
-                .flightId(UUID.fromString(this.bookingQueryDTO.getUserId()))
+                .flightId(UUID.fromString(this.bookingQueryDTO.getFlightId()))
                 .totalSeats(this.bookingQueryDTO.getTotalSeats())
                 .messageType("UpdateSeatsCommand")
                 .build();

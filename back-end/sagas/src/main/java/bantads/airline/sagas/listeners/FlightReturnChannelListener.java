@@ -19,9 +19,10 @@ public class FlightReturnChannelListener {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
     private BookingSAGA bookingSAGA;
 
-    @RabbitListener(queues = "ClientReturnChannel")
+    @RabbitListener(queues = "FlightReturnChannel")
     public void handleFlightResponses(String receivedMessage) throws JsonMappingException, JsonProcessingException {
 
         Object object = objectMapper.readValue(receivedMessage, Object.class);
@@ -34,7 +35,7 @@ public class FlightReturnChannelListener {
 
             switch (messageType) {
 
-                case "ClientCreatedEvent" -> {
+                case "SeatsUpdatedEvent" -> {
 
                     SeatsUpdatedEvent seatsUpdatedEvent = objectMapper.convertValue(map, SeatsUpdatedEvent.class);
 
