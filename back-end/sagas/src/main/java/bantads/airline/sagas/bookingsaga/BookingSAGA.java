@@ -13,6 +13,7 @@ import bantads.airline.dto.BookingQueryDTO;
 import bantads.airline.sagas.bookingsaga.commands.UpdateMilesCommand;
 import bantads.airline.sagas.bookingsaga.commands.UpdateSeatsCommand;
 import bantads.airline.sagas.bookingsaga.events.MilesUpdatedEvent;
+import bantads.airline.sagas.bookingsaga.events.SeatsUpdatedEvent;
 
 @Component
 public class BookingSAGA {
@@ -28,8 +29,6 @@ public class BookingSAGA {
     public void handleRequest(BookingQueryDTO bookingQueryDTO) throws JsonProcessingException {
 
         this.bookingQueryDTO = bookingQueryDTO;
-
-        System.out.println("O QUE CHEGA DO FRONT: " + this.bookingQueryDTO);
 
         // 1. ir no cliente e atualizar o saldo. se usedMiles = 0 ou null
         // nao precisa atualizar o cliente
@@ -49,8 +48,6 @@ public class BookingSAGA {
 
     public void handleMilesUpdatedEvent(MilesUpdatedEvent milesUpdatedEvent) throws JsonProcessingException {
 
-        System.out.println("O QUE FOI FEITO EM CLIENTE: " + milesUpdatedEvent);
-
         UpdateSeatsCommand updateSeatsCommand = UpdateSeatsCommand.builder()
                 .flightId(UUID.fromString(this.bookingQueryDTO.getUserId()))
                 .totalSeats(this.bookingQueryDTO.getTotalSeats())
@@ -61,6 +58,10 @@ public class BookingSAGA {
 
         rabbitTemplate.convertAndSend("FlightRequestChannel", message);
 
+    }
+
+    public void handleSeatsUpdatedEvent(SeatsUpdatedEvent seatsUpdatedEvent) {
+        System.out.println("ALTERAÇÕES EM SERVIÇO DE VOO: " + seatsUpdatedEvent);
     }
 
 }

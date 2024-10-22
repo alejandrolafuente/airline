@@ -53,6 +53,24 @@
             "arguments": {
                 "x-queue-type": "classic"
             }
+        },
+        {
+            "name": "FlightRequestChannel",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        },
+        {
+            "name": "FlightReturnChannel",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
         }
     ]
 }

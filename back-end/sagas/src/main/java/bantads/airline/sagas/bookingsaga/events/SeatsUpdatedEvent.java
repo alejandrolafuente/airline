@@ -1,6 +1,4 @@
-package bantads.airline.sagas.commands;
-
-import java.util.UUID;
+package bantads.airline.sagas.bookingsaga.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateSeatsCommand {
-    private UUID flightId; // 44b9e844-ea19-44ef-9a01-461e152eacd2
-    private Integer totalSeats;
+public class SeatsUpdatedEvent {
+    private String flightCode;
+    private Integer freeSeats;
     private String messageType;
-
 }

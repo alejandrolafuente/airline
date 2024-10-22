@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.commands.UpdateSeatsCommand;
+import bantads.airline.sagas.events.SeatsUpdatedEvent;
 
 @Component
 public class SagasHandler {
@@ -21,6 +22,9 @@ public class SagasHandler {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private SagaService sagaService;
 
     @RabbitListener(queues = "FlightRequestChannel")
     public void handleMessage(String msg) throws JsonProcessingException, JsonMappingException {
@@ -35,7 +39,11 @@ public class SagasHandler {
 
                 UpdateSeatsCommand updateSeatsCommand = objectMapper.convertValue(map, UpdateSeatsCommand.class);
 
+                SeatsUpdatedEvent seatsUpdatedEvent = sagaService.updateSeats(updateSeatsCommand);
 
+                var message = objectMapper.writeValueAsString(seatsUpdatedEvent);
+
+                rabbitTemplate.convertAndSend("FlightReturnChannel", message);
             }
 
         }
