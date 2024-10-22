@@ -1,5 +1,7 @@
 package com.airline.sagas;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,22 +9,17 @@ import org.springframework.stereotype.Service;
 
 import com.airline.model.Booking;
 import com.airline.repository.BookingRepository;
+import com.airline.repository.BookingStatusRep;
 import com.airline.sagas.commands.CreateBookingCommand;
 
 @Service
 public class SagaService {
 
-    // class CreateBookingCommand
-    // private UUID flightId;
-    // private String flightCode; // * we're not using it
-    // private BigDecimal moneyValue;
-    // private Integer usedMiles;
-    // private Integer totalSeats;
-    // private String userId;
-    // private String messageType;
-
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private BookingStatusRep bookingStatusRep;
 
     public void insertBooking(CreateBookingCommand createBookingCommand) {
 
@@ -32,16 +29,28 @@ public class SagaService {
             bookingCode = generateBookingcode();
         } while (bookingRepository.getBookingByCode(bookingCode) != null);
 
+        // class CreateBookingCommand
+        // private UUID flightId;
+        // private String flightCode; // * we're not using it
+        // private BigDecimal moneyValue;
+        // private Integer usedMiles;
+        // private Integer totalSeats;
+        // private String userId;
+        // private String messageType;
+
         Booking booking = Booking.builder()
-                .bookingCode(null)
-                .flightCode(null)
-                .bookingDate(null)
-                .bookingStatus(null)
-                .moneySpent(null)
-                .milesSpent(null)
-                .numberOfSeats(null)
+                .bookingCode(bookingCode)
+                .flightCode(createBookingCommand.getFlightCode())
+                .bookingDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                .bookingStatus(bookingStatusRep.findByStatusCode(1))
+                .moneySpent(createBookingCommand.getMoneyValue())
+                .milesSpent(createBookingCommand.getUsedMiles())
+                .numberOfSeats(createBookingCommand.getTotalSeats())
                 .userId(bookingCode)
                 .build();
+
+        booking = bookingRepository.save(booking);
+
     }
 
     public String generateBookingcode() {
