@@ -11,6 +11,7 @@ import com.airline.model.Booking;
 import com.airline.repository.BookingRepository;
 import com.airline.repository.BookingStatusRep;
 import com.airline.sagas.commands.CreateBookingCommand;
+import com.airline.sagas.events.BookingCreatedEvent;
 
 @Service
 public class SagaService {
@@ -21,22 +22,13 @@ public class SagaService {
     @Autowired
     private BookingStatusRep bookingStatusRep;
 
-    public void insertBooking(CreateBookingCommand createBookingCommand) {
+    public BookingCreatedEvent insertBooking(CreateBookingCommand createBookingCommand) {
 
         String bookingCode;
 
         do {
             bookingCode = generateBookingcode();
         } while (bookingRepository.getBookingByCode(bookingCode) != null);
-
-        // class CreateBookingCommand
-        // private UUID flightId;
-        // private String flightCode; // * we're not using it
-        // private BigDecimal moneyValue;
-        // private Integer usedMiles;
-        // private Integer totalSeats;
-        // private String userId;
-        // private String messageType;
 
         Booking booking = Booking.builder()
                 .bookingCode(bookingCode)
@@ -50,6 +42,15 @@ public class SagaService {
                 .build();
 
         booking = bookingRepository.save(booking);
+
+        BookingCreatedEvent bookingCreatedEvent = BookingCreatedEvent.builder()
+                .bookingStatus(booking.getBookingCode())
+                .bookingCode(booking.getBookingCode())
+                .bookingDate(booking.getBookingDate())
+                .messageType("BookingCreatedEvent")
+                .build();
+
+        return bookingCreatedEvent;
 
     }
 
