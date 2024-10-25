@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import com.airline.sagas.commands.BookingCommand;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "booking_query_table")
 public class BookingQuery implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "booking_id", nullable = false, updatable = false)
@@ -66,4 +68,21 @@ public class BookingQuery implements Serializable {
 
     @Column(name = "user_id", nullable = false)
     private String userId;
+
+    // constructor
+    public BookingQuery(BookingCommand bookingCommand) {
+
+        this.bookingCommandId = bookingCommand.getBookingCommandId().toString();
+        this.bookingCode = bookingCommand.getBookingCode();
+        this.flightCode = bookingCommand.getFlightCode();
+        this.bookingDate = bookingCommand.getBookingDate();
+        this.statusCommandId = bookingCommand.getStatusCommandId().toString();
+        this.statusCode = bookingCommand.getStatusCode();
+        this.statusAcronym = bookingCommand.getStatusAcronym();
+        this.statusDescription = bookingCommand.getStatusDescription();
+        this.moneySpent = bookingCommand.getMoneySpent();
+        this.milesSpent = bookingCommand.getMilesSpent();
+        this.numberOfSeats = bookingCommand.getNumberOfSeats();
+        this.userId = bookingCommand.getUserId();
+    }
 }

@@ -3,19 +3,17 @@ package com.airline.sagas;
 import java.util.Map;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.airline.sagas.commands.BookingCommand;
+import com.airline.sagas.events.BookingCreatedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class SagasHandler {
-
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -33,6 +31,9 @@ public class SagasHandler {
             Map<?, ?> map = (Map<?, ?>) object;
 
             if ("BookingCommand".equals(map.get("messageType"))) {
+                BookingCommand bookingCommand = objectMapper.convertValue(map, BookingCommand.class);
+                BookingCreatedEvent bookingCreatedEvent = sagaService.insertBooking(bookingCommand);
+                // imprimir aqui
             }
         }
     }
