@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.airline.sagas.commands.CreateBookingCommand;
+import com.airline.sagas.events.BookingCreatedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,12 +38,11 @@ public class SagasHandler {
 
                 CreateBookingCommand createBookingCommand = objectMapper.convertValue(map, CreateBookingCommand.class);
 
-                // SeatsUpdatedEvent seatsUpdatedEvent =
-                // sagaService.updateSeats(updateSeatsCommand);
+                BookingCreatedEvent bookingCreatedEvent = sagaService.insertBooking(createBookingCommand);
 
-                // var message = objectMapper.writeValueAsString(seatsUpdatedEvent);
+                var message = objectMapper.writeValueAsString(bookingCreatedEvent);
 
-                // rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+                rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
             }
 
         }

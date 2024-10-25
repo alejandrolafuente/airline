@@ -71,6 +71,33 @@
             "arguments": {
                 "x-queue-type": "classic"
             }
+        },
+        {
+            "name": "BookingCommandRequestChannel",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        },
+        {
+            "name": "BookingCommandReturnChannel",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
+        },
+        {
+            "name": "BookingQueryRequestChannel",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {
+                "x-queue-type": "classic"
+            }
         }
     ]
 }

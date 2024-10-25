@@ -4,14 +4,18 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.airline.model.Booking;
 import com.airline.repository.BookingRepository;
 import com.airline.repository.BookingStatusRep;
+import com.airline.sagas.commands.BookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
 import com.airline.sagas.events.BookingCreatedEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class SagaService {
@@ -22,7 +26,13 @@ public class SagaService {
     @Autowired
     private BookingStatusRep bookingStatusRep;
 
-    public BookingCreatedEvent insertBooking(CreateBookingCommand createBookingCommand) {
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    public BookingCreatedEvent insertBooking(CreateBookingCommand createBookingCommand) throws JsonProcessingException {
 
         String bookingCode;
 
@@ -42,6 +52,29 @@ public class SagaService {
                 .build();
 
         booking = bookingRepository.save(booking);
+
+        // send message to booking query service:
+
+        BookingCommand bookingCommand = BookingCommand.builder()
+                .bookingCommandId(booking.getBookingId())
+                .bookingCode(booking.getBookingCode())
+                .flightCode(booking.getFlightCode())
+                .bookingDate(booking.getBookingDate())
+                .statusCommandId(booking.getBookingStatus().getStatusId())
+                .statusCode(booking.getBookingStatus().getStatusCode())
+                .statusAcronym(booking.getBookingStatus().getStatusAcronym())
+                .statusDescription(booking.getBookingStatus().getStatusDescription())
+                .moneySpent(booking.getMoneySpent())
+                .milesSpent(booking.getMilesSpent())
+                .numberOfSeats(booking.getNumberOfSeats())
+                .userId(booking.getUserId())
+                .build();
+
+        var message = objectMapper.writeValueAsString(bookingCommand);
+
+        rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
+
+        // send return back to handler and to sagas service:
 
         BookingCreatedEvent bookingCreatedEvent = BookingCreatedEvent.builder()
                 .bookingStatus(booking.getBookingCode())
