@@ -11,6 +11,7 @@ import bantads.airline.dto.BookingQueryDTO;
 import bantads.airline.sagas.bookingsaga.commands.CreateBookingCommand;
 import bantads.airline.sagas.bookingsaga.commands.UpdateMilesCommand;
 import bantads.airline.sagas.bookingsaga.commands.UpdateSeatsCommand;
+import bantads.airline.sagas.bookingsaga.events.BookingCreatedEvent;
 import bantads.airline.sagas.bookingsaga.events.MilesUpdatedEvent;
 import bantads.airline.sagas.bookingsaga.events.SeatsUpdatedEvent;
 
@@ -76,6 +77,12 @@ public class BookingSAGA {
         var message = objectMapper.writeValueAsString(createBookingCommand);
 
         rabbitTemplate.convertAndSend("BookingCommandRequestChannel", message);
+    }
+
+    public void handleBookingCreatedEvent(BookingCreatedEvent bookingCreatedEvent) {
+
+        System.out.println("VEM DO SERVIÇO DE RESERVA - ESCRITA: " + bookingCreatedEvent);
+
     }
 
 }

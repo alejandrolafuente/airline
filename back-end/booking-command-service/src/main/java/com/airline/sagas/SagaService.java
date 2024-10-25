@@ -68,6 +68,7 @@ public class SagaService {
                 .milesSpent(booking.getMilesSpent())
                 .numberOfSeats(booking.getNumberOfSeats())
                 .userId(booking.getUserId())
+                .messageType("BookingCommand")
                 .build();
 
         var message = objectMapper.writeValueAsString(bookingCommand);
@@ -79,7 +80,7 @@ public class SagaService {
         BookingCreatedEvent bookingCreatedEvent = BookingCreatedEvent.builder()
                 .bookingStatus(booking.getBookingCode())
                 .bookingCode(booking.getBookingCode())
-                .bookingDate(booking.getBookingDate())
+                .bookingDate(booking.getBookingDate()) // UTC local
                 .messageType("BookingCreatedEvent")
                 .build();
 

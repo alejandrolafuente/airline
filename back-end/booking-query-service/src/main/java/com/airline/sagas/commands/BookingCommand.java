@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class BookingCommand {
-    private UUID bookingCommandId; // * save as String Type in query service
+    private UUID bookingCommandId; // * must save as String Type 
     private String bookingCode;
     private String flightCode;
     private ZonedDateTime bookingDate;
     // booking status
-    private UUID statusCommandId; // * save as String Type in query service
+    private UUID statusCommandId; // * must save as String Type 
     private Integer statusCode;
     private String statusAcronym;
     private String statusDescription;
