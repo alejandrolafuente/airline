@@ -34,6 +34,7 @@ public class SagasHandler {
                 BookingCommand bookingCommand = objectMapper.convertValue(map, BookingCommand.class);
                 BookingCreatedEvent bookingCreatedEvent = sagaService.insertBooking(bookingCommand);
                 // imprimir aqui
+                System.out.println("O ULTIMO QUE SALVAMOS AQUI EM QUERY SERVICE: " + bookingCreatedEvent);
             }
         }
     }

@@ -11,7 +11,7 @@ import com.airline.model.Booking;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
-    @Query("select b from Booking b where b.code = ?1")
+    @Query("select b from Booking b where b.bookingCode = ?1")
     Booking getBookingByCode(String bookingCode);
 
 }
