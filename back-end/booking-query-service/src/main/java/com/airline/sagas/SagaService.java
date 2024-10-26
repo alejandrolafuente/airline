@@ -21,11 +21,11 @@ public class SagaService {
         newBooking = bookingQueryRepository.save(newBooking);
 
         BookingCreatedEvent bookingCreatedEvent = BookingCreatedEvent.builder()
-                .bookingId(null)
-                .bookingCommandId(null)
-                .bookingCode(null)
-                .bookingDate(null) // converter para hora local com ajuda de flight service
-                .statusDescription(null)
+                .bookingId(newBooking.getBookingId())
+                .bookingCommandId(newBooking.getBookingCommandId())
+                .bookingCode(newBooking.getBookingCode())
+                .bookingDate(newBooking.getBookingDate()) // converter para hora local com ajuda de flight service
+                .statusDescription(newBooking.getStatusDescription())
                 .build();
 
         return bookingCreatedEvent;

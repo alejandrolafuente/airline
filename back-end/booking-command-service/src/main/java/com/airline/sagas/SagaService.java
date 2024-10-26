@@ -48,7 +48,7 @@ public class SagaService {
                 .moneySpent(createBookingCommand.getMoneyValue())
                 .milesSpent(createBookingCommand.getUsedMiles())
                 .numberOfSeats(createBookingCommand.getTotalSeats())
-                .userId(bookingCode)
+                .userId(createBookingCommand.getUserId())
                 .build();
 
         booking = bookingRepository.save(booking);
