@@ -181,33 +181,13 @@ public class FlightServiceImpl implements FlightService {
         // gets the current date in UTC
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of("UTC"));
 
+        System.out.println("current date in UTC => " + currentDate);
+
         // calculates the next 48 hours
         ZonedDateTime futureDate = currentDate.plusHours(48);
 
         // fetches the flights
         List<Flight> flightsList = flightRepository.getNext48HoursFlights(currentDate, futureDate);
-
-        // defines the São Paulo time zone
-        ZoneId saoPauloZoneId = ZoneId.of("America/Sao_Paulo");
-
-        // adjusts the flight dates to São Paulo time zone
-        flightsList.forEach(flight -> {
-
-            ZonedDateTime utcDateTime = flight.getFlightDate();
-
-            // ensure utcDateTime is in UTC before converting
-            if (utcDateTime.getZone().equals(ZoneId.of("UTC"))) {
-
-                ZonedDateTime localDateTime = utcDateTime.withZoneSameInstant(saoPauloZoneId);
-
-                flight.setFlightDate(localDateTime);
-
-            }
-            // else {
-            // System.out.println("Unexpected time zone for flight date: " +
-            // utcDateTime.getZone());
-            // }
-        });
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -217,14 +197,16 @@ public class FlightServiceImpl implements FlightService {
 
         for (Flight flight : flightsList) {
 
+            ZonedDateTime localtime = flight.getFlightDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
+
             AirportDTO departureAirportDTO = new AirportDTO(flight.getDepartureAirport());
 
             AirportDTO arrivalAirportDTO = new AirportDTO(flight.getArrivalAirport());
 
             R11ResDTO dto = R11ResDTO.builder()
                     .flightId(flight.getFlightId())
-                    .flightDate(flight.getFlightDate().format(dateFormatter))
-                    .flighTime(flight.getFlightDate().format(timeFormatter))
+                    .flightDate(localtime.format(dateFormatter))
+                    .flighTime(localtime.format(timeFormatter))
                     .departureAirport(departureAirportDTO)
                     .arrivalAirport(arrivalAirportDTO)
                     .build();
@@ -245,6 +227,8 @@ public class FlightServiceImpl implements FlightService {
         do {
             flightCode = generateRandomCode();
         } while (flightRepository.getFlightByCode(flightCode) != null);
+
+        // ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of("UTC"));
 
         // define flighDate
         ZonedDateTime flightDate = convertToZonedDateTime(r15QueDTO.getFlighDate(), r15QueDTO.getFlighTime());
