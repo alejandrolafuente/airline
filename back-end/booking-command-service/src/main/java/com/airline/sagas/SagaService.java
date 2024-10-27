@@ -75,7 +75,7 @@ public class SagaService {
 
         rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
 
-        // send return back to handler and to sagas service:
+        // send return back to both handler and sagas service:
 
         BookingCreatedEvent bookingCreatedEvent = BookingCreatedEvent.builder()
                 .bookingStatus(booking.getBookingCode())

@@ -6,25 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.airline.service.CommandService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @RestController
 @CrossOrigin
 @RequestMapping("booking-command")
 public class CommandController {
 
-    // R10: Fazer Check-In
-    // apenas o id da reserva basta
-
+    // R10: Fazer Check-In ; apenas o id da reserva basta
+    // provavelmente api composition antes
     @Autowired
     private CommandService commandService;
 
-    @PostMapping("/purchase/{id}")
-    public ResponseEntity<?> milesPurhase(@PathVariable(value = "id") String id) {
+    @PutMapping("/purchase/{id}")
+    public ResponseEntity<?> milesPurhase(@PathVariable(value = "id") String id) throws JsonProcessingException {
 
         UUID bookingId = UUID.fromString(id);
 
