@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class DoCheckInCommand {
-    private String bookingId;
+    private String bookingId; // bookingCommandId
     private String changeId;
     private ZonedDateTime changeDate;
     private String iStatusCommandId;

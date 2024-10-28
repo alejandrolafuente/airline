@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import com.airline.model.BookingQuery;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
