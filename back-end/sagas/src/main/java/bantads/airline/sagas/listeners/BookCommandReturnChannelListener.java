@@ -12,10 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
 import bantads.airline.sagas.bookingsaga.events.BookingCreatedEvent;
-import bantads.airline.sagas.selfregistersaga.events.UserCreatedEvent;
 
 @Component
-public class BookCommandChannelListener {
+public class BookCommandReturnChannelListener {
 
     @Autowired
     private ObjectMapper objectMapper;
