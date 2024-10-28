@@ -36,22 +36,25 @@ public class CommandServiceImpl implements CommandService {
     @Autowired
     private StatusChangeRepository statusChangeRepository;
 
-    // R10
     @Override
-    public void doCheckIn(UUID bookingId) throws JsonProcessingException {
+    public void updateBookingStatus(String identifier, int statusCode) throws JsonProcessingException {
 
-        Booking booking = bookingRepository.findById(bookingId).orElse(null);
+        Booking booking = identifier.length() == 36
+                ? bookingRepository.findById(UUID.fromString(identifier)).orElse(null)
+                : bookingRepository.getBookingByCode(identifier);
+
+        if (booking == null) {
+            throw new IllegalArgumentException("Booking Not Found");
+        }
 
         BookingStatus initialStatus = booking.getBookingStatus();
 
-        // atualiza reserva
-        booking.setBookingStatus(bookingStatusRep.findByStatusCode(2));
-
+        // Atualiza a reserva com o novo status
+        booking.setBookingStatus(bookingStatusRep.findByStatusCode(statusCode));
         booking = bookingRepository.save(booking);
 
-        // cria registro de historico
+        // Cria registro de histórico
         BookingStatus finalStatus = booking.getBookingStatus();
-
         StatusChangeHist newHistory = StatusChangeHist.builder()
                 .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
                 .booking(booking)
@@ -61,8 +64,8 @@ public class CommandServiceImpl implements CommandService {
 
         newHistory = statusChangeRepository.save(newHistory);
 
-        // prepara mensagem e envia para query service
-        Command doCheckInCommand = Command.builder()
+        // Prepara a mensagem para o serviço de consulta
+        Command commandMessage = Command.builder()
                 .bookingId(newHistory.getBooking().getBookingId().toString())
                 .changeId(newHistory.getId().toString())
                 .changeDate(newHistory.getChangeDate())
@@ -74,58 +77,10 @@ public class CommandServiceImpl implements CommandService {
                 .fStatusCode(newHistory.getFinalStatus().getStatusCode())
                 .fStatusAcronym(newHistory.getFinalStatus().getStatusAcronym())
                 .fStatusDescription(newHistory.getFinalStatus().getStatusDescription())
-                .messageType("DoCheckInCommand")
+                .messageType("SynCommand")
                 .build();
 
-        var message = objectMapper.writeValueAsString(doCheckInCommand);
-
-        rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
-
-    }
-
-    // R12
-    @Override
-    public void boardPassenger(String bookingCode) throws JsonProcessingException {
-
-        Booking booking = bookingRepository.getBookingByCode(bookingCode);
-
-        BookingStatus initialStatus = booking.getBookingStatus();
-
-        // atualiza reserva
-        booking.setBookingStatus(bookingStatusRep.findByStatusCode(4));
-
-        booking = bookingRepository.save(booking);
-
-        // cria registro de historico
-        BookingStatus finalStatus = booking.getBookingStatus();
-
-        StatusChangeHist newHistory = StatusChangeHist.builder()
-                .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
-                .booking(booking)
-                .initialStatus(initialStatus)
-                .finalStatus(finalStatus)
-                .build();
-
-        newHistory = statusChangeRepository.save(newHistory);
-
-        // prepara mensagem e envia para query service
-        Command boardPassengerCommand = Command.builder()
-                .bookingId(newHistory.getBooking().getBookingId().toString())
-                .changeId(newHistory.getId().toString())
-                .changeDate(newHistory.getChangeDate())
-                .iStatusCommandId(newHistory.getInitialStatus().getStatusId().toString())
-                .iStatusCode(newHistory.getInitialStatus().getStatusCode())
-                .iStatusAcronym(newHistory.getInitialStatus().getStatusAcronym())
-                .iStatusDescription(newHistory.getInitialStatus().getStatusDescription())
-                .fStatusCommandId(newHistory.getFinalStatus().getStatusId().toString())
-                .fStatusCode(newHistory.getFinalStatus().getStatusCode())
-                .fStatusAcronym(newHistory.getFinalStatus().getStatusAcronym())
-                .fStatusDescription(newHistory.getFinalStatus().getStatusDescription())
-                .messageType("BoardPassengerCommand")
-                .build();
-
-        var message = objectMapper.writeValueAsString(boardPassengerCommand);
-
+        String message = objectMapper.writeValueAsString(commandMessage);
         rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
     }
 

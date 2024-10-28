@@ -1,7 +1,5 @@
 package com.airline.controller;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,22 +24,15 @@ public class CommandController {
     // R10: Fazer Check-In
     @PutMapping("/check-in/{id}")
     public ResponseEntity<?> doCheckIn(@PathVariable(value = "id") String id) throws JsonProcessingException {
-
-        UUID bookingId = UUID.fromString(id);
-
-        commandService.doCheckIn(bookingId);
-
-        return null;
+        commandService.updateBookingStatus(id, 2); // 2 é o código para check-in
+        return ResponseEntity.ok().build();
     }
 
     // R12: Confirmação de Embarque
     @PutMapping("/board-passenger/{code}")
     public ResponseEntity<?> boardPassenger(@PathVariable(value = "code") String bookingCode)
             throws JsonProcessingException {
-
-        commandService.boardPassenger(bookingCode);
-
-        return null;
+        commandService.updateBookingStatus(bookingCode, 4); // 4 é o código para embarque
+        return ResponseEntity.ok().build();
     }
-
 }
