@@ -18,11 +18,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @RequestMapping("booking-command")
 public class CommandController {
 
+    @Autowired
     private CommandService commandService;
 
     // R10: Fazer Check-In ; apenas o id da reserva basta
     // provavelmente api composition antes
-    @Autowired
+    
     @PutMapping("/check-in/{id}")
     public ResponseEntity<?> doCheckIn(@PathVariable(value = "id") String id) throws JsonProcessingException {
 
