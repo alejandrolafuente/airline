@@ -21,15 +21,25 @@ public class CommandController {
     @Autowired
     private CommandService commandService;
 
-    // R10: Fazer Check-In ; apenas o id da reserva basta
+    // apenas o id da reserva basta
     // provavelmente api composition antes
-    
+    // R10: Fazer Check-In
     @PutMapping("/check-in/{id}")
     public ResponseEntity<?> doCheckIn(@PathVariable(value = "id") String id) throws JsonProcessingException {
 
         UUID bookingId = UUID.fromString(id);
 
         commandService.doCheckIn(bookingId);
+
+        return null;
+    }
+
+    // R12: Confirmação de Embarque
+    @PutMapping("/board-passenger/{code}")
+    public ResponseEntity<?> boardPassenger(@PathVariable(value = "code") String bookingCode)
+            throws JsonProcessingException {
+
+        commandService.boardPassenger(bookingCode);
 
         return null;
     }

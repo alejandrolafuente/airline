@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.airline.cqrs.commands.DoCheckInCommand;
+import com.airline.cqrs.commands.Command;
 import com.airline.dto.response.R03ResDTO;
 import com.airline.model.BookingQuery;
 import com.airline.model.StatChangHistQuery;
@@ -30,31 +30,31 @@ public class BookingQueryServImpl implements BookingQueryService {
         return bookedFlights.stream().map(R03ResDTO::new).toList();
     }
 
-    // R10: request from cqrs
+    // R10, R12: requests from cqrs
     @Override
-    public void doCheckIn(DoCheckInCommand doCheckInCommand) {
+    public void syncronizeDBs(Command command) {
 
-        BookingQuery bookingQuery = bookingQueryRepository.findByBookingCommandId(doCheckInCommand.getBookingId());
+        BookingQuery bookingQuery = bookingQueryRepository.findByBookingCommandId(command.getBookingId());
 
-        bookingQuery.setStatusCommandId(doCheckInCommand.getFStatusCommandId());
-        bookingQuery.setStatusCode(doCheckInCommand.getFStatusCode());
-        bookingQuery.setStatusAcronym(doCheckInCommand.getFStatusAcronym());
-        bookingQuery.setStatusDescription(doCheckInCommand.getFStatusDescription());
+        bookingQuery.setStatusCommandId(command.getFStatusCommandId());
+        bookingQuery.setStatusCode(command.getFStatusCode());
+        bookingQuery.setStatusAcronym(command.getFStatusAcronym());
+        bookingQuery.setStatusDescription(command.getFStatusDescription());
 
         bookingQuery = bookingQueryRepository.save(bookingQuery);
 
         StatChangHistQuery statChangHistQuery = StatChangHistQuery.builder()
-                .commandChangeId(doCheckInCommand.getChangeId())
-                .changeDate(doCheckInCommand.getChangeDate())
+                .commandChangeId(command.getChangeId())
+                .changeDate(command.getChangeDate())
                 .bookingCode(bookingQuery.getBookingCode()) // * reference from the another table
-                .iStatusCommandId(doCheckInCommand.getIStatusCommandId())
-                .iStatusCode(doCheckInCommand.getIStatusCode())
-                .iStatusAcronym(doCheckInCommand.getIStatusAcronym())
-                .iStatusDescription(doCheckInCommand.getIStatusDescription())
-                .fStatusCommandId(doCheckInCommand.getFStatusCommandId())
-                .fStatusCode(doCheckInCommand.getFStatusCode())
-                .fStatusAcronym(doCheckInCommand.getFStatusAcronym())
-                .fStatusDescription(doCheckInCommand.getFStatusDescription())
+                .iStatusCommandId(command.getIStatusCommandId())
+                .iStatusCode(command.getIStatusCode())
+                .iStatusAcronym(command.getIStatusAcronym())
+                .iStatusDescription(command.getIStatusDescription())
+                .fStatusCommandId(command.getFStatusCommandId())
+                .fStatusCode(command.getFStatusCode())
+                .fStatusAcronym(command.getFStatusAcronym())
+                .fStatusDescription(command.getFStatusDescription())
                 .build();
 
         statChangHistQueryRep.save(statChangHistQuery);

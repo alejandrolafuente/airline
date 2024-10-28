@@ -6,7 +6,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.airline.cqrs.commands.DoCheckInCommand;
+import com.airline.cqrs.commands.Command;
 import com.airline.sagas.SagasHandler;
 import com.airline.sagas.commands.BookingCommand;
 import com.airline.service.BookingQueryService;
@@ -44,9 +44,10 @@ public class CommandsListener {
                     sagasHandler.handleBookingCommand(bookingCommand);
                 }
 
-                case "DoCheckInCommand" -> {
-                    DoCheckInCommand doCheckInCommand = objectMapper.convertValue(map, DoCheckInCommand.class);
-                    bookingQueryService.doCheckIn(doCheckInCommand);
+                case "Command" -> {
+                    Command command = objectMapper.convertValue(map, Command.class);
+
+                    bookingQueryService.syncronizeDBs(command);
                 }
 
                 default -> {

@@ -1,4 +1,4 @@
-package com.airline.cqrs;
+package com.airline.cqrs.commands;
 
 import java.time.ZonedDateTime;
 
@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DoCheckInCommand {
-    private String bookingId;
+public class Command {
+    private String bookingId; // bookingCommandId
     private String changeId;
     private ZonedDateTime changeDate;
     private String iStatusCommandId;
