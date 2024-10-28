@@ -44,7 +44,7 @@ public class CommandsListener {
                     sagasHandler.handleBookingCommand(bookingCommand);
                 }
 
-                case "SyncCommand" -> {
+                case "SynCommand" -> {
                     Command command = objectMapper.convertValue(map, Command.class);
 
                     bookingQueryService.syncronizeDBs(command);
