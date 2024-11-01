@@ -11,7 +11,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import bantads.airline.sagas.commands.CompFlightCommand;
 import bantads.airline.sagas.commands.UpdateSeatsCommand;
+import bantads.airline.sagas.events.FlightCompletedEvent;
 import bantads.airline.sagas.events.SeatsUpdatedEvent;
 
 @Component
@@ -44,6 +46,17 @@ public class SagasHandler {
                 var message = objectMapper.writeValueAsString(seatsUpdatedEvent);
 
                 rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+
+            } else if ("CompFlightCommand".equals(map.get("messageType"))) {
+
+                CompFlightCommand compFlightCommand = objectMapper.convertValue(map, CompFlightCommand.class);
+
+                FlightCompletedEvent flightCompletedEvent = sagaService.completeFlight(compFlightCommand);
+
+                var message = objectMapper.writeValueAsString(flightCompletedEvent);
+
+                rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+
             }
 
         }

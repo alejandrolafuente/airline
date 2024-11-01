@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import bantads.airline.dto.BookingQueryDTO;
 import bantads.airline.dto.SelfRegDTO;
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
+import bantads.airline.sagas.completeflightsaga.CompleteFlightSaga;
 import bantads.airline.sagas.selfregistersaga.ManageRegisterQuery;
 import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
 import bantads.airline.sagas.selfregistersaga.dto.ManageRegisterRes;
@@ -35,6 +38,9 @@ public class SagasController {
 
     @Autowired
     private BookingSAGA bookingSAGA;
+
+    @Autowired
+    private CompleteFlightSaga completeFlightSaga;
 
     @Autowired
     private ManageRegisterQuery manageRegisterQuery;
@@ -68,6 +74,7 @@ public class SagasController {
 
     }
 
+    // R07 - Booking
     @PostMapping("/booking")
     public ResponseEntity<?> flightBooking(@RequestBody BookingQueryDTO bookingQueryDTO)
             throws JsonProcessingException, InterruptedException, ExecutionException {
@@ -75,5 +82,14 @@ public class SagasController {
         this.bookingSAGA.handleRequest(bookingQueryDTO);
         return new ResponseEntity<>("Reserva feita ", HttpStatus.OK);
 
+    }
+
+    // R14 - Realização do Voo
+    @PutMapping("/complete-flight/{id}")
+    public ResponseEntity<?> completeFlight(@PathVariable("id") String flightId) throws JsonProcessingException {
+
+        this.completeFlightSaga.handleRequest(flightId);
+
+        return new ResponseEntity<>("Flight Completed, check flight and booking data bases", HttpStatus.OK);
     }
 }
