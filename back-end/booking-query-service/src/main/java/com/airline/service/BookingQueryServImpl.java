@@ -31,6 +31,7 @@ public class BookingQueryServImpl implements BookingQueryService {
     }
 
     // R10, R12: requests from cqrs
+    // R14: request from saga
     @Override
     public void syncronizeDBs(Command command) {
 
@@ -59,7 +60,7 @@ public class BookingQueryServImpl implements BookingQueryService {
 
         statChangHistQueryRep.save(statChangHistQuery);
 
-        System.out.println("\nAPARENTEMENTE CHECK-IN FOI FEITO COM SUCESSO VERIFIQUE BANCOS DE DADOS");
+        System.out.println("\nAPARENTEMENTE ATUALIZAÇÃO FOI BEM SUCEDIDA, VERIFIQUE BANCOS DE DADOS");
 
     }
 

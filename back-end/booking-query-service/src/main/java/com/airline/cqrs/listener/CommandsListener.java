@@ -45,6 +45,7 @@ public class CommandsListener {
                 }
 
                 case "SynCommand" -> {
+                    
                     Command command = objectMapper.convertValue(map, Command.class);
 
                     bookingQueryService.syncronizeDBs(command);

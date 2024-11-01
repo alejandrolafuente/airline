@@ -2,15 +2,20 @@ package com.airline.sagas;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.airline.cqrs.Command;
 import com.airline.model.Booking;
+import com.airline.model.BookingStatus;
+import com.airline.model.StatusChangeHist;
 import com.airline.repository.BookingRepository;
 import com.airline.repository.BookingStatusRep;
+import com.airline.repository.StatusChangeRepository;
 import com.airline.sagas.commands.BookingCommand;
 import com.airline.sagas.commands.CompleteBookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
@@ -27,6 +32,9 @@ public class SagaService {
 
     @Autowired
     private BookingStatusRep bookingStatusRep;
+
+    @Autowired
+    private StatusChangeRepository statusChangeRepository;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -90,8 +98,56 @@ public class SagaService {
 
     }
 
-    public BookingsCompletedEvent completeBookings(CompleteBookingCommand completeBookingCommand) {
+    // R14 - Realização do Voo
+    public BookingsCompletedEvent completeBookings(CompleteBookingCommand completeBookingCommand)
+            throws JsonProcessingException {
 
+        // pergunta: pegar todas as reservas ou somente as que estao no estado BOARDED?
+
+        List<Booking> relatedBookings = bookingRepository.findByFlightCode(completeBookingCommand.getFlightCode());
+
+        for (Booking booking : relatedBookings) {
+
+            if (booking.getBookingStatus().getStatusDescription() == "BOARDED") {
+
+                BookingStatus initialStatus = booking.getBookingStatus();
+
+                // Atualiza a reserva com o status "COMPLETED"
+                booking.setBookingStatus(bookingStatusRep.findByStatusCode(5));
+                booking = bookingRepository.save(booking);
+
+                // Cria registro de histórico
+                BookingStatus finalStatus = booking.getBookingStatus();
+                StatusChangeHist newHistory = StatusChangeHist.builder()
+                        .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                        .booking(booking)
+                        .initialStatus(initialStatus)
+                        .finalStatus(finalStatus)
+                        .build();
+
+                newHistory = statusChangeRepository.save(newHistory);
+
+                // Prepara a mensagem para o serviço de consulta
+                Command commandMessage = Command.builder()
+                        .bookingId(newHistory.getBooking().getBookingId().toString())
+                        .changeId(newHistory.getId().toString())
+                        .changeDate(newHistory.getChangeDate())
+                        .iStatusCommandId(newHistory.getInitialStatus().getStatusId().toString())
+                        .iStatusCode(newHistory.getInitialStatus().getStatusCode())
+                        .iStatusAcronym(newHistory.getInitialStatus().getStatusAcronym())
+                        .iStatusDescription(newHistory.getInitialStatus().getStatusDescription())
+                        .fStatusCommandId(newHistory.getFinalStatus().getStatusId().toString())
+                        .fStatusCode(newHistory.getFinalStatus().getStatusCode())
+                        .fStatusAcronym(newHistory.getFinalStatus().getStatusAcronym())
+                        .fStatusDescription(newHistory.getFinalStatus().getStatusDescription())
+                        .messageType("SynCommand")
+                        .build();
+
+                String message = objectMapper.writeValueAsString(commandMessage);
+                rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
+            }
+        }
+        
         return null;
     }
 

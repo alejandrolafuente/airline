@@ -1,5 +1,6 @@
 package com.airline.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +14,8 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
     @Query("select b from Booking b where b.bookingCode = ?1")
     Booking getBookingByCode(String bookingCode);
+
+    // R14
+    List<Booking> findByFlightCode(String flightCode);
 
 }
