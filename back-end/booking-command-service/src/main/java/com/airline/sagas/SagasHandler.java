@@ -7,8 +7,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.airline.sagas.commands.CompleteBookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
 import com.airline.sagas.events.BookingCreatedEvent;
+import com.airline.sagas.events.BookingsCompletedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +43,17 @@ public class SagasHandler {
                 BookingCreatedEvent bookingCreatedEvent = sagaService.insertBooking(createBookingCommand);
 
                 var message = objectMapper.writeValueAsString(bookingCreatedEvent);
+
+                rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
+
+            } else if ("CompleteBookingCommand".equals(map.get("messageType"))) {
+
+                CompleteBookingCommand completeBookingCommand = objectMapper.convertValue(map,
+                        CompleteBookingCommand.class);
+
+                BookingsCompletedEvent bookingsCompletedEvent = sagaService.completeBookings(completeBookingCommand);
+
+                var message = objectMapper.writeValueAsString(bookingsCompletedEvent);
 
                 rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
             }

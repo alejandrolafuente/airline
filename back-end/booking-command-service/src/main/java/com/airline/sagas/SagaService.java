@@ -12,8 +12,10 @@ import com.airline.model.Booking;
 import com.airline.repository.BookingRepository;
 import com.airline.repository.BookingStatusRep;
 import com.airline.sagas.commands.BookingCommand;
+import com.airline.sagas.commands.CompleteBookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
 import com.airline.sagas.events.BookingCreatedEvent;
+import com.airline.sagas.events.BookingsCompletedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -86,6 +88,11 @@ public class SagaService {
 
         return bookingCreatedEvent;
 
+    }
+
+    public BookingsCompletedEvent completeBookings(CompleteBookingCommand completeBookingCommand) {
+
+        return null;
     }
 
     public String generateBookingcode() {

@@ -8,6 +8,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.completeflightsaga.commands.CompFlightCommand;
+import bantads.airline.sagas.completeflightsaga.commands.CompleteBookingCommand;
+import bantads.airline.sagas.completeflightsaga.events.FlightCompletedEvent;
 
 @Component
 public class CompleteFlightSaga {
@@ -29,6 +31,19 @@ public class CompleteFlightSaga {
         var message = objectMapper.writeValueAsString(compFlightCommand);
 
         rabbitTemplate.convertAndSend("FlightRequestChannel", message);
+    }
+
+    public void handleFlightCompletedEvent(FlightCompletedEvent flightCompletedEvent) throws JsonProcessingException {
+
+        // 2 ir para servico de reserva (comandos) e atualizar o Estado da Reserva
+        CompleteBookingCommand completeBookingCommand = CompleteBookingCommand.builder()
+                .flightCode(flightCompletedEvent.getFlightCode())
+                .messageType("CompleteBookingCommand")
+                .build();
+
+        var message = objectMapper.writeValueAsString(completeBookingCommand);
+
+        rabbitTemplate.convertAndSend("BookingCommandRequestChannel", message);
     }
 
 }
