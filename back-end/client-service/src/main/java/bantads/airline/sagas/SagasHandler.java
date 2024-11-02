@@ -12,8 +12,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.commands.CreateClientCommand;
+import bantads.airline.sagas.commands.RefundClientCommand;
 import bantads.airline.sagas.commands.UpdateMilesCommand;
 import bantads.airline.sagas.events.ClientCreatedEvent;
+import bantads.airline.sagas.events.ClientRefundedEvent;
 import bantads.airline.sagas.events.MilesUpdatedEvent;
 import bantads.airline.sagas.queries.ManageRegisterRes;
 import bantads.airline.sagas.queries.VerifyClientQuery;
@@ -43,8 +45,6 @@ public class SagasHandler {
 
                 CreateClientCommand createClientCommand = objectMapper.convertValue(map, CreateClientCommand.class);
 
-                System.out.println("COMANDO CHEGOU => " + createClientCommand);
-
                 ClientCreatedEvent clientCreatedEvent = sagaService.saveNewClient(createClientCommand);
 
                 var resMsg = objectMapper.writeValueAsString(clientCreatedEvent);
@@ -55,12 +55,19 @@ public class SagasHandler {
 
                 UpdateMilesCommand updateMilesCommand = objectMapper.convertValue(map, UpdateMilesCommand.class);
 
-                System.out.println("CHEGOU MENSAGEM: " + updateMilesCommand);
-
-
                 MilesUpdatedEvent milesUpdatedEvent = sagaService.updateMiles(updateMilesCommand);
 
                 var resMsg = objectMapper.writeValueAsString(milesUpdatedEvent);
+
+                rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
+
+            } else if ("RefundClientCommand".equals(map.get("messageType"))) {
+
+                RefundClientCommand refundClientCommand = objectMapper.convertValue(map, RefundClientCommand.class);
+
+                ClientRefundedEvent clientRefundedEvent = sagaService.refundClient(refundClientCommand);
+
+                var resMsg = objectMapper.writeValueAsString(clientRefundedEvent);
 
                 rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
 

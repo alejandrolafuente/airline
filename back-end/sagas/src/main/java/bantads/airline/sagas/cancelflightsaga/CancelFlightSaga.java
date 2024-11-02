@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.cancelflightsaga.commands.CancelBookingCommand;
 import bantads.airline.sagas.cancelflightsaga.commands.CancelFlightCommand;
+import bantads.airline.sagas.cancelflightsaga.commands.RefundClientCommand;
+import bantads.airline.sagas.cancelflightsaga.events.BookingCancelledEvent;
+import bantads.airline.sagas.cancelflightsaga.events.ClientRefundedEvent;
 import bantads.airline.sagas.cancelflightsaga.events.FlightCancelledEvent;
 
 @Component
@@ -46,6 +49,28 @@ public class CancelFlightSaga {
 
         rabbitTemplate.convertAndSend("BookingCommandRequestChannel", message);
 
+    }
+
+    public void handleBookingCancelledEvent(BookingCancelledEvent bookingCancelledEvent)
+            throws JsonProcessingException {
+
+        RefundClientCommand refundClientCommand = new RefundClientCommand(bookingCancelledEvent);
+
+        refundClientCommand.setMessageType("RefundClientCommand");
+
+        var message = objectMapper.writeValueAsString(refundClientCommand);
+
+        rabbitTemplate.convertAndSend("ClientRequestChannel", message);
+
+    }
+
+    public void handleClientRefundedEvent(ClientRefundedEvent clientRefundedEvent) {
+
+        System.out.println("FIM DA SAGA DE CANCELAMENTO DE VOO, CLIENTE RESSARCIDO: ");
+        System.out.println("NOME: " + clientRefundedEvent.getName());
+        System.out.println("DINHEIRO DEVOLVIDO: " + clientRefundedEvent.getRefundMoney());
+        System.out.println("MILHAS DEVOLVIDAS: " + clientRefundedEvent.getRefundMiles());
+        System.out.println("NOVO SALDO DE MILHAS: " + clientRefundedEvent.getNewBalance());
     }
 
 }

@@ -217,7 +217,7 @@ public class FlightServiceImpl implements FlightService {
         return listR11ResDTO;
     }
 
-    // R15
+    // R15 - insert flight
     @Override
     public R15ResDTO insertFlight(R15QueDTO r15QueDTO) {
 

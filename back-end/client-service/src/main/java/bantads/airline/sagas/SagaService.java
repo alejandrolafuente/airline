@@ -1,16 +1,24 @@
 package bantads.airline.sagas;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import bantads.airline.model.Client;
+import bantads.airline.model.MilesTransaction;
 import bantads.airline.repository.ClientRepository;
+import bantads.airline.repository.MilesTransactionRepository;
 import bantads.airline.sagas.commands.CreateClientCommand;
+import bantads.airline.sagas.commands.RefundClientCommand;
 import bantads.airline.sagas.commands.UpdateMilesCommand;
 import bantads.airline.sagas.events.ClientCreatedEvent;
+import bantads.airline.sagas.events.ClientRefundedEvent;
 import bantads.airline.sagas.events.MilesUpdatedEvent;
 import bantads.airline.sagas.queries.ManageRegisterRes;
 import bantads.airline.sagas.queries.VerifyClientQuery;
+import jakarta.transaction.Transactional;
 
 @Service
 public class SagaService {
@@ -18,6 +26,10 @@ public class SagaService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private MilesTransactionRepository milesTransactionRepository;
+
+    // R01 - saga
     public ManageRegisterRes verifyClient(VerifyClientQuery query) {
 
         Client client = clientRepository.findByCpfAndEmail(query.getClientCpf(), query.getClientEmail());
@@ -104,5 +116,37 @@ public class SagaService {
                 .build();
 
         return event;
+    }
+
+    // R13 - cancelamento de voo - ressarcir cliente
+    @Transactional // verificar esta anotacao!
+    public ClientRefundedEvent refundClient(RefundClientCommand refundClientCommand) {
+
+        Client client = clientRepository.getClientByUserId(refundClientCommand.getUserId());
+
+        MilesTransaction transaction = MilesTransaction.builder()
+                .client(client)
+                .transactionDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                .moneyValue(refundClientCommand.getRefundMoney())
+                .milesQuantity(refundClientCommand.getRefundMiles())
+                .build();
+
+        transaction = milesTransactionRepository.save(transaction);
+
+        // updates balance
+        client.setMiles(client.getMiles() + refundClientCommand.getRefundMiles());
+
+        client = clientRepository.save(client);
+
+        ClientRefundedEvent clientRefundedEvent = ClientRefundedEvent.builder()
+                .name(client.getName())
+                .refundMoney(transaction.getMoneyValue())
+                .refundMiles(transaction.getMilesQuantity())
+                .newBalance(client.getMiles())
+                .messageType("ClientRefundedEvent")
+                .build();
+
+        return clientRefundedEvent;
+
     }
 }

@@ -108,8 +108,62 @@ public class SagaService {
     public BookingCancelledEvent cancelBookings(CancelBookingCommand cancelBookingCommand)
             throws JsonProcessingException {
 
-        
-        
+        List<Booking> relatedBookings = bookingRepository.findByFlightCode(cancelBookingCommand.getFlightCode());
+
+        for (Booking booking : relatedBookings) {
+
+            // cancela somente voos confirmados os que estao com estado check-in
+            if (booking.getBookingStatus().getStatusCode() == 1 || booking.getBookingStatus().getStatusCode() == 2) {
+
+                BookingStatus initialStatus = booking.getBookingStatus();
+
+                // Atualiza a reserva com o status "CANCELLED"
+                booking.setBookingStatus(bookingStatusRep.findByStatusCode(3));
+
+                booking = bookingRepository.save(booking);
+
+                // Cria registro de histórico
+                BookingStatus finalStatus = booking.getBookingStatus();
+                StatusChangeHist newHistory = StatusChangeHist.builder()
+                        .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                        .booking(booking)
+                        .initialStatus(initialStatus)
+                        .finalStatus(finalStatus)
+                        .build();
+
+                newHistory = statusChangeRepository.save(newHistory);
+
+                // Prepara a mensagem para o serviço de consulta:
+                Command commandMessage = Command.builder()
+                        .bookingId(newHistory.getBooking().getBookingId().toString())
+                        .changeId(newHistory.getId().toString())
+                        .changeDate(newHistory.getChangeDate())
+                        .iStatusCommandId(newHistory.getInitialStatus().getStatusId().toString())
+                        .iStatusCode(newHistory.getInitialStatus().getStatusCode())
+                        .iStatusAcronym(newHistory.getInitialStatus().getStatusAcronym())
+                        .iStatusDescription(newHistory.getInitialStatus().getStatusDescription())
+                        .fStatusCommandId(newHistory.getFinalStatus().getStatusId().toString())
+                        .fStatusCode(newHistory.getFinalStatus().getStatusCode())
+                        .fStatusAcronym(newHistory.getFinalStatus().getStatusAcronym())
+                        .fStatusDescription(newHistory.getFinalStatus().getStatusDescription())
+                        .messageType("SynCommand")
+                        .build();
+
+                String message = objectMapper.writeValueAsString(commandMessage);
+                rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
+
+                // prepara o retorno para sagas, o cliente que precisa ressarcir:
+                BookingCancelledEvent bookingCancelledEvent = BookingCancelledEvent.builder()
+                        .userId(booking.getUserId())
+                        .refundMoney(booking.getMoneySpent())
+                        .refundMiles(booking.getMilesSpent())
+                        .messageType("BookingCancelledEvent")
+                        .build();
+
+                return bookingCancelledEvent;
+            }
+        }
+
         return null;
     }
 
