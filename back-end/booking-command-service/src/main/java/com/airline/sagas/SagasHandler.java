@@ -56,6 +56,9 @@ public class SagasHandler {
                 var message = objectMapper.writeValueAsString(bookingsCompletedEvent);
 
                 rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
+                
+            } else if ("CancelBookingCommand".equals(map.get("messageType"))) {
+
             }
 
         }

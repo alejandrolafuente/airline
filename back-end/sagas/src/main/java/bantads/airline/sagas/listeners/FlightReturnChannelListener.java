@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
 import bantads.airline.sagas.bookingsaga.events.SeatsUpdatedEvent;
+import bantads.airline.sagas.cancelflightsaga.CancelFlightSaga;
+import bantads.airline.sagas.cancelflightsaga.events.FlightCancelledEvent;
 import bantads.airline.sagas.completeflightsaga.CompleteFlightSaga;
 import bantads.airline.sagas.completeflightsaga.events.FlightCompletedEvent;
 
@@ -26,6 +28,9 @@ public class FlightReturnChannelListener {
 
     @Autowired
     private CompleteFlightSaga completeFlightSaga;
+
+    @Autowired
+    private CancelFlightSaga cancelFlightSaga;
 
     @RabbitListener(queues = "FlightReturnChannel")
     public void handleFlightResponses(String receivedMessage) throws JsonMappingException, JsonProcessingException {
@@ -55,6 +60,16 @@ public class FlightReturnChannelListener {
                             FlightCompletedEvent.class);
 
                     completeFlightSaga.handleFlightCompletedEvent(flightCompletedEvent);
+
+                    break;
+                }
+
+                case "FlightCancelledEvent" -> {
+
+                    FlightCancelledEvent flightCancelledEvent = objectMapper.convertValue(map,
+                            FlightCancelledEvent.class);
+
+                    cancelFlightSaga.handleFlightCancelledEvent(flightCancelledEvent);
 
                     break;
                 }

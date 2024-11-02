@@ -17,8 +17,10 @@ import com.airline.repository.BookingRepository;
 import com.airline.repository.BookingStatusRep;
 import com.airline.repository.StatusChangeRepository;
 import com.airline.sagas.commands.BookingCommand;
+import com.airline.sagas.commands.CancelBookingCommand;
 import com.airline.sagas.commands.CompleteBookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
+import com.airline.sagas.events.BookingCancelledEvent;
 import com.airline.sagas.events.BookingCreatedEvent;
 import com.airline.sagas.events.BookingsCompletedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -99,6 +101,16 @@ public class SagaService {
 
         return bookingCreatedEvent;
 
+    }
+
+    // R13 - Cancelamento do Voo
+    @Transactional
+    public BookingCancelledEvent cancelBookings(CancelBookingCommand cancelBookingCommand)
+            throws JsonProcessingException {
+
+        
+        
+        return null;
     }
 
     // R14 - Realização do Voo

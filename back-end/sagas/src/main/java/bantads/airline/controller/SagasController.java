@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import bantads.airline.dto.BookingQueryDTO;
 import bantads.airline.dto.SelfRegDTO;
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
+import bantads.airline.sagas.cancelflightsaga.CancelFlightSaga;
 import bantads.airline.sagas.completeflightsaga.CompleteFlightSaga;
 import bantads.airline.sagas.selfregistersaga.ManageRegisterQuery;
 import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
@@ -41,6 +42,9 @@ public class SagasController {
 
     @Autowired
     private CompleteFlightSaga completeFlightSaga;
+
+    @Autowired
+    private CancelFlightSaga cancelFlightSaga;
 
     @Autowired
     private ManageRegisterQuery manageRegisterQuery;
@@ -91,5 +95,14 @@ public class SagasController {
         this.completeFlightSaga.handleRequest(flightId);
 
         return new ResponseEntity<>("Flight Completed, check flight and booking data bases", HttpStatus.OK);
+    }
+
+    // R13 - Cancelamento do Voo
+    @PutMapping("/complete-flight/{id}")
+    public ResponseEntity<?> cancelFlight(@PathVariable("id") String flightId) throws JsonProcessingException {
+
+        cancelFlightSaga.handleRequest(flightId);
+
+        return new ResponseEntity<>("Flight cancelled, check flight, booking and client data bases", HttpStatus.OK);
     }
 }
