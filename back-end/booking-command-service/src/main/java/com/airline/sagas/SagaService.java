@@ -24,6 +24,8 @@ import com.airline.sagas.events.BookingsCompletedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class SagaService {
 
@@ -42,6 +44,7 @@ public class SagaService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Transactional
     public BookingCreatedEvent insertBooking(CreateBookingCommand createBookingCommand) throws JsonProcessingException {
 
         String bookingCode;
@@ -99,6 +102,7 @@ public class SagaService {
     }
 
     // R14 - Realização do Voo
+    @Transactional
     public BookingsCompletedEvent completeBookings(CompleteBookingCommand completeBookingCommand)
             throws JsonProcessingException {
 
@@ -108,7 +112,7 @@ public class SagaService {
 
         for (Booking booking : relatedBookings) {
 
-            if (booking.getBookingStatus().getStatusDescription() == "BOARDED") {
+            if (booking.getBookingStatus().getStatusCode() == 4) {
 
                 BookingStatus initialStatus = booking.getBookingStatus();
 
@@ -147,7 +151,7 @@ public class SagaService {
                 rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
             }
         }
-        
+
         return null;
     }
 
