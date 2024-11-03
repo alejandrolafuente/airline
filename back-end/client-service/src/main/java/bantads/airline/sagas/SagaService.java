@@ -23,130 +23,132 @@ import jakarta.transaction.Transactional;
 @Service
 public class SagaService {
 
-    @Autowired
-    private ClientRepository clientRepository;
+        @Autowired
+        private ClientRepository clientRepository;
 
-    @Autowired
-    private MilesTransactionRepository milesTransactionRepository;
+        @Autowired
+        private MilesTransactionRepository milesTransactionRepository;
 
-    // R01 - saga
-    public ManageRegisterRes verifyClient(VerifyClientQuery query) {
+        // R01 - saga
+        public ManageRegisterRes verifyClient(VerifyClientQuery query) {
 
-        Client client = clientRepository.findByCpfAndEmail(query.getClientCpf(), query.getClientEmail());
+                Client client = clientRepository.findByCpfAndEmail(query.getClientCpf(), query.getClientEmail());
 
-        if (client != null) {
+                if (client != null) {
 
-            return ManageRegisterRes.builder()
-                    .cpf(client.getCpf())
-                    .response("You are a client already")
-                    .startSaga(false)
-                    .build();
+                        return ManageRegisterRes.builder()
+                                        .cpf(client.getCpf())
+                                        .response("You are a client already")
+                                        .startSaga(false)
+                                        .build();
+
+                }
+
+                client = clientRepository.getClientByCpf(query.getClientCpf());
+
+                if (client != null) {
+
+                        return ManageRegisterRes.builder()
+                                        .cpf(query.getClientCpf())
+                                        .response("This CPF is registered in the system")
+                                        .startSaga(false)
+                                        .build();
+                }
+
+                client = clientRepository.getClientByEmail(query.getClientEmail());
+
+                if (client != null) {
+
+                        return ManageRegisterRes.builder()
+                                        .cpf(query.getClientCpf())
+                                        .response("This email is registered in the system")
+                                        .startSaga(false)
+                                        .build();
+                }
+
+                return ManageRegisterRes.builder()
+                                .cpf(query.getClientCpf())
+                                .response("Must start self-register SAGA")
+                                .startSaga(true)
+                                .build();
 
         }
 
-        client = clientRepository.getClientByCpf(query.getClientCpf());
+        public ClientCreatedEvent saveNewClient(CreateClientCommand command) {
 
-        if (client != null) {
+                System.out.println("COMANDO CHEGOU => " + command);
 
-            return ManageRegisterRes.builder()
-                    .cpf(query.getClientCpf())
-                    .response("This CPF is registered in the system")
-                    .startSaga(false)
-                    .build();
+                Client newClient = Client.builder()
+                                .userId(command.getUserId())
+                                .cpf(command.getCpf())
+                                .name(command.getName())
+                                .email(command.getEmail())
+                                .addressType(command.getAddressType())
+                                .number(command.getNumber())
+                                .complement(command.getComplement())
+                                .cep(command.getCep())
+                                .city(command.getCity())
+                                .state(command.getState())
+                                .miles(0)
+                                .build();
+
+                this.clientRepository.save(newClient);
+
+                ClientCreatedEvent clientCreatedEvent = ClientCreatedEvent.builder()
+                                .messageType("ClientCreatedEvent")
+                                .build();
+
+                return clientCreatedEvent;
         }
 
-        client = clientRepository.getClientByEmail(query.getClientEmail());
+        // R07
+        public MilesUpdatedEvent updateMiles(UpdateMilesCommand updateMilesCommand) {
 
-        if (client != null) {
+                Client client = clientRepository.getClientByUserId(updateMilesCommand.getUserId());
 
-            return ManageRegisterRes.builder()
-                    .cpf(query.getClientCpf())
-                    .response("This email is registered in the system")
-                    .startSaga(false)
-                    .build();
+                client.setMiles(client.getMiles() - updateMilesCommand.getUsedMiles());
+
+                client = clientRepository.save(client);
+
+                MilesUpdatedEvent event = MilesUpdatedEvent.builder()
+                                .milesBalance(client.getMiles())
+                                .messageType("MilesUpdatedEvent")
+                                .build();
+
+                return event;
         }
 
-        return ManageRegisterRes.builder()
-                .cpf(query.getClientCpf())
-                .response("Must start self-register SAGA")
-                .startSaga(true)
-                .build();
+        // R13 - cancelamento de voo - ressarcir cliente
+        @Transactional // verificar esta anotacao!
+        public ClientRefundedEvent refundClient(RefundClientCommand refundClientCommand) {
 
-    }
+                Client client = clientRepository.getClientByUserId(refundClientCommand.getUserId());
 
-    public ClientCreatedEvent saveNewClient(CreateClientCommand command) {
+                MilesTransaction transaction = MilesTransaction.builder()
+                                .client(client)
+                                .transactionDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                                .moneyValue(refundClientCommand.getRefundMoney())
+                                .milesQuantity(refundClientCommand.getRefundMiles())
+                                .transactionType("INPUT")
+                                .description("MILES REFUND")
+                                .build();
 
-        System.out.println("COMANDO CHEGOU => " + command);
+                transaction = milesTransactionRepository.save(transaction);
 
-        Client newClient = Client.builder()
-                .userId(command.getUserId())
-                .cpf(command.getCpf())
-                .name(command.getName())
-                .email(command.getEmail())
-                .addressType(command.getAddressType())
-                .number(command.getNumber())
-                .complement(command.getComplement())
-                .cep(command.getCep())
-                .city(command.getCity())
-                .state(command.getState())
-                .miles(0)
-                .build();
+                // updates balance
+                client.setMiles(client.getMiles() + refundClientCommand.getRefundMiles());
 
-        this.clientRepository.save(newClient);
+                client = clientRepository.save(client);
 
-        ClientCreatedEvent clientCreatedEvent = ClientCreatedEvent.builder()
-                .messageType("ClientCreatedEvent")
-                .build();
+                ClientRefundedEvent clientRefundedEvent = ClientRefundedEvent.builder()
+                                .name(client.getName())
+                                .refundMoney(transaction.getMoneyValue())
+                                .refundMiles(transaction.getMilesQuantity())
+                                .newBalance(client.getMiles())
+                                .messageType("ClientRefundedEvent")
+                                .build();
 
-        return clientCreatedEvent;
-    }
+                return clientRefundedEvent;
 
-    // R07
-    public MilesUpdatedEvent updateMiles(UpdateMilesCommand updateMilesCommand) {
-
-        Client client = clientRepository.getClientByUserId(updateMilesCommand.getUserId());
-
-        client.setMiles(client.getMiles() - updateMilesCommand.getUsedMiles());
-
-        client = clientRepository.save(client);
-
-        MilesUpdatedEvent event = MilesUpdatedEvent.builder()
-                .milesBalance(client.getMiles())
-                .messageType("MilesUpdatedEvent")
-                .build();
-
-        return event;
-    }
-
-    // R13 - cancelamento de voo - ressarcir cliente
-    @Transactional // verificar esta anotacao!
-    public ClientRefundedEvent refundClient(RefundClientCommand refundClientCommand) {
-
-        Client client = clientRepository.getClientByUserId(refundClientCommand.getUserId());
-
-        MilesTransaction transaction = MilesTransaction.builder()
-                .client(client)
-                .transactionDate(ZonedDateTime.now(ZoneId.of("UTC")))
-                .moneyValue(refundClientCommand.getRefundMoney())
-                .milesQuantity(refundClientCommand.getRefundMiles())
-                .build();
-
-        transaction = milesTransactionRepository.save(transaction);
-
-        // updates balance
-        client.setMiles(client.getMiles() + refundClientCommand.getRefundMiles());
-
-        client = clientRepository.save(client);
-
-        ClientRefundedEvent clientRefundedEvent = ClientRefundedEvent.builder()
-                .name(client.getName())
-                .refundMoney(transaction.getMoneyValue())
-                .refundMiles(transaction.getMilesQuantity())
-                .newBalance(client.getMiles())
-                .messageType("ClientRefundedEvent")
-                .build();
-
-        return clientRefundedEvent;
-
-    }
+        }
 }

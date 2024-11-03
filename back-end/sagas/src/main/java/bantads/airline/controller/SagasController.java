@@ -98,7 +98,7 @@ public class SagasController {
     }
 
     // R13 - Cancelamento do Voo
-    @PutMapping("/complete-flight/{id}")
+    @PutMapping("/cancel-flight/{id}")
     public ResponseEntity<?> cancelFlight(@PathVariable("id") String flightId) throws JsonProcessingException {
 
         cancelFlightSaga.handleRequest(flightId);
