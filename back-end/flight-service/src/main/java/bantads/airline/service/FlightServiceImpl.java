@@ -39,7 +39,7 @@ public class FlightServiceImpl implements FlightService {
 
     // R03
     @Override
-    public List<R03ResDTO> getBookedFlights(List<String> flightCodes) {
+    public List<R03ResDTO> getClientFlights(List<String> flightCodes) {
 
         List<Flight> flightsList = new ArrayList<>();
 
@@ -50,7 +50,7 @@ public class FlightServiceImpl implements FlightService {
 
         flightsList.sort(Comparator.comparing(Flight::getFlightDate));
 
-        ZoneId saoPauloZoneId = ZoneId.of("America/Sao_Paulo");
+        // **************************************************************
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -60,20 +60,13 @@ public class FlightServiceImpl implements FlightService {
 
         for (Flight flight : flightsList) {
 
-            ZonedDateTime utcDateTime = flight.getFlightDate();
-
-            if (utcDateTime.getZone().equals(ZoneId.of("UTC"))) {
-
-                ZonedDateTime localDateTime = utcDateTime.withZoneSameInstant(saoPauloZoneId);
-
-                flight.setFlightDate(localDateTime);
-            }
+            ZonedDateTime localTime = flight.getFlightDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
 
             R03ResDTO dto = R03ResDTO.builder()
                     .flightId(flight.getFlightId())
                     .flightCode(flight.getCode())
-                    .flightDate(flight.getFlightDate().format(dateFormatter))
-                    .flighTime(flight.getFlightDate().format(timeFormatter))
+                    .flightDate(localTime.format(dateFormatter))
+                    .flighTime(localTime.format(timeFormatter))
                     .departureAirport(flight.getDepartureAirport().getCode())
                     .arrivalAirport(flight.getArrivalAirport().getCode())
                     .build();

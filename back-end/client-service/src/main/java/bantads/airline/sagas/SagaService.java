@@ -104,6 +104,7 @@ public class SagaService {
         // R07
         public MilesUpdatedEvent updateMiles(UpdateMilesCommand updateMilesCommand) {
 
+                // FALTANDO TRANSACAO!!!
                 Client client = clientRepository.getClientByUserId(updateMilesCommand.getUserId());
 
                 client.setMiles(client.getMiles() - updateMilesCommand.getUsedMiles());

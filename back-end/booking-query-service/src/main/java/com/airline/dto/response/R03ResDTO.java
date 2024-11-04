@@ -17,10 +17,12 @@ public class R03ResDTO {
     private UUID bookingId;
     private String bookingCode; // request key for flight service
     private String flightCode;
+    private String statusDescription;
 
     public R03ResDTO(BookingQuery entity) {
         bookingId = entity.getBookingId();
         bookingCode = entity.getBookingCode();
         flightCode = entity.getFlightCode();
+        statusDescription = entity.getStatusDescription();
     }
 }

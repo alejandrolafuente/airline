@@ -11,7 +11,7 @@ import com.airline.model.BookingQuery;
 @Repository
 public interface BookingQueryRepository extends JpaRepository<BookingQuery, UUID> {
 
-    List<BookingQuery> findByStatusCodeAndUserId(Integer statusCode, String userId);
+    List<BookingQuery> findByUserId(String userId);
 
     BookingQuery findByBookingCommandId(String bookingCommandId);
 }

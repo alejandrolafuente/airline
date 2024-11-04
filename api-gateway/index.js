@@ -160,7 +160,7 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
         const flightCodes = bookedFlights.map(flight => flight.flightCode).join(',');
 
         // Fazendo a terceira requisição com os códigos de voo
-        const flightDetailsResponse = await axios.get(`http://localhost:8093/flight/bookedflights?flightCodes=${flightCodes}`);
+        const flightDetailsResponse = await axios.get(`http://localhost:8093/flight/client-flights?flightCodes=${flightCodes}`);
 
         console.log("Flight details response status: ", flightDetailsResponse.status);
         console.log("Flight details data: ", flightDetailsResponse.data);

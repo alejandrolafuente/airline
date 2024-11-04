@@ -23,9 +23,9 @@ public class BookingQueryServImpl implements BookingQueryService {
 
     // R03
     @Override
-    public List<R03ResDTO> findBookedFlights(String userId) {
+    public List<R03ResDTO> findClientBookings(String userId) {
 
-        List<BookingQuery> bookedFlights = bookingQueryRepository.findByStatusCodeAndUserId(1, userId);
+        List<BookingQuery> bookedFlights = bookingQueryRepository.findByUserId(userId);
 
         return bookedFlights.stream().map(R03ResDTO::new).toList();
     }

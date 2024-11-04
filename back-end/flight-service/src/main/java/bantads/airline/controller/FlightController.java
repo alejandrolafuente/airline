@@ -27,9 +27,9 @@ public class FlightController {
     private FlightService flightService;
 
     // R03
-    @GetMapping("/bookedflights")
-    public ResponseEntity<?> getBookedflights(@RequestParam List<String> flightCodes) {
-        return new ResponseEntity<>(flightService.getBookedFlights(flightCodes), HttpStatus.OK);
+    @GetMapping("/client-flights")
+    public ResponseEntity<?> getClientflights(@RequestParam List<String> flightCodes) {
+        return new ResponseEntity<>(flightService.getClientFlights(flightCodes), HttpStatus.OK);
     }
 
     // R07 passo 1

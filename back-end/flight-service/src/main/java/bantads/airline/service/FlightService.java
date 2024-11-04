@@ -13,7 +13,7 @@ import bantads.airline.dto.response.R15ResDTO;
 public interface FlightService {
 
     // R03
-    List<R03ResDTO> getBookedFlights(List<String> flightCodes);
+    List<R03ResDTO> getClientFlights(List<String> flightCodes);
 
     // R07 - 1
     List<R07ResDTO1> getClientRequestflights(R07QueDTO1 dto);

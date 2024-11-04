@@ -21,8 +21,8 @@ public class BookingQueryAPI {
 
     // R03
     @GetMapping("/bookedflights/{id}")
-    public ResponseEntity<?> getBookedFlights(@PathVariable(value = "id") String id) {
-        return new ResponseEntity<>(bookingQueryService.findBookedFlights(id), HttpStatus.OK);
+    public ResponseEntity<?> getClientBookings(@PathVariable(value = "id") String id) {
+        return new ResponseEntity<>(bookingQueryService.findClientBookings(id), HttpStatus.OK);
     }
 
 }
