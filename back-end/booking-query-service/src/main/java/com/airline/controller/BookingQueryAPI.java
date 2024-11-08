@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.airline.dto.response.R04ResDTO;
 import com.airline.service.BookingQueryService;
 
 @RestController
@@ -25,4 +26,11 @@ public class BookingQueryAPI {
         return new ResponseEntity<>(bookingQueryService.findClientBookings(id), HttpStatus.OK);
     }
 
+    // R04
+    @GetMapping("/booking/{id}")
+    public ResponseEntity<R04ResDTO> getBooking(@PathVariable(value = "id") String bookingId) {
+
+        R04ResDTO dto = bookingQueryService.getBooking(bookingId);
+        return ResponseEntity.ok().body(dto);
+    }
 }

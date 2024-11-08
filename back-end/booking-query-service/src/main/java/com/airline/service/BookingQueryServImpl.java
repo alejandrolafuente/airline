@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.airline.cqrs.commands.Command;
 import com.airline.dto.response.R03ResDTO;
+import com.airline.dto.response.R04ResDTO;
 import com.airline.model.BookingQuery;
 import com.airline.model.StatChangHistQuery;
 import com.airline.repository.BookingQueryRepository;
@@ -62,6 +63,14 @@ public class BookingQueryServImpl implements BookingQueryService {
 
         System.out.println("\nAPARENTEMENTE ATUALIZAÇÃO FOI BEM SUCEDIDA, VERIFIQUE BANCOS DE DADOS");
 
+    }
+
+    // R04
+    @Override
+    public R04ResDTO getBooking(String bookingId) {
+
+        
+        return null;
     }
 
 }

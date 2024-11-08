@@ -43,8 +43,8 @@ public class FlightController {
     // R07 passo 2
     @GetMapping("/{id}")
     public ResponseEntity<R07ResDTO2> getFlight(@PathVariable(value = "id") String flightId) {
-        R07ResDTO2 obj = flightService.getFlight(flightId);
-        return ResponseEntity.ok().body(obj);
+        R07ResDTO2 dto = flightService.getFlight(flightId);
+        return ResponseEntity.ok().body(dto);
 
     }
 

@@ -146,7 +146,7 @@ public class FlightServiceImpl implements FlightService {
 
         Flight flight = flightRepository.findById(UUID.fromString(flightID)).orElseThrow(
 
-                () -> new FlightNotFoundException("Flight With thisNot Found Baby: " + flightID));
+                () -> new FlightNotFoundException("Flight nor found for ID: " + flightID));
 
         if (flight != null) {
 
