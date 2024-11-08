@@ -29,7 +29,6 @@ public class BookingQueryAPI {
     // R04
     @GetMapping("/booking/{id}")
     public ResponseEntity<R04ResDTO> getBooking(@PathVariable(value = "id") String bookingId) {
-
         R04ResDTO dto = bookingQueryService.getBooking(bookingId);
         return ResponseEntity.ok().body(dto);
     }

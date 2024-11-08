@@ -141,9 +141,6 @@ public class FlightServiceImpl implements FlightService {
     @Override
     public R07ResDTO2 getFlight(String flightID) {
 
-        // Flight flight =
-        // flightRepository.findById(UUID.fromString(flightID)).orElse(null);
-
         Flight flight = flightRepository.findById(UUID.fromString(flightID)).orElseThrow(
 
                 () -> new FlightNotFoundException("Flight nor found for ID: " + flightID));

@@ -19,8 +19,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class R04ResDTO {
     private UUID bookingId;
-    private String flightDate;
-    private String flighTime;
+    private String bookingDate;
+    private String bookingTime;
     private String bookingCode;
     private BigDecimal moneySpent;
     private Integer milesSpent;
@@ -34,11 +34,11 @@ public class R04ResDTO {
 
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-        ZonedDateTime localTimeFlight = entity.getBookingDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
+        ZonedDateTime localTimeBooking = entity.getBookingDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
 
         bookingId = entity.getBookingId();
-        flightDate = localTimeFlight.format(dateFormatter);
-        flighTime = localTimeFlight.format(timeFormatter);
+        bookingDate = localTimeBooking.format(dateFormatter);
+        bookingTime = localTimeBooking.format(timeFormatter);
         bookingCode = entity.getBookingCode();
         moneySpent = entity.getMoneySpent();
         milesSpent = entity.getMilesSpent();

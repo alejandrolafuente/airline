@@ -18,7 +18,7 @@ public class ResourceExceptionHandler {
         StandardError error = StandardError.builder()
                 .timestamp(Instant.now())
                 .status(HttpStatus.NOT_FOUND.value())
-                .error("Voo Nao encontrado")
+                .error("Booking Not Found")
                 .message(e.getMessage())
                 .path(request.getRequestURI())
                 .build();

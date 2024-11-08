@@ -1,6 +1,7 @@
 package com.airline.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.airline.cqrs.commands.Command;
 import com.airline.dto.response.R03ResDTO;
 import com.airline.dto.response.R04ResDTO;
+import com.airline.exceptions.BookingNotFoundException;
 import com.airline.model.BookingQuery;
 import com.airline.model.StatChangHistQuery;
 import com.airline.repository.BookingQueryRepository;
@@ -29,6 +31,17 @@ public class BookingQueryServImpl implements BookingQueryService {
         List<BookingQuery> bookedFlights = bookingQueryRepository.findByUserId(userId);
 
         return bookedFlights.stream().map(R03ResDTO::new).toList();
+    }
+
+    // R04
+    @Override
+    public R04ResDTO getBooking(String bookingId) {
+
+        BookingQuery booking = bookingQueryRepository.findById(UUID.fromString(bookingId)).orElseThrow(
+
+                () -> new BookingNotFoundException("Booking not found for ID: " + bookingId));
+
+        return new R04ResDTO(booking);
     }
 
     // R10, R12: requests from cqrs
@@ -63,14 +76,6 @@ public class BookingQueryServImpl implements BookingQueryService {
 
         System.out.println("\nAPARENTEMENTE ATUALIZAÇÃO FOI BEM SUCEDIDA, VERIFIQUE BANCOS DE DADOS");
 
-    }
-
-    // R04
-    @Override
-    public R04ResDTO getBooking(String bookingId) {
-
-        
-        return null;
     }
 
 }
