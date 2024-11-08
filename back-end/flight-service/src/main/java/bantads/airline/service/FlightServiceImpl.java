@@ -24,6 +24,7 @@ import bantads.airline.dto.response.R07ResDTO1;
 import bantads.airline.dto.response.R07ResDTO2;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
+import bantads.airline.exceptions.FlightNotFoundException;
 import bantads.airline.model.Flight;
 import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;
@@ -140,7 +141,12 @@ public class FlightServiceImpl implements FlightService {
     @Override
     public R07ResDTO2 getFlight(String flightID) {
 
-        Flight flight = flightRepository.findById(UUID.fromString(flightID)).orElse(null);
+        // Flight flight =
+        // flightRepository.findById(UUID.fromString(flightID)).orElse(null);
+
+        Flight flight = flightRepository.findById(UUID.fromString(flightID)).orElseThrow(
+
+                () -> new FlightNotFoundException("Flight With thisNot Found Baby: " + flightID));
 
         if (flight != null) {
 

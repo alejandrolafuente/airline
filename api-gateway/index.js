@@ -135,10 +135,12 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
     try {
         const userId = req.params.id;
 
+        console.log("\n\nR03 - API COMPOSITION:\n\n");
+
         console.log("User ID: ", userId);
 
         // Fazendo as duas primeiras requisições em paralelo
-        const [balanceResponse, bookedFlightsResponse] = await Promise.all([
+        const [balanceResponse, clientBookingsResponse] = await Promise.all([
             // Requisição para pegar o balance do cliente
             axios.get(`http://localhost:8091/client/balance/${userId}`),
             // Requisição para pegar as reservas de voos
@@ -146,18 +148,18 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
         ]);
 
         // Verificando os status das respostas
-        console.log("Balance response status: ", balanceResponse.status);
-        console.log("Booked flights response status: ", bookedFlightsResponse.status);
+        console.log("Client service response status: ", balanceResponse.status);
+        console.log("Booking query service response status: ", clientBookingsResponse.status);
 
         // Extraindo os dados
         const balance = balanceResponse.data;
-        const bookedFlights = bookedFlightsResponse.data;
+        const clientBookings = clientBookingsResponse.data;
 
-        console.log("Balance data: ", balance);
-        console.log("Booked flights data: ", bookedFlights);
+        console.log("\n\nBalance data: ", balance);
+        console.log("Client Bookings data: ", clientBookings);
 
         // Extraindo os códigos de voo das reservas
-        const flightCodes = bookedFlights.map(flight => flight.flightCode).join(',');
+        const flightCodes = clientBookings.map(flight => flight.flightCode).join(',');
 
         // Fazendo a terceira requisição com os códigos de voo
         const flightDetailsResponse = await axios.get(`http://localhost:8093/flight/client-flights?flightCodes=${flightCodes}`);
@@ -169,8 +171,8 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
         // Juntando os dados das três requisições
         const combinedData = {
             balance: balance,
-            bookedFlights: bookedFlights,
-            flightDetails: flightDetailsResponse.data
+            clientBookings: clientBookings,
+            clientFlights: flightDetailsResponse.data
         };
 
         // Enviando a resposta final
