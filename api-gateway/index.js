@@ -184,6 +184,73 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
     }
 });
 
+// R04
+app.get('/booking/:id', async (req, res) => {
+
+    try {
+
+        const bookingId = req.params.id;
+
+        const [bookingResponse] = await Promise.all([
+            // Requisição para pegar o balance do cliente
+            axios.get(`http://localhost:8095/bookingquery/booking/${bookingId}`),
+
+        ]);
+
+        // Verificando os status das respostas
+        console.log("Client service response status: ", bookingResponse.status);
+
+        // Extraindo os dados
+        const booking = bookingResponse.data;
+
+
+        console.log("\n\nDADOS DA RESERVA: ", booking);
+        res.status(200);
+
+        // **
+
+        // Extraindo o código de voo da reserva
+        const flightCode = booking.flightCode;
+
+        // Fazendo a terceira requisição com o código de voo
+        const flightResponse = await axios.get(`http://localhost:8093/flight/booking-flight/${flightCode}`);
+
+        console.log("Flight details response status: ", flightResponse.status);
+        console.log("Flight details data: ", flightResponse.data);
+
+
+        // Juntando os dados das duas requisições, tirar depois, serve para teste
+        const combinedData = {
+            booking: booking,
+            flight: flightResponse.data
+        };
+
+        const flight = flightResponse.data;
+
+        const bookingData = {
+            bookingId: booking.bookingId,
+            bookingDate: booking.bookingDate,
+            bookingTime: booking.bookingTime,
+            bookingCode: booking.bookingCode,
+            departure: flight.departure,
+            arrival: flight.arrival,
+            moneySpent: booking.moneySpent,
+            milesSpent: booking.milesSpent,
+            seatsNumber: booking.seatsNumber,
+            statusDescription: booking.statusDescription,
+            flightCode: booking.flightCode
+        };
+
+
+        // Enviando a resposta final
+        res.status(200).json(bookingData);
+
+    } catch (error) {
+        console.error("Error: ", error.message || error);
+        res.status(500).send({ message: 'Error fetching data', error: error.message || error });
+    }
+});
+
 
 // *********************************************************************************
 var server = http.createServer(app);
