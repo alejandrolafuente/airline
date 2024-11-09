@@ -20,6 +20,7 @@ import bantads.airline.dto.request.R07QueDTO1;
 import bantads.airline.dto.request.R15QueDTO;
 import bantads.airline.dto.response.AirportDTO;
 import bantads.airline.dto.response.R03ResDTO;
+import bantads.airline.dto.response.R04ResDTO;
 import bantads.airline.dto.response.R07ResDTO1;
 import bantads.airline.dto.response.R07ResDTO2;
 import bantads.airline.dto.response.R11ResDTO;
@@ -46,7 +47,7 @@ public class FlightServiceImpl implements FlightService {
 
         for (String flightCode : flightCodes) {
 
-            flightsList.add(flightRepository.getFlightByCode(flightCode));
+            flightRepository.getFlightByCode(flightCode).ifPresent(flightsList::add);
         }
 
         flightsList.sort(Comparator.comparing(Flight::getFlightDate));
@@ -76,6 +77,15 @@ public class FlightServiceImpl implements FlightService {
         }
 
         return listR03ResDTO;
+    }
+
+    // R04
+    @Override
+    public R04ResDTO getBookingFlight(String flightCode) {
+
+        Flight flight = flightRepository.getFlightByCode(flightCode)
+                .orElseThrow(() -> new FlightNotFoundException("Flight with code " + flightCode + " not found."));
+        return new R04ResDTO(flight);
     }
 
     // R07 - 1

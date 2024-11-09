@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bantads.airline.dto.request.R07QueDTO1;
 import bantads.airline.dto.request.R15QueDTO;
+import bantads.airline.dto.response.R04ResDTO;
 import bantads.airline.dto.response.R07ResDTO2;
 import bantads.airline.service.FlightService;
 
@@ -31,6 +32,14 @@ public class FlightController {
     @GetMapping("/client-flights")
     public ResponseEntity<?> getClientflights(@RequestParam List<String> flightCodes) {
         return new ResponseEntity<>(flightService.getClientFlights(flightCodes), HttpStatus.OK);
+    }
+
+    // R04
+    @GetMapping("/booking-flight/{code}")
+    public ResponseEntity<R04ResDTO> getBookingFlight(@PathVariable(value = "code") String flightCode) {
+
+        R04ResDTO dto = flightService.getBookingFlight(flightCode);
+        return ResponseEntity.ok().body(dto);
     }
 
     // R07 passo 1
