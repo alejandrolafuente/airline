@@ -246,8 +246,16 @@ app.get('/booking/:id', async (req, res) => {
         res.status(200).json(bookingData);
 
     } catch (error) {
-        console.error("Error: ", error.message || error);
-        res.status(500).send({ message: 'Error fetching data', error: error.message || error });
+        if (error.response && error.response.data) {
+            // Caso a resposta contenha dados de erro customizados, os repassa ao front
+            const { status, data } = error.response;
+            console.error("Custom Error: ", data);
+            res.status(status).send(data);
+        } else {
+            // Caso contrário, responde com um erro genérico
+            console.error("Error: ", error.message || error);
+            res.status(500).send({ message: 'Error fetching data', error: error.message || error });
+        }
     }
 });
 
