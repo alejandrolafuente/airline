@@ -1,7 +1,8 @@
 package com.airline.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.airline.dto.response.R03ResDTO;
 import com.airline.dto.response.R04ResDTO;
 import com.airline.service.BookingQueryService;
 
@@ -21,9 +23,10 @@ public class BookingQueryAPI {
     private BookingQueryService bookingQueryService;
 
     // R03 - 2
-    @GetMapping("/bookedflights/{id}")
-    public ResponseEntity<?> getClientBookings(@PathVariable(value = "id") String id) {
-        return new ResponseEntity<>(bookingQueryService.findClientBookings(id), HttpStatus.OK);
+    @GetMapping("/client-bookings/{id}")
+    public ResponseEntity<List<R03ResDTO>> getClientBookings(@PathVariable(value = "id") String userId) {
+        List<R03ResDTO> dto = bookingQueryService.findClientBookings(userId);
+        return ResponseEntity.ok().body(dto);
     }
 
     // R04

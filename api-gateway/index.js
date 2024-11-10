@@ -144,7 +144,7 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
             // Requisição para pegar o balance do cliente
             axios.get(`http://localhost:8091/client/balance/${userId}`),
             // Requisição para pegar as reservas de voos
-            axios.get(`http://localhost:8095/bookingquery/bookedflights/${userId}`)
+            axios.get(`http://localhost:8095/bookingquery/client-bookings/${userId}`)
         ]);
 
         // Verificando os status das respostas

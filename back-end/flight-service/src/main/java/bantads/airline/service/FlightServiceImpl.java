@@ -26,6 +26,7 @@ import bantads.airline.dto.response.R07ResDTO2;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.exceptions.FlightNotFoundException;
+import bantads.airline.exceptions.NoFlightNotFoundException;
 import bantads.airline.model.Flight;
 import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;
@@ -39,7 +40,7 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     private AirportRepository airportRepository;
 
-    // R03
+    // R03 - 3
     @Override
     public List<R03ResDTO> getClientFlights(List<String> flightCodes) {
 
@@ -50,28 +51,19 @@ public class FlightServiceImpl implements FlightService {
             flightRepository.getFlightByCode(flightCode).ifPresent(flightsList::add);
         }
 
+        if (flightsList.isEmpty()) {
+            throw new NoFlightNotFoundException("No flights found for the codes provided.");
+        }
+
         flightsList.sort(Comparator.comparing(Flight::getFlightDate));
 
         // **************************************************************
-
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         List<R03ResDTO> listR03ResDTO = new ArrayList<>();
 
         for (Flight flight : flightsList) {
 
-            ZonedDateTime localTime = flight.getFlightDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
-
-            R03ResDTO dto = R03ResDTO.builder()
-                    .flightId(flight.getFlightId())
-                    .flightCode(flight.getCode())
-                    .flightDate(localTime.format(dateFormatter))
-                    .flighTime(localTime.format(timeFormatter))
-                    .departureAirport(flight.getDepartureAirport().getCode())
-                    .arrivalAirport(flight.getArrivalAirport().getCode())
-                    .build();
+            R03ResDTO dto = new R03ResDTO(flight);
 
             listR03ResDTO.add(dto);
         }

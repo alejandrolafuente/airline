@@ -1,6 +1,7 @@
 package com.airline.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ import com.airline.model.BookingQuery;
 @Repository
 public interface BookingQueryRepository extends JpaRepository<BookingQuery, UUID> {
 
-    List<BookingQuery> findByUserId(String userId);
+    Optional<List<BookingQuery>> findByUserId(String userId);
 
     BookingQuery findByBookingCommandId(String bookingCommandId);
 }

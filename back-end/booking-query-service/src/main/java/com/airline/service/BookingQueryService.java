@@ -8,7 +8,7 @@ import com.airline.dto.response.R04ResDTO;
 
 public interface BookingQueryService {
 
-    // R03 from controller
+    // R03 - 2 from controller
     List<R03ResDTO> findClientBookings(String userId);
 
     // R04 from controller

@@ -10,6 +10,7 @@ import com.airline.cqrs.commands.Command;
 import com.airline.dto.response.R03ResDTO;
 import com.airline.dto.response.R04ResDTO;
 import com.airline.exceptions.BookingNotFoundException;
+import com.airline.exceptions.UserBookingsNotFoundException;
 import com.airline.model.BookingQuery;
 import com.airline.model.StatChangHistQuery;
 import com.airline.repository.BookingQueryRepository;
@@ -24,13 +25,15 @@ public class BookingQueryServImpl implements BookingQueryService {
     @Autowired
     private StatChangHistQueryRep statChangHistQueryRep;
 
-    // R03
+    // R03 - 2
     @Override
     public List<R03ResDTO> findClientBookings(String userId) {
 
-        List<BookingQuery> bookedFlights = bookingQueryRepository.findByUserId(userId);
+        List<BookingQuery> clientBookings = bookingQueryRepository.findByUserId(userId)
+                .filter(bookings -> !bookings.isEmpty()) // Verifica se a lista nao esta vazia
+                .orElseThrow(() -> new UserBookingsNotFoundException("Bookings not found for user: " + userId));
 
-        return bookedFlights.stream().map(R03ResDTO::new).toList();
+        return clientBookings.stream().map(R03ResDTO::new).toList();
     }
 
     // R04
