@@ -1,5 +1,6 @@
 package bantads.airline.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,6 +31,6 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
 
     // query using JPQL
     @Query("select c.miles from Client c where c.userId = ?1")
-    Integer getMilesBalanceByClientUserId(String userId);
+    Optional<Integer> getMilesBalanceByClientUserId(String userId);
 
 }

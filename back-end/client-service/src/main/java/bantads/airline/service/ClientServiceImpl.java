@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import bantads.airline.dto.query.R05DTO;
+import bantads.airline.dto.response.R03ResDTO;
+import bantads.airline.exceptions.ClientNotFoundException;
 import bantads.airline.model.Client;
 import bantads.airline.model.MilesTransaction;
 import bantads.airline.repository.ClientRepository;
@@ -23,10 +25,15 @@ public class ClientServiceImpl implements ClientService {
     @Autowired
     private MilesTransactionRepository milesTransactionRepository;
 
-    // R03
+    // R03 - 1
     @Override
-    public Integer getMilesBalance(String userId) {
-        return clientRepository.getMilesBalanceByClientUserId(userId);
+    public R03ResDTO getMilesBalance(String userId) {
+
+        Integer balance = clientRepository.getMilesBalanceByClientUserId(userId).orElseThrow(
+
+                () -> new ClientNotFoundException("Client not found for User ID: " + userId));
+
+        return new R03ResDTO(balance);
     }
 
     // R05
@@ -59,7 +66,7 @@ public class ClientServiceImpl implements ClientService {
         ZonedDateTime utc1DateTime = transaction.getTransactionDate(); // Data em UTC
 
         ZonedDateTime local1DateTime = utc1DateTime.withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
-        
+
         System.out.println("Hora local: " + local1DateTime);
 
         client.setMiles(client.getMiles() + transaction.getMilesQuantity()); // Adiciona as milhas ao cliente

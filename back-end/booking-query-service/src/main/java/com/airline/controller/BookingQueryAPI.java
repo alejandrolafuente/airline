@@ -20,7 +20,7 @@ public class BookingQueryAPI {
     @Autowired
     private BookingQueryService bookingQueryService;
 
-    // R03
+    // R03 - 2
     @GetMapping("/bookedflights/{id}")
     public ResponseEntity<?> getClientBookings(@PathVariable(value = "id") String id) {
         return new ResponseEntity<>(bookingQueryService.findClientBookings(id), HttpStatus.OK);
