@@ -11,6 +11,8 @@ import bantads.airline.dto.query.R05QueDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R05ResDTO;
 import bantads.airline.exceptions.ClientNotFoundException;
+import bantads.airline.exceptions.ClientUpdateException;
+import bantads.airline.exceptions.MilesTransactionException;
 import bantads.airline.model.Client;
 import bantads.airline.model.MilesTransaction;
 import bantads.airline.repository.ClientRepository;
@@ -40,7 +42,9 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public R05ResDTO completeMilesPurchasing(String userId, R05QueDTO r05QueDTO) {
 
-        Client client = clientRepository.getClientByUserId(userId);
+        Client client = clientRepository.getClientByUserId(userId).orElseThrow(
+
+                () -> new ClientNotFoundException("Client not found for User ID: " + userId));
 
         MilesTransaction transaction = MilesTransaction.builder()
                 .client(client)
@@ -51,12 +55,23 @@ public class ClientServiceImpl implements ClientService {
                 .description("MILES PURCHASE")
                 .build();
 
-        transaction = milesTransactionRepository.save(transaction);
+        // Faz a transacao
+        try {
+            transaction = milesTransactionRepository.save(transaction);
+        } catch (Exception e) {
+            throw new MilesTransactionException("Cannot complete miles purchasing");
+        }
 
         client.setMiles(client.getMiles() + transaction.getMilesQuantity()); // Adiciona as milhas ao cliente
 
         // Salva as alterações no cliente
-        client = clientRepository.save(client);
+        try {
+
+            client = clientRepository.save(client);
+        } catch (Exception e) {
+
+            throw new ClientUpdateException("Cannot update miles balance for ID: " + client.getUserId());
+        }
 
         R05ResDTO dto = new R05ResDTO(client, transaction);
 

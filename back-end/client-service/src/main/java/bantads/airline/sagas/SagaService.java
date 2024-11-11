@@ -105,7 +105,7 @@ public class SagaService {
         public MilesUpdatedEvent updateMiles(UpdateMilesCommand updateMilesCommand) {
 
                 // FALTANDO TRANSACAO!!!
-                Client client = clientRepository.getClientByUserId(updateMilesCommand.getUserId());
+                Client client = clientRepository.getClientByUserId(updateMilesCommand.getUserId()).orElseThrow(null);
 
                 client.setMiles(client.getMiles() - updateMilesCommand.getUsedMiles());
 
@@ -123,7 +123,7 @@ public class SagaService {
         @Transactional // verificar esta anotacao!
         public ClientRefundedEvent refundClient(RefundClientCommand refundClientCommand) {
 
-                Client client = clientRepository.getClientByUserId(refundClientCommand.getUserId());
+                Client client = clientRepository.getClientByUserId(refundClientCommand.getUserId()).orElseThrow(null);
 
                 MilesTransaction transaction = MilesTransaction.builder()
                                 .client(client)

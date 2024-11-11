@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ResourceExceptionHandler {
 
     @ExceptionHandler(ClientNotFoundException.class)
-    public ResponseEntity<StandardError> flightNotFound(ClientNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<StandardError> clientNotFound(ClientNotFoundException e, HttpServletRequest request) {
 
         StandardError error = StandardError.builder()
                 .timestamp(Instant.now())
@@ -24,5 +24,35 @@ public class ResourceExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(MilesTransactionException.class)
+    public ResponseEntity<StandardError> transactionNotCompleted(MilesTransactionException e,
+            HttpServletRequest request) {
+
+        StandardError error = StandardError.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Transaction not completed")
+                .message(e.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    @ExceptionHandler(ClientUpdateException.class)
+    public ResponseEntity<StandardError> balanceNotUpdated(ClientUpdateException e,
+            HttpServletRequest request) {
+
+        StandardError error = StandardError.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Balance not updated")
+                .message(e.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }
