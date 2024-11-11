@@ -1,7 +1,8 @@
 package bantads.airline.service;
 
-import bantads.airline.dto.query.R05DTO;
+import bantads.airline.dto.query.R05QueDTO;
 import bantads.airline.dto.response.R03ResDTO;
+import bantads.airline.dto.response.R05ResDTO;
 
 public interface ClientService {
 
@@ -9,5 +10,6 @@ public interface ClientService {
     R03ResDTO getMilesBalance(String userId);
 
     // R05
-    void completeMilesPurchasing(R05DTO r05dto);
+    R05ResDTO completeMilesPurchasing(String userId, R05QueDTO r05QueDTO);
+
 }

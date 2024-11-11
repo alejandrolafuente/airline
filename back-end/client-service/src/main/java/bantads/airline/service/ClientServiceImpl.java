@@ -2,14 +2,14 @@ package bantads.airline.service;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import bantads.airline.dto.query.R05DTO;
+import bantads.airline.dto.query.R05QueDTO;
 import bantads.airline.dto.response.R03ResDTO;
+import bantads.airline.dto.response.R05ResDTO;
 import bantads.airline.exceptions.ClientNotFoundException;
 import bantads.airline.model.Client;
 import bantads.airline.model.MilesTransaction;
@@ -38,41 +38,29 @@ public class ClientServiceImpl implements ClientService {
 
     // R05
     @Override
-    public void completeMilesPurchasing(R05DTO r05dto) {
+    public R05ResDTO completeMilesPurchasing(String userId, R05QueDTO r05QueDTO) {
 
-        System.out.println("CHEGA DO FRONT => " + r05dto);
-
-        Client client = clientRepository.getClientByUserId(r05dto.getUserId());
-
-        System.out.println("CLIENTE => " + client);
-
-        // Obtém a data e hora local do servidor
-        ZonedDateTime localDateTime = ZonedDateTime.now(ZoneId.systemDefault());
-
-        // Converte para UTC antes de armazenar no banco de dados
-        ZonedDateTime utcDateTime = localDateTime.withZoneSameInstant(ZoneOffset.UTC);
+        Client client = clientRepository.getClientByUserId(userId);
 
         MilesTransaction transaction = MilesTransaction.builder()
                 .client(client)
-                .transactionDate(utcDateTime)
-                .moneyValue(r05dto.getMoneyValue())
-                .milesQuantity(r05dto.getMoneyValue().divide(BigDecimal.valueOf(5)).intValue())
+                .transactionDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                .moneyValue(r05QueDTO.getMoneyValue())
+                .milesQuantity(r05QueDTO.getMoneyValue().divide(BigDecimal.valueOf(5)).intValue())
                 .transactionType("INPUT")
                 .description("MILES PURCHASE")
                 .build();
 
-        milesTransactionRepository.save(transaction);
-
-        ZonedDateTime utc1DateTime = transaction.getTransactionDate(); // Data em UTC
-
-        ZonedDateTime local1DateTime = utc1DateTime.withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
-
-        System.out.println("Hora local: " + local1DateTime);
+        transaction = milesTransactionRepository.save(transaction);
 
         client.setMiles(client.getMiles() + transaction.getMilesQuantity()); // Adiciona as milhas ao cliente
 
         // Salva as alterações no cliente
-        clientRepository.save(client);
+        client = clientRepository.save(client);
+
+        R05ResDTO dto = new R05ResDTO(client, transaction);
+
+        return dto;
     }
 
 }
