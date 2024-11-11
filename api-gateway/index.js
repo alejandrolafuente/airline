@@ -182,7 +182,10 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
                 flighTime: flights[index].flighTime,
                 departureAirport: flights[index].departureAirport,
                 arrivalAirport: flights[index].arrivalAirport,
-
+                flightCode: flights[index].flightCode,
+                bookingId: matchingBooking ? matchingBooking.bookingId : null,
+                bookingCode: matchingBooking ? matchingBooking.bookingCode : null,
+                statusDescription: matchingBooking ? matchingBooking.statusDescription : null
             };
 
             completeBookings.push(completeBooking);
@@ -192,17 +195,24 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
 
         // Juntando os dados das três requisições
         const combinedData = {
-            balance: balance,
-            clientBookings: clientBookings,
-            clientFlights: flightDetailsResponse.data
+            balance: balance.milesBalance,
+            clientBookings: completeBookings
         };
 
         // Enviando a resposta final
         res.status(200).json(combinedData);
 
     } catch (error) {
-        console.error("Error: ", error.message || error);
-        res.status(500).send({ message: 'Error fetching data', error: error.message || error });
+        if (error.response && error.response.data) {
+            // Caso a resposta contenha dados de erro customizados, os repassa ao front
+            const { status, data } = error.response;
+            console.error("Custom Error: ", data);
+            res.status(status).send(data);
+        } else {
+            // Caso contrário, responde com um erro genérico
+            console.error("Error: ", error.message || error);
+            res.status(500).send({ message: 'Error fetching data', error: error.message || error });
+        }
     }
 });
 
