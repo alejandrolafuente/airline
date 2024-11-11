@@ -127,7 +127,7 @@ app.get('/bookingquery/bookedflights/:id', (req, res, next) => {
 // ------------------- API COMPOSITION
 
 
-// R03- FINAL
+// R03
 
 // app.get('/api-composition/combined-info/:id', validateTokenProxy, async (req, res) => {
 app.get('/api-composition/combined-info/:id', async (req, res) => {
@@ -166,6 +166,28 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
 
         console.log("Flight details response status: ", flightDetailsResponse.status);
         console.log("Flight details data: ", flightDetailsResponse.data);
+
+        const flights = flightDetailsResponse.data;
+
+        const completeBookings = [];
+
+        for (let index = 0; index < flights.length; index++) {
+
+            const matchingBooking = clientBookings.find(
+                booking => booking.flightCode === flights[index].flightCode
+            );
+
+            const completeBooking = {
+                flightDate: flights[index].flightDate,
+                flighTime: flights[index].flighTime,
+                departureAirport: flights[index].departureAirport,
+                arrivalAirport: flights[index].arrivalAirport,
+
+            };
+
+            completeBookings.push(completeBooking);
+
+        }
 
 
         // Juntando os dados das três requisições
