@@ -49,6 +49,6 @@ public class MilesTransaction implements Serializable {
     private String transactionType; // "INPUT"/"OUTPUT"
 
     @Column(name = "description", nullable = false)
-    private String description; // "MILES PURCHASE"/"TICKET BOOKING"/"MILES REFUND"
+    private String description; // "MILES PURCHASE"/"MILES REFUND"
 
 }

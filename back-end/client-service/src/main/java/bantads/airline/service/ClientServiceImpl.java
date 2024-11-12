@@ -3,11 +3,13 @@ package bantads.airline.service;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import bantads.airline.dto.query.R05QueDTO;
+import bantads.airline.dto.response.PurchaseDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R05ResDTO;
 import bantads.airline.dto.response.R06ResDTO;
@@ -82,9 +84,24 @@ public class ClientServiceImpl implements ClientService {
     // R06
     @Override
     public R06ResDTO getMilesStatement(String userId) {
-        
-        
-        return null;
+
+        Integer milesBalance = this.getMilesBalance(userId).getMilesBalance();
+
+        Client client = clientRepository.getClientByUserId(userId).orElseThrow(
+
+                () -> new ClientNotFoundException("Client not found for User ID: " + userId));
+
+        List<MilesTransaction> milesPurchases = milesTransactionRepository.getClientPurchases(client.getClientId(),
+                "MILES PURCHASE");
+
+        List<PurchaseDTO> purchasesDtos = milesPurchases.stream().map(PurchaseDTO::new).toList();
+
+        R06ResDTO dto = R06ResDTO.builder()
+                .milesBalance(milesBalance)
+                .clientPurchasings(purchasesDtos)
+                .build();
+
+        return dto;
     }
 
 }
