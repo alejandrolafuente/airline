@@ -19,6 +19,7 @@ import bantads.airline.dto.request.R15QueDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R04ResDTO;
 import bantads.airline.dto.response.R07ResDTO2;
+import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.service.FlightService;
 
 @RestController
@@ -44,7 +45,7 @@ public class FlightController {
         return ResponseEntity.ok().body(dto);
     }
 
-    // R07 passo 1
+    // R07-1
     @GetMapping("/searchflights")
     public ResponseEntity<?> getClientRequestflights(@RequestBody R07QueDTO1 dto) {
 
@@ -67,7 +68,7 @@ public class FlightController {
 
     // R15
     @PostMapping("/insertflight")
-    public ResponseEntity<?> insertflight(@RequestBody R15QueDTO r15QueDTO) {
+    public ResponseEntity<R15ResDTO> insertflight(@RequestBody R15QueDTO r15QueDTO) {
 
         return new ResponseEntity<>(flightService.insertFlight(r15QueDTO), HttpStatus.OK);
     }

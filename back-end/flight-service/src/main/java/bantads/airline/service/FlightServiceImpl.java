@@ -1,6 +1,5 @@
 package bantads.airline.service;
 
-import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -226,9 +225,7 @@ public class FlightServiceImpl implements FlightService {
             flightCode = generateRandomCode();
         } while (flightRepository.getFlightByCode(flightCode) != null);
 
-        // ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of("UTC"));
-
-        // define flighDate
+        // define flighDate in UTC
         ZonedDateTime flightDate = convertToZonedDateTime(r15QueDTO.getFlighDate(), r15QueDTO.getFlighTime());
 
         // construindo o registro:
@@ -238,37 +235,17 @@ public class FlightServiceImpl implements FlightService {
                 .flightDate(flightDate)
                 .departureAirport(airportRepository.getAirportByCode(r15QueDTO.getDepartureAirport()))
                 .arrivalAirport(airportRepository.getAirportByCode(r15QueDTO.getArrivalAirport()))
-                .flightPrice(new BigDecimal(r15QueDTO.getFlightPrice()))
-                .totalSeats(Integer.parseInt(r15QueDTO.getTotalSeats()))
+                .flightPrice(r15QueDTO.getFlightPrice())
+                .totalSeats(r15QueDTO.getTotalSeats())
                 .occupiedSeats(0)
                 .flightStatus("CONFIRMED")
                 .build();
 
         newFlight = flightRepository.save(newFlight);
 
-        System.out.println("DEVERIA COINCIDIR COM O BD => " + newFlight.getFlightDate());
-
         // fazer a dto de reposta, R15ResDTO:
 
-        ZonedDateTime localTime = newFlight.getFlightDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
-
-        System.out.println("HORARIO LOCAL => " + localTime);
-
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
-        R15ResDTO dto = R15ResDTO.builder()
-                .departureAirport(
-                        newFlight.getDepartureAirport().getCode() + " - " + newFlight.getDepartureAirport().getName())
-                .arrivalAirport(
-                        newFlight.getArrivalAirport().getCode() + " - " + newFlight.getArrivalAirport().getName())
-                .flighDate(localTime.format(dateFormatter))
-                .flighTime(localTime.format(timeFormatter))
-                .flighCode(newFlight.getCode())
-                .build();
-
-        return dto;
+        return new R15ResDTO(newFlight);
     }
 
     private String generateRandomCode() {
@@ -288,16 +265,15 @@ public class FlightServiceImpl implements FlightService {
     }
 
     public ZonedDateTime convertToZonedDateTime(String flightDate, String flightTime) {
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
         // Converter as strings para LocalDate e LocalTime
-        LocalDate date = LocalDate.parse(flightDate);
+        LocalDate date = LocalDate.parse(flightDate, dateFormatter);
         LocalTime time = LocalTime.parse(flightTime);
 
-        // Combinar LocalDate e LocalTime em ZonedDateTime com fuso horário
-        // America/Sao_Paulo
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(date, time, ZoneId.of("America/Sao_Paulo"));
-
-        // Converter para UTC antes de armazenar
-        return zonedDateTime.withZoneSameInstant(ZoneOffset.UTC);
+        // Criar o ZonedDateTime diretamente em UTC
+        return ZonedDateTime.of(date, time, ZoneOffset.UTC);
     }
 
 }
