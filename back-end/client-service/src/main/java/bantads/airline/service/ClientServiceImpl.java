@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import bantads.airline.dto.query.R05QueDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R05ResDTO;
+import bantads.airline.dto.response.R06ResDTO;
 import bantads.airline.exceptions.ClientNotFoundException;
 import bantads.airline.exceptions.ClientUpdateException;
 import bantads.airline.exceptions.MilesTransactionException;
@@ -76,6 +77,14 @@ public class ClientServiceImpl implements ClientService {
         R05ResDTO dto = new R05ResDTO(client, transaction);
 
         return dto;
+    }
+
+    // R06
+    @Override
+    public R06ResDTO getMilesStatement(String userId) {
+        
+        
+        return null;
     }
 
 }

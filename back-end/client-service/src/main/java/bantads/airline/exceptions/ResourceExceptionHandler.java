@@ -1,6 +1,7 @@
 package bantads.airline.exceptions;
 
-import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class ResourceExceptionHandler {
     public ResponseEntity<StandardError> clientNotFound(ClientNotFoundException e, HttpServletRequest request) {
 
         StandardError error = StandardError.builder()
-                .timestamp(Instant.now())
+                .timestamp(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant())
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Client Not Found")
                 .message(e.getMessage())
@@ -31,7 +32,7 @@ public class ResourceExceptionHandler {
             HttpServletRequest request) {
 
         StandardError error = StandardError.builder()
-                .timestamp(Instant.now())
+                .timestamp(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error("Transaction not completed")
                 .message(e.getMessage())
@@ -46,7 +47,7 @@ public class ResourceExceptionHandler {
             HttpServletRequest request) {
 
         StandardError error = StandardError.builder()
-                .timestamp(Instant.now())
+                .timestamp(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error("Balance not updated")
                 .message(e.getMessage())

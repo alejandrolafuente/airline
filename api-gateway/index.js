@@ -291,6 +291,49 @@ app.get('/booking/:id', async (req, res) => {
     }
 });
 
+// R06 
+// api composition:
+// client: 
+//        saldo da tabela Client, (objeto)
+//        dia, hora, valor em reais, quantidade de milhas, descricao ("MILES PURCHASE") da tabela MilesTransaction 
+//        (array)
+// booking query:
+//        codigo de voo das reservas onde milesSpent != 0 da tabela BookingQuery (array)
+// flight:
+//        dia, hora, origem, destino ("CWB->GRU") da tabela Flight
+app.get('/miles-statement/:id', async (req, res) => {
+
+    try {
+
+        const userId = req.params.id;
+
+        const [balanceResponse, clientBookingsResponse] = await Promise.all([
+            axios.get(`http://localhost:8091/client/miles-statement/${userId}`),
+            axios.get(`http://localhost:8095/bookingquery/client-bookings/${userId}`)
+        ]);
+
+
+        // Extraindo os dados
+        const balance = balanceResponse.data;
+        const clientBookings = clientBookingsResponse.data;
+
+        console.log("\n\nBalance data: ", balance);
+        console.log("Client Bookings data: ", clientBookings);
+
+
+    } catch (error) {
+        if (error.response && error.response.data) {
+            // Caso a resposta contenha dados de erro customizados, os repassa ao front
+            const { status, data } = error.response;
+            console.error("Custom Error: ", data);
+            res.status(status).send(data);
+        } else {
+            // Caso contrário, responde com um erro genérico
+            console.error("Error: ", error.message || error);
+            res.status(500).send({ message: 'Error fetching data', error: error.message || error });
+        }
+    }
+});
 
 // *********************************************************************************
 var server = http.createServer(app);

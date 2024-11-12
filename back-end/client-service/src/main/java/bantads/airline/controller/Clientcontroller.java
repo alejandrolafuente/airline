@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import bantads.airline.dto.query.R05QueDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R05ResDTO;
+import bantads.airline.dto.response.R06ResDTO;
 import bantads.airline.service.ClientService;
 
 @RestController
@@ -42,6 +43,15 @@ public class Clientcontroller {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
 
+    }
+
+    // R06
+    @GetMapping("/miles-statement/{id}")
+    public ResponseEntity<R06ResDTO> getMilesStatement(@PathVariable(value = "id") String userId) {
+
+        R06ResDTO dto = clientService.getMilesStatement(userId);
+
+        return ResponseEntity.ok().body(dto);
     }
 
 }
