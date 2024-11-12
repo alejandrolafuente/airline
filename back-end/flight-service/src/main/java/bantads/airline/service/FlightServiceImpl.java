@@ -26,6 +26,7 @@ import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.exceptions.FlightNotFoundException;
 import bantads.airline.exceptions.NoFlightNotFoundException;
+import bantads.airline.model.Airport;
 import bantads.airline.model.Flight;
 import bantads.airline.repository.AirportRepository;
 import bantads.airline.repository.FlightRepository;
@@ -223,18 +224,22 @@ public class FlightServiceImpl implements FlightService {
 
         do {
             flightCode = generateRandomCode();
-        } while (flightRepository.getFlightByCode(flightCode) != null);
+        } while (flightRepository.getFlightByCode(flightCode).isPresent());
 
         // define flighDate in UTC
-        ZonedDateTime flightDate = convertToZonedDateTime(r15QueDTO.getFlighDate(), r15QueDTO.getFlighTime());
+        ZonedDateTime flightDate = convertToZonedDateTime(r15QueDTO.getFlighDate(),
+                r15QueDTO.getFlighTime());
+
+        Airport departureAirport = airportRepository.getAirportByCode(r15QueDTO.getDepartureAirport());
+        Airport arrivalAirport = airportRepository.getAirportByCode(r15QueDTO.getArrivalAirport());
 
         // construindo o registro:
 
         Flight newFlight = Flight.builder()
                 .code(flightCode)
                 .flightDate(flightDate)
-                .departureAirport(airportRepository.getAirportByCode(r15QueDTO.getDepartureAirport()))
-                .arrivalAirport(airportRepository.getAirportByCode(r15QueDTO.getArrivalAirport()))
+                .departureAirport(departureAirport)
+                .arrivalAirport(arrivalAirport)
                 .flightPrice(r15QueDTO.getFlightPrice())
                 .totalSeats(r15QueDTO.getTotalSeats())
                 .occupiedSeats(0)
@@ -246,6 +251,7 @@ public class FlightServiceImpl implements FlightService {
         // fazer a dto de reposta, R15ResDTO:
 
         return new R15ResDTO(newFlight);
+
     }
 
     private String generateRandomCode() {
@@ -272,8 +278,10 @@ public class FlightServiceImpl implements FlightService {
         LocalDate date = LocalDate.parse(flightDate, dateFormatter);
         LocalTime time = LocalTime.parse(flightTime);
 
-        // Criar o ZonedDateTime diretamente em UTC
-        return ZonedDateTime.of(date, time, ZoneOffset.UTC);
+        ZonedDateTime localDateTime = ZonedDateTime.of(date, time, ZoneId.of("America/Sao_Paulo"));
+
+        // Converter para UTC
+        return localDateTime.withZoneSameInstant(ZoneOffset.UTC);
     }
 
 }

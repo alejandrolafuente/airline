@@ -69,7 +69,7 @@ public class FlightController {
     // R15
     @PostMapping("/insertflight")
     public ResponseEntity<R15ResDTO> insertflight(@RequestBody R15QueDTO r15QueDTO) {
-
-        return new ResponseEntity<>(flightService.insertFlight(r15QueDTO), HttpStatus.OK);
+        R15ResDTO dto = flightService.insertFlight(r15QueDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 }
