@@ -20,7 +20,7 @@ public interface FlightService {
     R04ResDTO getBookingFlight(String flightCode);
 
     // R07 - 1
-    List<R07ResDTO1> getClientRequestflights(R07QueDTO1 dto);
+    List<R07ResDTO1> getClientRequestflights(R07QueDTO1 r07QueDTO1);
 
     // R07 - 2
     R07ResDTO2 getFlight(String flightID);

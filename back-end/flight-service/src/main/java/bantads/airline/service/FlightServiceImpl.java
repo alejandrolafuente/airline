@@ -25,6 +25,7 @@ import bantads.airline.dto.response.R07ResDTO2;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.exceptions.FlightNotFoundException;
+import bantads.airline.exceptions.MissingFlightException;
 import bantads.airline.exceptions.NewFlightException;
 import bantads.airline.exceptions.NoFlightNotFoundException;
 import bantads.airline.model.Airport;
@@ -88,7 +89,18 @@ public class FlightServiceImpl implements FlightService {
         UUID depId = null;
         UUID arrId = null;
 
-        // 1. pega o id dos aeroportos
+        if ((dto.getDepAirportCode() != null && dto.getArrAirportCode() == null)
+                || (dto.getDepAirportCode() == null && dto.getArrAirportCode() != null)) {
+
+            if (dto.getDepAirportCode() == null) {
+                throw new MissingFlightException("Departure Airport not specified");
+            } else if (dto.getArrAirportCode() == null) {
+                throw new MissingFlightException("Arrival Airport not specified");
+            }
+
+        }
+
+        // 1. pega o id dos aeroportos usando o codigo do mesmo; se null nao faz
 
         if (dto.getDepAirportCode() != null) {
 
@@ -116,28 +128,16 @@ public class FlightServiceImpl implements FlightService {
             flights = flightRepository.getClientRequestflights(depId, arrId, localTime);
         }
 
-        List<R07ResDTO1> listR07ResDTO1 = new ArrayList<>();
-
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        List<R07ResDTO1> dtoList = new ArrayList<>();
 
         for (Flight flight : flights) {
 
-            ZonedDateTime localTimeFlight = flight.getFlightDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
+            R07ResDTO1 resDto = new R07ResDTO1(flight);
 
-            R07ResDTO1 r07ResDTO1 = R07ResDTO1.builder()
-                    .flightId(flight.getFlightId().toString())
-                    .flightDate(localTimeFlight.format(dateFormatter))
-                    .flighTime(localTimeFlight.format(timeFormatter))
-                    .departure(flight.getDepartureAirport().getName())
-                    .arrival(flight.getArrivalAirport().getName())
-                    .build();
-
-            listR07ResDTO1.add(r07ResDTO1);
+            dtoList.add(resDto);
         }
 
-        return listR07ResDTO1;
+        return dtoList;
     }
 
     // R07 - 2

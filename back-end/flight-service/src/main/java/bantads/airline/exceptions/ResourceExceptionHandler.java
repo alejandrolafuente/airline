@@ -54,4 +54,18 @@ public class ResourceExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(MissingFlightException.class)
+    public ResponseEntity<StandardError> missingFlight(MissingFlightException e, HttpServletRequest request) {
+
+        StandardError error = StandardError.builder()
+                .timestamp(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Missing Flight")
+                .message(e.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
 }

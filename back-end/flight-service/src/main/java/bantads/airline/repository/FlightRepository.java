@@ -30,7 +30,7 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
         List<Flight> getClientRequestflights(@Param("departure") UUID depAirport,
                         @Param("arrival") UUID arrAirportCode, @Param("currentDate") ZonedDateTime currentDate);
 
-        // R07 - 2: Retorna todos os voos a partir de uma data
+        // R07 - 1: Retorna todos os voos a partir de uma data
         @Query(value = "SELECT * FROM flight_table f WHERE f.flight_date >= :currentDate ORDER BY f.flight_date", nativeQuery = true)
         List<Flight> getAllFlightsAfterDate(@Param("currentDate") ZonedDateTime currentDate);
 
