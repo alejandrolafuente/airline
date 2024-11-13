@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import bantads.airline.dto.BookingQueryDTO;
-import bantads.airline.dto.SelfRegDTO;
+import bantads.airline.dto.request.BookingQueryDTO;
+import bantads.airline.dto.request.SelfRegDTO;
+import bantads.airline.dto.response.R07ResDTO;
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
 import bantads.airline.sagas.cancelflightsaga.CancelFlightSaga;
 import bantads.airline.sagas.completeflightsaga.CompleteFlightSaga;
@@ -80,11 +81,14 @@ public class SagasController {
 
     // R07 - Booking
     @PostMapping("/booking")
-    public ResponseEntity<?> flightBooking(@RequestBody BookingQueryDTO bookingQueryDTO)
+    public ResponseEntity<R07ResDTO> flightBooking(@RequestBody BookingQueryDTO bookingQueryDTO)
             throws JsonProcessingException, InterruptedException, ExecutionException {
 
         this.bookingSAGA.handleRequest(bookingQueryDTO);
-        return new ResponseEntity<>("Reserva feita ", HttpStatus.OK);
+
+        R07ResDTO dto = new R07ResDTO("Flight reservation made");
+
+        return ResponseEntity.ok().body(dto);
 
     }
 

@@ -1,4 +1,4 @@
-package bantads.airline.dto;
+package bantads.airline.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

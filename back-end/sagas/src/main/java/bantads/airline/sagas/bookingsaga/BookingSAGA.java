@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import bantads.airline.dto.BookingQueryDTO;
+import bantads.airline.dto.request.BookingQueryDTO;
 import bantads.airline.sagas.bookingsaga.commands.CreateBookingCommand;
 import bantads.airline.sagas.bookingsaga.commands.UpdateMilesCommand;
 import bantads.airline.sagas.bookingsaga.commands.UpdateSeatsCommand;

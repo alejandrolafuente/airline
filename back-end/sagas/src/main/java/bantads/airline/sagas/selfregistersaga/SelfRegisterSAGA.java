@@ -8,7 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import bantads.airline.dto.SelfRegDTO;
+import bantads.airline.dto.request.SelfRegDTO;
 import bantads.airline.sagas.selfregistersaga.commands.CreateClientCommand;
 import bantads.airline.sagas.selfregistersaga.commands.CreateUserCommand;
 import bantads.airline.sagas.selfregistersaga.emailservice.EmailService;

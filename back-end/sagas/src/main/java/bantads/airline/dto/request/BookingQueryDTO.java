@@ -1,4 +1,4 @@
-package bantads.airline.dto;
+package bantads.airline.dto.request;
 
 import java.math.BigDecimal;
 import java.util.UUID;
