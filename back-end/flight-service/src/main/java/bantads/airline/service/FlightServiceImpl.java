@@ -25,6 +25,7 @@ import bantads.airline.dto.response.R07ResDTO2;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.exceptions.FlightNotFoundException;
+import bantads.airline.exceptions.NewFlightException;
 import bantads.airline.exceptions.NoFlightNotFoundException;
 import bantads.airline.model.Airport;
 import bantads.airline.model.Flight;
@@ -233,8 +234,6 @@ public class FlightServiceImpl implements FlightService {
         Airport departureAirport = airportRepository.getAirportByCode(r15QueDTO.getDepartureAirport());
         Airport arrivalAirport = airportRepository.getAirportByCode(r15QueDTO.getArrivalAirport());
 
-        // construindo o registro:
-
         Flight newFlight = Flight.builder()
                 .code(flightCode)
                 .flightDate(flightDate)
@@ -246,9 +245,11 @@ public class FlightServiceImpl implements FlightService {
                 .flightStatus("CONFIRMED")
                 .build();
 
-        newFlight = flightRepository.save(newFlight);
-
-        // fazer a dto de reposta, R15ResDTO:
+        try {
+            newFlight = flightRepository.save(newFlight);
+        } catch (Exception e) {
+            throw new NewFlightException("Cannot create flight");
+        }
 
         return new R15ResDTO(newFlight);
 
