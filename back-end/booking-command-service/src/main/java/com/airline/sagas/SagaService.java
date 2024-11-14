@@ -1,5 +1,6 @@
 package com.airline.sagas;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -46,8 +47,17 @@ public class SagaService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    // R07
     @Transactional
-    public BookingCreatedEvent insertBooking(CreateBookingCommand createBookingCommand) throws JsonProcessingException {
+    public BookingCreatedEvent insertBooking(CreateBookingCommand command) throws JsonProcessingException {
+
+        if (command.getMoneyValue() == null) {
+            command.setMoneyValue(BigDecimal.ZERO);
+        }
+
+        if (command.getUsedMiles() == null) {
+            command.setUsedMiles(0);
+        }
 
         String bookingCode;
 
@@ -57,13 +67,14 @@ public class SagaService {
 
         Booking booking = Booking.builder()
                 .bookingCode(bookingCode)
-                .flightCode(createBookingCommand.getFlightCode())
+                .flightCode(command.getFlightCode())
                 .bookingDate(ZonedDateTime.now(ZoneId.of("UTC")))
                 .bookingStatus(bookingStatusRep.findByStatusCode(1))
-                .moneySpent(createBookingCommand.getMoneyValue())
-                .milesSpent(createBookingCommand.getUsedMiles())
-                .numberOfSeats(createBookingCommand.getTotalSeats())
-                .userId(createBookingCommand.getUserId())
+                .moneySpent(command.getMoneyValue())
+                .milesSpent(command.getUsedMiles())
+                .numberOfSeats(command.getTotalSeats())
+                .userId(command.getUserId())
+                .transactionId(command.getTransactionId())
                 .build();
 
         booking = bookingRepository.save(booking);

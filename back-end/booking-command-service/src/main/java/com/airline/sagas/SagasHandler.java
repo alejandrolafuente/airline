@@ -38,6 +38,7 @@ public class SagasHandler {
 
             Map<?, ?> map = (Map<?, ?>) object;
 
+            // R07
             if ("CreateBookingCommand".equals(map.get("messageType"))) {
 
                 CreateBookingCommand createBookingCommand = objectMapper.convertValue(map, CreateBookingCommand.class);

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UpdateSeatsCommand {
-    private UUID flightId; // 44b9e844-ea19-44ef-9a01-461e152eacd2
+    private UUID flightId;
     private Integer totalSeats;
     private String messageType;
 

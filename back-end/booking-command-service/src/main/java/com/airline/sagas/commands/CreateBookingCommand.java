@@ -19,5 +19,6 @@ public class CreateBookingCommand {
     private Integer usedMiles;
     private Integer totalSeats;
     private String userId;
+    private UUID transactionId;
     private String messageType;
 }

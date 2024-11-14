@@ -1,5 +1,7 @@
 package bantads.airline.sagas.bookingsaga;
 
+import java.util.UUID;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ public class BookingSAGA {
 
     private BookingQueryDTO bookingQueryDTO;
 
+    private UUID transactionId;
+
     public void handleRequest(BookingQueryDTO bookingQueryDTO) throws JsonProcessingException {
 
         this.bookingQueryDTO = bookingQueryDTO;
@@ -45,6 +49,8 @@ public class BookingSAGA {
 
     public void handleMilesUpdatedEvent(MilesUpdatedEvent milesUpdatedEvent) throws JsonProcessingException {
 
+        this.transactionId = milesUpdatedEvent.getTransactionId();
+
         UpdateSeatsCommand updateSeatsCommand = UpdateSeatsCommand.builder()
                 .flightId(this.bookingQueryDTO.getFlightId())
                 .totalSeats(this.bookingQueryDTO.getTotalSeats())
@@ -59,8 +65,6 @@ public class BookingSAGA {
 
     public void handleSeatsUpdatedEvent(SeatsUpdatedEvent seatsUpdatedEvent) throws JsonProcessingException {
 
-        System.out.println("ALTERAÇÕES EM SERVIÇO DE VOO: " + seatsUpdatedEvent);
-
         CreateBookingCommand createBookingCommand = CreateBookingCommand.builder()
                 .flightId(this.bookingQueryDTO.getFlightId())
                 .flightCode(seatsUpdatedEvent.getFlightCode())
@@ -68,6 +72,7 @@ public class BookingSAGA {
                 .usedMiles(this.bookingQueryDTO.getUsedMiles())
                 .totalSeats(this.bookingQueryDTO.getTotalSeats()) // mudar para vir do servico voo
                 .userId(this.bookingQueryDTO.getUserId())
+                .transactionId(this.transactionId)
                 .messageType("CreateBookingCommand")
                 .build();
 

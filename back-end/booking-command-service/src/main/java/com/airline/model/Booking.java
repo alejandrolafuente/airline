@@ -45,10 +45,10 @@ public class Booking implements Serializable {
     @JoinColumn(name = "booking_status", referencedColumnName = "status_id", nullable = false)
     private BookingStatus bookingStatus;
 
-    @Column(name = "money_spent", nullable = true)
+    @Column(name = "money_spent", nullable = false)
     private BigDecimal moneySpent;
 
-    @Column(name = "miles_spent", nullable = true)
+    @Column(name = "miles_spent", nullable = false)
     private Integer milesSpent;
 
     @Column(name = "seats_number", nullable = false)
@@ -56,4 +56,7 @@ public class Booking implements Serializable {
 
     @Column(name = "user_id", nullable = false)
     private String userId;
+
+    @Column(name = "transaction_id", nullable = false, unique = true)
+    private UUID transactionId;
 }

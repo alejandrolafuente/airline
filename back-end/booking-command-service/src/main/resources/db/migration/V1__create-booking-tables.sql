@@ -24,10 +24,11 @@ CREATE TABLE IF NOT EXISTS booking_table (
     flight_code VARCHAR(8) NOT NULL,
     booking_date TIMESTAMP WITH TIME ZONE NOT NULL,
     booking_status UUID NOT NULL,
-    money_spent NUMERIC(10, 2), 
-    miles_spent INTEGER,
+    money_spent NUMERIC(10, 2) NOT NULL, 
+    miles_spent INTEGER NOT NULL,
     seats_number INTEGER NOT NULL,
     user_id VARCHAR(24) NOT NULL,
+    transaction_id UUID NOT NULL UNIQUE,
     CONSTRAINT fk_booking_status FOREIGN KEY (booking_status) REFERENCES status_table (status_id)
 );
 

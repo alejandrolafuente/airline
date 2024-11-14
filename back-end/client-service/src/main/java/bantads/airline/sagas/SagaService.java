@@ -134,7 +134,9 @@ public class SagaService {
 
                 client = clientRepository.save(client);
 
+                // prepara mensagem de volta para o orquestrador
                 MilesUpdatedEvent event = MilesUpdatedEvent.builder()
+                                .transactionId(transaction.getTransactionId())
                                 .milesBalance(client.getMiles())
                                 .messageType("MilesUpdatedEvent")
                                 .build();

@@ -1,35 +1,3 @@
 database container:
 
 docker run --name al-command-db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=password -e POSTGRES_DB=bookingCommand -p 5442:5432 -d postgres:latest
-
-COMO MANIPULAR NO JAVA:
-
-@Service
-public class BookingService {
-
-    @Autowired
-    private BookingRepository bookingRepository;
-
-    @Autowired
-    private BookingStatusRepository bookingStatusRepository;
-
-    public Booking createBooking(BookingDto bookingDto) {
-        // Buscar o status de acordo com o código ou sigla
-        BookingStatus status = bookingStatusRepository.findByStatusCode(1) // Exemplo: 1 é "BOOKED"
-                .orElseThrow(() -> new RuntimeException("Booking status not found"));
-
-        // Instanciar o objeto Booking com os dados recebidos do frontend
-        Booking booking = Booking.builder()
-                .bookingCode(bookingDto.getBookingCode())
-                .flightCode(bookingDto.getFlightCode())
-                .bookingDate(bookingDto.getBookingDate())
-                .moneySpent(bookingDto.getMoneySpent())
-                .milesSpent(bookingDto.getMilesSpent())
-                .userId(bookingDto.getUserId())
-                .bookingStatus(status)  // Associando o status pré-cadastrado
-                .build();
-
-        // Salvar a nova reserva
-        return bookingRepository.save(booking);
-    }
-}
