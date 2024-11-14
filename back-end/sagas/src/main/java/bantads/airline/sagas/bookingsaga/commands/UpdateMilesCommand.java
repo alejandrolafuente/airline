@@ -1,5 +1,7 @@
 package bantads.airline.sagas.bookingsaga.commands;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UpdateMilesCommand {
     private Integer usedMiles;
+    private BigDecimal moneyValue;
     private String userId;
     private String messageType;
 }

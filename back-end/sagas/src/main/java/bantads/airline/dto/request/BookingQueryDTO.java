@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookingQueryDTO {
     private UUID flightId;
-    private BigDecimal moneyValue;
-    private Integer usedMiles;
+    private BigDecimal moneyValue; // can be null
+    private Integer usedMiles;    // can be null
     private Integer totalSeats;
     private String userId;
 }

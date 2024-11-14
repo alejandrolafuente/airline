@@ -30,20 +30,17 @@ public class BookingSAGA {
 
         this.bookingQueryDTO = bookingQueryDTO;
 
-        // 1. ir no cliente e atualizar o saldo. se usedMiles = 0 ou null
-        // nao precisa atualizar o cliente
-        if (bookingQueryDTO.getUsedMiles() != 0 && bookingQueryDTO.getUsedMiles() != null) {
+        UpdateMilesCommand updateMilesCommand = UpdateMilesCommand.builder()
+                .usedMiles(bookingQueryDTO.getUsedMiles())
+                .moneyValue(bookingQueryDTO.getMoneyValue())
+                .userId(bookingQueryDTO.getUserId())
+                .messageType("UpdateMilesCommand")
+                .build();
 
-            UpdateMilesCommand updateMilesCommand = UpdateMilesCommand.builder()
-                    .usedMiles(bookingQueryDTO.getUsedMiles())
-                    .userId(bookingQueryDTO.getUserId())
-                    .messageType("UpdateMilesCommand")
-                    .build();
+        var message = objectMapper.writeValueAsString(updateMilesCommand);
 
-            var message = objectMapper.writeValueAsString(updateMilesCommand);
+        rabbitTemplate.convertAndSend("ClientRequestChannel", message);
 
-            rabbitTemplate.convertAndSend("ClientRequestChannel", message);
-        }
     }
 
     public void handleMilesUpdatedEvent(MilesUpdatedEvent milesUpdatedEvent) throws JsonProcessingException {

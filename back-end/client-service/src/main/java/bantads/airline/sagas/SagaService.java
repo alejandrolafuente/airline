@@ -1,5 +1,6 @@
 package bantads.airline.sagas;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -102,12 +103,34 @@ public class SagaService {
         }
 
         // R07
+        @Transactional
         public MilesUpdatedEvent updateMiles(UpdateMilesCommand updateMilesCommand) {
 
-                // FALTANDO TRANSACAO!!!
+                if (updateMilesCommand.getUsedMiles() == null) {
+                        updateMilesCommand.setUsedMiles(0);
+                }
+
+                if (updateMilesCommand.getMoneyValue() == null) {
+                        updateMilesCommand.setMoneyValue(BigDecimal.ZERO);
+                }
+
                 Client client = clientRepository.getClientByUserId(updateMilesCommand.getUserId()).orElseThrow(null);
 
-                client.setMiles(client.getMiles() - updateMilesCommand.getUsedMiles());
+                // primeiro vamos fazer a transação e depois atualizamos o saldo do cliente
+
+                MilesTransaction transaction = MilesTransaction.builder()
+                                .client(client)
+                                .transactionDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                                .moneyValue(updateMilesCommand.getMoneyValue())
+                                .milesQuantity(updateMilesCommand.getUsedMiles())
+                                .transactionType("OUTPUT")
+                                .description("FLIGHT BOOKING")
+                                .build();
+
+                transaction = milesTransactionRepository.save(transaction);
+
+                // atualiza saldo do cliente
+                client.setMiles(client.getMiles() - transaction.getMilesQuantity());
 
                 client = clientRepository.save(client);
 
