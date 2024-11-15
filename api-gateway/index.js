@@ -292,33 +292,29 @@ app.get('/booking/:id', async (req, res) => {
 });
 
 // R06 
-// api composition:
-// client: 
-//        saldo da tabela Client, (objeto)
-//        dia, hora, valor em reais, quantidade de milhas, descricao ("MILES PURCHASE") da tabela MilesTransaction 
-//        (array)
-// booking query:
-//        codigo de voo das reservas onde milesSpent != 0 da tabela BookingQuery (array)
-// flight:
-//        dia, hora, origem, destino ("CWB->GRU") da tabela Flight
 app.get('/miles-statement/:id', async (req, res) => {
 
     try {
 
         const userId = req.params.id;
 
-        const [balanceResponse, clientBookingsResponse] = await Promise.all([
-            axios.get(`http://localhost:8091/client/miles-statement/${userId}`),
-            axios.get(`http://localhost:8095/booking-query/client-bookings/${userId}`)
+        const [transactionsResponse] = await Promise.all([
+            axios.get(`http://localhost:8091/client/miles-statement/${userId}`)
         ]);
 
 
         // Extraindo os dados
-        const balance = balanceResponse.data;
-        const clientBookings = clientBookingsResponse.data;
+        const transactions = transactionsResponse.data;
 
-        console.log("\n\nBalance data: ", balance);
-        console.log("Client Bookings data: ", clientBookings);
+        console.log("\nTransacoes\n" + transactions);
+
+        res.status(200).json(transactions);
+        // const flightResponse = await axios.get(`http://localhost:8095/booking-query/client-bookings/${userId}`);
+
+        // const clientBookings = clientBookingsResponse.data;
+
+        // console.log("\n\nBalance data: ", balance);
+        // console.log("Client Bookings data: ", clientBookings);
 
 
     } catch (error) {
