@@ -97,7 +97,7 @@ public class ClientServiceImpl implements ClientService {
 
         R06ResDTO dto = R06ResDTO.builder()
                 .milesBalance(milesBalance)
-                .clientPurchasings(transactionDtos)
+                .clientTransactions(transactionDtos)
                 .build();
 
         return dto;

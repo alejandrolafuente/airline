@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.airline.dto.response.R03ResDTO;
@@ -34,5 +35,11 @@ public class BookingQueryAPI {
     public ResponseEntity<R04ResDTO> getBooking(@PathVariable(value = "id") String bookingId) {
         R04ResDTO dto = bookingQueryService.getBooking(bookingId);
         return ResponseEntity.ok().body(dto);
+    }
+
+    // R06 - 2
+    @GetMapping("/flight-codes")
+    public ResponseEntity<?> getFlightCodes(@RequestParam List<String> transactionIds) {
+        return null;
     }
 }

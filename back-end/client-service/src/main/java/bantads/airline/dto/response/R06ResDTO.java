@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class R06ResDTO {
     private Integer milesBalance;
-    private List<TransactionDTO> clientPurchasings;
+    private List<TransactionDTO> clientTransactions;
 }

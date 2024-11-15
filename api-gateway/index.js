@@ -304,18 +304,17 @@ app.get('/miles-statement/:id', async (req, res) => {
 
 
         // Extraindo os dados
-        const transactions = transactionsResponse.data;
+        const clientData = transactionsResponse.data;
 
-        console.log("\nTransacoes\n" + transactions);
+        // Usando filter e map para selecionar e extrair transactionId
+        const bookingTranIds = clientData.clientTransactions
+            .filter(transaction => transaction.description === "FLIGHT BOOKING")
+            .map(transaction => transaction.transactionId);
 
-        res.status(200).json(transactions);
-        // const flightResponse = await axios.get(`http://localhost:8095/booking-query/client-bookings/${userId}`);
+        // Fazendo a segunda requisição em booking query service com os ids das transacões?
+        const flightDetailsResponse = await axios.get(`http://localhost:8095/booking-query/flight-codes?transactionIds=${bookingTranIds}`);
 
-        // const clientBookings = clientBookingsResponse.data;
-
-        // console.log("\n\nBalance data: ", balance);
-        // console.log("Client Bookings data: ", clientBookings);
-
+        res.status(200).json(clientData);
 
     } catch (error) {
         if (error.response && error.response.data) {

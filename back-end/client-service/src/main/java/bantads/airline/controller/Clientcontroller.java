@@ -45,7 +45,7 @@ public class Clientcontroller {
 
     }
 
-    // R06
+    // R06 - 1
     @GetMapping("/miles-statement/{id}")
     public ResponseEntity<R06ResDTO> getMilesStatement(@PathVariable(value = "id") String userId) {
 
