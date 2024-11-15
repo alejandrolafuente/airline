@@ -90,7 +90,7 @@ public class SagaService {
         // send return back to sagas service:
 
         BookingCreatedEvent bookingCreatedEvent = BookingCreatedEvent.builder()
-                .bookingStatus(booking.getBookingCode())
+                .bookingStatus(booking.getBookingStatus().getStatusDescription())
                 .bookingCode(booking.getBookingCode())
                 .bookingDate(booking.getBookingDate()) // UTC local
                 .messageType("BookingCreatedEvent")
