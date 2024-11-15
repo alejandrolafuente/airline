@@ -1,6 +1,7 @@
 package com.airline.cqrs.commands;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,14 +13,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Command {
-    private String bookingId; // bookingCommandId
-    private String changeId;
+    private UUID bookingId; // bookingCommandId
+    private UUID changeId;
     private ZonedDateTime changeDate;
-    private String iStatusCommandId;
+    private UUID iStatusCommandId;
     private Integer iStatusCode;
     private String iStatusAcronym;
     private String iStatusDescription;
-    private String fStatusCommandId;
+    private UUID fStatusCommandId;
     private Integer fStatusCode;
     private String fStatusAcronym;
     private String fStatusDescription;

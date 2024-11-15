@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.airline.cqrs.commands.Command;
-import com.airline.sagas.SagasHandler;
+import com.airline.sagas.SagaService;
 import com.airline.sagas.commands.BookingCommand;
 import com.airline.service.BookingQueryService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,7 +21,7 @@ public class CommandsListener {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private SagasHandler sagasHandler;
+    private SagaService sagaService;
 
     @Autowired
     private BookingQueryService bookingQueryService;
@@ -39,13 +39,14 @@ public class CommandsListener {
 
             switch (messageType) {
 
-                case "BookingCommand" -> {// mudar para chamar direto o serviço e eliminar o sagasHandler
+                case "BookingCommand" -> {
                     BookingCommand bookingCommand = objectMapper.convertValue(map, BookingCommand.class);
-                    sagasHandler.handleBookingCommand(bookingCommand);
+                    
+                    sagaService.insertBooking(bookingCommand);
                 }
 
                 case "SynCommand" -> {
-                    
+
                     Command command = objectMapper.convertValue(map, Command.class);
 
                     bookingQueryService.syncronizeDBs(command);

@@ -81,27 +81,13 @@ public class SagaService {
 
         // send message to booking query service:
 
-        BookingCommand bookingCommand = BookingCommand.builder()
-                .bookingCommandId(booking.getBookingId())
-                .bookingCode(booking.getBookingCode())
-                .flightCode(booking.getFlightCode())
-                .bookingDate(booking.getBookingDate())
-                .statusCommandId(booking.getBookingStatus().getStatusId())
-                .statusCode(booking.getBookingStatus().getStatusCode())
-                .statusAcronym(booking.getBookingStatus().getStatusAcronym())
-                .statusDescription(booking.getBookingStatus().getStatusDescription())
-                .moneySpent(booking.getMoneySpent())
-                .milesSpent(booking.getMilesSpent())
-                .numberOfSeats(booking.getNumberOfSeats())
-                .userId(booking.getUserId())
-                .messageType("BookingCommand")
-                .build();
+        BookingCommand bookingCommand = new BookingCommand(booking);
 
         var message = objectMapper.writeValueAsString(bookingCommand);
 
         rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
 
-        // send return back to both handler and sagas service:
+        // send return back to sagas service:
 
         BookingCreatedEvent bookingCreatedEvent = BookingCreatedEvent.builder()
                 .bookingStatus(booking.getBookingCode())

@@ -15,12 +15,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class BookingCommand {
-    private UUID bookingCommandId; // * must save as String Type
+    private UUID bookingCommandId; 
     private String bookingCode;
     private String flightCode;
     private ZonedDateTime bookingDate;
     // booking status
-    private UUID statusCommandId; // * must save as String Type
+    private UUID statusCommandId; 
     private Integer statusCode;
     private String statusAcronym;
     private String statusDescription;
@@ -29,6 +29,7 @@ public class BookingCommand {
     private Integer milesSpent;
     private Integer numberOfSeats;
     private String userId;
+    private UUID transactionId;
     private String messageType;
 
     

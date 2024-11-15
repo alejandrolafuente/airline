@@ -32,7 +32,7 @@ public class BookingQuery implements Serializable {
     private UUID bookingId;
 
     @Column(name = "booking_command_id", nullable = false)
-    private String bookingCommandId; // * id in booking command service
+    private UUID bookingCommandId; // * id in booking command service
 
     @Column(name = "booking_code", nullable = false)
     private String bookingCode;
@@ -45,7 +45,7 @@ public class BookingQuery implements Serializable {
 
     // booking status
     @Column(name = "status_command_id", nullable = false)
-    private String statusCommandId; // * id in booking command service
+    private UUID statusCommandId; // * id in booking command service
 
     @Column(name = "status_code", nullable = false)
     private Integer statusCode;
@@ -57,10 +57,10 @@ public class BookingQuery implements Serializable {
     private String statusDescription;
     // *******************************************************
 
-    @Column(name = "money_spent", nullable = true)
+    @Column(name = "money_spent", nullable = false)
     private BigDecimal moneySpent;
 
-    @Column(name = "miles_spent")
+    @Column(name = "miles_spent", nullable = false)
     private Integer milesSpent;
 
     @Column(name = "seats_number", nullable = false)
@@ -69,14 +69,17 @@ public class BookingQuery implements Serializable {
     @Column(name = "user_id", nullable = false)
     private String userId;
 
+    @Column(name = "transaction_id", nullable = false)
+    private UUID transactionId;
+
     // constructor
     public BookingQuery(BookingCommand bookingCommand) {
 
-        this.bookingCommandId = bookingCommand.getBookingCommandId().toString();
+        this.bookingCommandId = bookingCommand.getBookingCommandId();
         this.bookingCode = bookingCommand.getBookingCode();
         this.flightCode = bookingCommand.getFlightCode();
         this.bookingDate = bookingCommand.getBookingDate();
-        this.statusCommandId = bookingCommand.getStatusCommandId().toString();
+        this.statusCommandId = bookingCommand.getStatusCommandId();
         this.statusCode = bookingCommand.getStatusCode();
         this.statusAcronym = bookingCommand.getStatusAcronym();
         this.statusDescription = bookingCommand.getStatusDescription();
@@ -84,5 +87,6 @@ public class BookingQuery implements Serializable {
         this.milesSpent = bookingCommand.getMilesSpent();
         this.numberOfSeats = bookingCommand.getNumberOfSeats();
         this.userId = bookingCommand.getUserId();
+        this.transactionId = bookingCommand.getTransactionId();
     }
 }
