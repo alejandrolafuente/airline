@@ -16,7 +16,7 @@ import com.airline.service.BookingQueryService;
 
 @RestController
 @CrossOrigin
-@RequestMapping("bookingquery")
+@RequestMapping("booking-query")
 public class BookingQueryAPI {
 
     @Autowired

@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import bantads.airline.dto.query.R05QueDTO;
-import bantads.airline.dto.response.PurchaseDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R05ResDTO;
 import bantads.airline.dto.response.R06ResDTO;
+import bantads.airline.dto.response.TransactionDTO;
 import bantads.airline.exceptions.ClientNotFoundException;
 import bantads.airline.exceptions.ClientUpdateException;
 import bantads.airline.exceptions.MilesTransactionException;
@@ -91,14 +91,13 @@ public class ClientServiceImpl implements ClientService {
 
                 () -> new ClientNotFoundException("Client not found for User ID: " + userId));
 
-        List<MilesTransaction> milesPurchases = milesTransactionRepository.getClientPurchases(client.getClientId(),
-                "MILES PURCHASE");
+        List<MilesTransaction> milesTransactions = milesTransactionRepository.getClientTransactions(client.getClientId());
 
-        List<PurchaseDTO> purchasesDtos = milesPurchases.stream().map(PurchaseDTO::new).toList();
+        List<TransactionDTO> transactionDtos = milesTransactions.stream().map(TransactionDTO::new).toList();
 
         R06ResDTO dto = R06ResDTO.builder()
                 .milesBalance(milesBalance)
-                .clientPurchasings(purchasesDtos)
+                .clientPurchasings(transactionDtos)
                 .build();
 
         return dto;

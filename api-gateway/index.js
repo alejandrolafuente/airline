@@ -225,7 +225,7 @@ app.get('/booking/:id', async (req, res) => {
 
         const [bookingResponse] = await Promise.all([
             // Requisição para pegar o balance do cliente
-            axios.get(`http://localhost:8095/bookingquery/booking/${bookingId}`),
+            axios.get(`http://localhost:8095/booking-query/booking/${bookingId}`),
 
         ]);
 
@@ -309,7 +309,7 @@ app.get('/miles-statement/:id', async (req, res) => {
 
         const [balanceResponse, clientBookingsResponse] = await Promise.all([
             axios.get(`http://localhost:8091/client/miles-statement/${userId}`),
-            axios.get(`http://localhost:8095/bookingquery/client-bookings/${userId}`)
+            axios.get(`http://localhost:8095/booking-query/client-bookings/${userId}`)
         ]);
 
 
