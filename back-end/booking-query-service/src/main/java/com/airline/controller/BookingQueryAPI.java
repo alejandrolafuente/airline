@@ -27,6 +27,7 @@ public class BookingQueryAPI {
     // R03 - 2
     @GetMapping("/client-bookings/{id}")
     public ResponseEntity<List<R03ResDTO>> getClientBookings(@PathVariable(value = "id") String userId) {
+        System.out.println("CHEGOU" + userId);
         List<R03ResDTO> dto = bookingQueryService.findClientBookings(userId);
         return ResponseEntity.ok().body(dto);
     }

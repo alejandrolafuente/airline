@@ -121,6 +121,7 @@ public class SagaService {
 
                 // Cria registro de histórico
                 BookingStatus finalStatus = booking.getBookingStatus();
+                
                 StatusChangeHist newHistory = StatusChangeHist.builder()
                         .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
                         .booking(booking)

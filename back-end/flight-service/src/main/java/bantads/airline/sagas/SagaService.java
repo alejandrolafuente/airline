@@ -40,7 +40,7 @@ public class SagaService {
     // R13 - cancel flight
     public FlightCancelledEvent cancelFlight(CancelFlightCommand cancelFlightCommand) {
 
-        Flight flight = flightRepository.findById(UUID.fromString(cancelFlightCommand.getFlightId())).orElse(null);
+        Flight flight = flightRepository.findById(cancelFlightCommand.getFlightId()).orElse(null);
 
         flight.setFlightStatus("CANCELLED");
 

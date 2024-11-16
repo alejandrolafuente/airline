@@ -1,5 +1,7 @@
 package bantads.airline.sagas.cancelflightsaga;
 
+import java.util.UUID;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +25,7 @@ public class CancelFlightSaga {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public void handleRequest(String flightId) throws JsonProcessingException {
+    public void handleRequest(UUID flightId) throws JsonProcessingException {
 
         // 1 ir para servico de voo e atualizar o voo de "CONFIRMED" para "CANCELLED"
         CancelFlightCommand cancelFlightCommand = CancelFlightCommand.builder()

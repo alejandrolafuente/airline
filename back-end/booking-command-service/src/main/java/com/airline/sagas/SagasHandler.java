@@ -38,42 +38,50 @@ public class SagasHandler {
 
             Map<?, ?> map = (Map<?, ?>) object;
 
-            // R07
-            if ("CreateBookingCommand".equals(map.get("messageType"))) {
+            String messageType = (String) map.get("messageType");
 
-                CreateBookingCommand createBookingCommand = objectMapper.convertValue(map, CreateBookingCommand.class);
+            switch (messageType) {
 
-                BookingCreatedEvent bookingCreatedEvent = sagaService.insertBooking(createBookingCommand);
+                case "CreateBookingCommand" -> {
 
-                var message = objectMapper.writeValueAsString(bookingCreatedEvent);
+                    CreateBookingCommand createBookingCommand = objectMapper.convertValue(map,
+                            CreateBookingCommand.class);
 
-                rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
+                    BookingCreatedEvent bookingCreatedEvent = sagaService.insertBooking(createBookingCommand);
 
-            } else if ("CompleteBookingCommand".equals(map.get("messageType"))) {
+                    var message = objectMapper.writeValueAsString(bookingCreatedEvent);
 
-                CompleteBookingCommand completeBookingCommand = objectMapper.convertValue(map,
-                        CompleteBookingCommand.class);
+                    rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
+                    break;
+                }
 
-                BookingsCompletedEvent bookingsCompletedEvent = sagaService.completeBookings(completeBookingCommand);
+                case "CompleteBookingCommand" -> {
 
-                var message = objectMapper.writeValueAsString(bookingsCompletedEvent);
+                    CompleteBookingCommand completeBookingCommand = objectMapper.convertValue(map,
+                            CompleteBookingCommand.class);
 
-                rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
+                    BookingsCompletedEvent bookingsCompletedEvent = sagaService
+                            .completeBookings(completeBookingCommand);
 
-            } else if ("CancelBookingCommand".equals(map.get("messageType"))) {
+                    var message = objectMapper.writeValueAsString(bookingsCompletedEvent);
 
-                CancelBookingCommand cancelBookingCommand = objectMapper.convertValue(map,
-                        CancelBookingCommand.class);
+                    rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
+                    break;
+                }
 
-                BookingCancelledEvent bookingCancelledEvent = sagaService.cancelBookings(cancelBookingCommand);
+                case "CancelBookingCommand" -> {
 
-                var message = objectMapper.writeValueAsString(bookingCancelledEvent);
+                    CancelBookingCommand cancelBookingCommand = objectMapper.convertValue(map,
+                            CancelBookingCommand.class);
 
-                rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
+                    BookingCancelledEvent bookingCancelledEvent = sagaService.cancelBookings(cancelBookingCommand);
 
+                    var message = objectMapper.writeValueAsString(bookingCancelledEvent);
+
+                    rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
+                    break;
+                }
             }
-
         }
     }
-
 }

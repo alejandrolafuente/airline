@@ -30,6 +30,7 @@ public class BookingQueryServImpl implements BookingQueryService {
     @Override
     public List<R03ResDTO> findClientBookings(String userId) {
 
+        System.out.println("CHEGOU" + userId);
         List<BookingQuery> clientBookings = bookingQueryRepository.findByUserId(userId)
                 .filter(bookings -> !bookings.isEmpty()) // Verifica se a lista nao esta vazia
                 .orElseThrow(() -> new UserBookingsNotFoundException("Bookings not found for user: " + userId));

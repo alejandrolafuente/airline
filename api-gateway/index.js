@@ -139,12 +139,15 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
             // Requisição para pegar o balance do cliente
             axios.get(`http://localhost:8091/client/balance/${userId}`),
             // Requisição para pegar as reservas de voos
-            axios.get(`http://localhost:8095/bookingquery/client-bookings/${userId}`)
+            axios.get(`http://localhost:8095/booking-query/client-bookings/${userId}`)
         ]);
 
         // Extraindo os dados
         const balance = balanceResponse.data;
         const clientBookings = clientBookingsResponse.data;
+
+        console.log(balance);
+        console.log(clientBookings);
 
         // Extraindo os códigos de voo das reservas
         const flightCodes = clientBookings.map(flight => flight.flightCode).join(',');

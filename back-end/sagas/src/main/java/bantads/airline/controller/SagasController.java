@@ -1,5 +1,6 @@
 package bantads.airline.controller;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -94,7 +95,7 @@ public class SagasController {
 
     // R13 - Cancelamento do Voo
     @PutMapping("/cancel-flight/{id}")
-    public ResponseEntity<?> cancelFlight(@PathVariable("id") String flightId) throws JsonProcessingException {
+    public ResponseEntity<?> cancelFlight(@PathVariable("id") UUID flightId) throws JsonProcessingException {
 
         cancelFlightSaga.handleRequest(flightId);
 
