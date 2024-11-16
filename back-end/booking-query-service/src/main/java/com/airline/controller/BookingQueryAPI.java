@@ -1,6 +1,7 @@
 package com.airline.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,8 @@ public class BookingQueryAPI {
 
     // R06 - 2
     @GetMapping("/flight-codes")
-    public ResponseEntity<?> getFlightCodes(@RequestParam List<String> transactionIds) {
-        return null;
+    public ResponseEntity<List<String>> getFlightCodes(@RequestParam List<UUID> transactionIds) {
+        List<String> dto = bookingQueryService.getFlightCodes(transactionIds);
+        return ResponseEntity.ok().body(dto);
     }
 }

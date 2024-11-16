@@ -312,7 +312,10 @@ app.get('/miles-statement/:id', async (req, res) => {
             .map(transaction => transaction.transactionId);
 
         // Fazendo a segunda requisição em booking query service com os ids das transacões?
-        const flightDetailsResponse = await axios.get(`http://localhost:8095/booking-query/flight-codes?transactionIds=${bookingTranIds}`);
+        const flihgtCodes = await axios.get(`http://localhost:8095/booking-query/flight-codes?transactionIds=${bookingTranIds}`);
+
+        
+        console.log(flihgtCodes.data);
 
         res.status(200).json(clientData);
 

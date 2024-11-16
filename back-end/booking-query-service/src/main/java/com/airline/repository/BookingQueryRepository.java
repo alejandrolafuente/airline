@@ -15,4 +15,6 @@ public interface BookingQueryRepository extends JpaRepository<BookingQuery, UUID
     Optional<List<BookingQuery>> findByUserId(String userId);
 
     BookingQuery findByBookingCommandId(UUID bookingCommandId);
+
+    Optional<BookingQuery> findByTransactionId(UUID transactionId);
 }

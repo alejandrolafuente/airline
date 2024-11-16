@@ -1,5 +1,6 @@
 package com.airline.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,6 +46,25 @@ public class BookingQueryServImpl implements BookingQueryService {
                 () -> new BookingNotFoundException("Booking not found for ID: " + bookingId));
 
         return new R04ResDTO(booking);
+    }
+
+    // R06 - 2
+    @Override
+    public List<String> getFlightCodes(List<UUID> transactionIds) {
+
+        List<String> listR06ResDTO = new ArrayList<>();
+
+        for (UUID uuid : transactionIds) {
+
+            BookingQuery bookingQuery = bookingQueryRepository.findByTransactionId(uuid).orElseThrow(null);
+
+            String flightCode = bookingQuery.getFlightCode();
+
+            listR06ResDTO.add(flightCode);
+
+        }
+
+        return listR06ResDTO;
     }
 
     // R10, R12: requests from cqrs

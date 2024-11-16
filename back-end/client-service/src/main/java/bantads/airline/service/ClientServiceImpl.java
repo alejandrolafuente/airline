@@ -81,7 +81,7 @@ public class ClientServiceImpl implements ClientService {
         return dto;
     }
 
-    // R06
+    // R06 - 1
     @Override
     public R06ResDTO getMilesStatement(String userId) {
 
