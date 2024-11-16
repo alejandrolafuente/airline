@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @NoArgsConstructor
-public class R07ResDTO {
+public class GenResDTO {
     private String message;
 
-    public R07ResDTO(String msg) {
+    public GenResDTO(String msg) {
         message = msg;
     }
 }

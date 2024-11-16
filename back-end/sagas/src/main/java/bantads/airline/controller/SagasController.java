@@ -19,8 +19,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import bantads.airline.dto.request.BookingQueryDTO;
 import bantads.airline.dto.request.SelfRegDTO;
-import bantads.airline.dto.response.R07ResDTO;
+import bantads.airline.dto.response.GenResDTO;
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
+import bantads.airline.sagas.cancelbookinsaga.CancelBookingSaga;
 import bantads.airline.sagas.cancelflightsaga.CancelFlightSaga;
 import bantads.airline.sagas.completeflightsaga.CompleteFlightSaga;
 import bantads.airline.sagas.selfregistersaga.ManageRegisterQuery;
@@ -44,6 +45,9 @@ public class SagasController {
 
     @Autowired
     private CompleteFlightSaga completeFlightSaga;
+
+    @Autowired
+    private CancelBookingSaga cancelBookingSaga;
 
     @Autowired
     private CancelFlightSaga cancelFlightSaga;
@@ -82,15 +86,27 @@ public class SagasController {
 
     // R07 - Booking
     @PostMapping("/booking")
-    public ResponseEntity<R07ResDTO> flightBooking(@RequestBody BookingQueryDTO bookingQueryDTO)
+    public ResponseEntity<GenResDTO> flightBooking(@RequestBody BookingQueryDTO bookingQueryDTO)
             throws JsonProcessingException, InterruptedException, ExecutionException {
 
         this.bookingSAGA.handleRequest(bookingQueryDTO);
 
-        R07ResDTO dto = new R07ResDTO("Flight reservation made");
+        GenResDTO dto = new GenResDTO("Flight reservation made");
 
         return ResponseEntity.ok().body(dto);
 
+    }
+
+    // R08 - Cancel Booking
+    @PutMapping("/cancel-booking/{id}")
+    public ResponseEntity<GenResDTO> cancelBooking(@PathVariable("id") UUID bookingId) throws JsonProcessingException {
+
+        cancelBookingSaga.handleRequest(bookingId);
+
+        GenResDTO dto = new GenResDTO("Booking Cancelled");
+
+        return ResponseEntity.ok().body(dto);
+        
     }
 
     // R13 - Cancelamento do Voo

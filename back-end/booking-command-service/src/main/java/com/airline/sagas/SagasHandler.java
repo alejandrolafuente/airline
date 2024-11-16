@@ -7,6 +7,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.airline.sagas.commands.CancelBookingByIdCommand;
 import com.airline.sagas.commands.CancelBookingCommand;
 import com.airline.sagas.commands.CompleteBookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
@@ -79,6 +80,14 @@ public class SagasHandler {
                     var message = objectMapper.writeValueAsString(bookingCancelledEvent);
 
                     rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
+                    break;
+                }
+
+                case "CancelBookingByIdCommand" -> {
+
+                    CancelBookingByIdCommand cancelBookingByIdCommand = objectMapper.convertValue(map,
+                            CancelBookingByIdCommand.class);
+
                     break;
                 }
             }
