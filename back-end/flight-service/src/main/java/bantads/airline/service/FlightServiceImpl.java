@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import bantads.airline.dto.request.R07QueDTO1;
 import bantads.airline.dto.request.R15QueDTO;
-import bantads.airline.dto.response.AirportDTO;
 import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R04ResDTO;
 import bantads.airline.dto.response.R07ResDTO1;
@@ -25,6 +24,7 @@ import bantads.airline.dto.response.R07ResDTO2;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.exceptions.FlightNotFoundException;
+import bantads.airline.exceptions.FlightsListNotFoundException;
 import bantads.airline.exceptions.MissingFlightException;
 import bantads.airline.exceptions.NewFlightException;
 import bantads.airline.exceptions.NoFlightNotFoundException;
@@ -180,36 +180,22 @@ public class FlightServiceImpl implements FlightService {
         // gets the current date in UTC
         ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of("UTC"));
 
-        System.out.println("current date in UTC => " + currentDate);
-
         // calculates the next 48 hours
         ZonedDateTime futureDate = currentDate.plusHours(48);
 
-        // fetches the flights
-        List<Flight> flightsList = flightRepository.getNext48HoursFlights(currentDate, futureDate);
+        List<Flight> flightsList;
 
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        try {
+            flightsList = flightRepository.getNext48HoursFlights(currentDate, futureDate);
+        } catch (Exception e) {
+            throw new FlightsListNotFoundException("Cannot find flights, DB is down");
+        }
 
         List<R11ResDTO> listR11ResDTO = new ArrayList<>();
 
         for (Flight flight : flightsList) {
 
-            ZonedDateTime localtime = flight.getFlightDate().withZoneSameInstant(ZoneId.of("America/Sao_Paulo"));
-
-            AirportDTO departureAirportDTO = new AirportDTO(flight.getDepartureAirport());
-
-            AirportDTO arrivalAirportDTO = new AirportDTO(flight.getArrivalAirport());
-
-            R11ResDTO dto = R11ResDTO.builder()
-                    .flightId(flight.getFlightId())
-                    .flightDate(localtime.format(dateFormatter))
-                    .flighTime(localtime.format(timeFormatter))
-                    .departureAirport(departureAirportDTO)
-                    .arrivalAirport(arrivalAirportDTO)
-                    .build();
-
+            R11ResDTO dto = new R11ResDTO(flight);
             listR11ResDTO.add(dto);
         }
 

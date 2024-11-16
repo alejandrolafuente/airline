@@ -23,13 +23,20 @@ Um fluxo padrão para desenvolvimento versionado é:
 - Assim todos ficam protegidos das modificações dos outro. 
 - "Ah, eu fui trabalhando aqui e percebi que esqueci de commitar, agora vou enviar tudo de uma vez com o título 'update'". - Não faça isso. Foi isso que trouxe a gente pro cenário de MUITO mais trabalho pra arrumar. O jeito descrito aqui é o principal modelo de produção das empresas, é bom irem se acostumando a fazer pequenas modificações e commitar com mais frequência
 
+// HISTÓRICO DE REQUISITOS PENDENTES
 
-/back-end$ git push
-fatal: The current branch R05-Compra-de-Milhas has no upstream branch.
-To push the current branch and set the remote as upstream, use
+R01 - PENDENTE *
+R02 - PENDENTE *
+R03 - PRONTO 
+R04 - PRONTO 
+R05 - PRONTO
+R06 - PENDENTE *
+R07 - PRONTO 
+R11 - PRONTO
 
-    git push --set-upstream origin R05-Compra-de-Milhas
+VENDO AGORA:
 
+R13 , DEPOIS R08
 
 
 

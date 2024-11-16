@@ -61,11 +61,25 @@ public class ResourceExceptionHandler {
         StandardError error = StandardError.builder()
                 .timestamp(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant())
                 .status(HttpStatus.NOT_FOUND.value())
-                .error("Missing Flight")
+                .error("No Flights Found")
                 .message(e.getMessage())
                 .path(request.getRequestURI())
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(FlightsListNotFoundException.class)
+    public ResponseEntity<StandardError> missingFlight(FlightsListNotFoundException e, HttpServletRequest request) {
+
+        StandardError error = StandardError.builder()
+                .timestamp(ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Cannot connect to DB")
+                .message(e.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }

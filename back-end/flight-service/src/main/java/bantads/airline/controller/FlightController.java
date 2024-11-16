@@ -20,6 +20,7 @@ import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R04ResDTO;
 import bantads.airline.dto.response.R07ResDTO1;
 import bantads.airline.dto.response.R07ResDTO2;
+import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.service.FlightService;
 
@@ -31,7 +32,7 @@ public class FlightController {
     @Autowired
     private FlightService flightService;
 
-    // R03 - 3
+    // R03 - 3 ; R06 - 3
     @GetMapping("/client-flights")
     public ResponseEntity<List<R03ResDTO>> getClientflights(@RequestParam List<String> flightCodes) {
         List<R03ResDTO> dto = flightService.getClientFlights(flightCodes);
@@ -46,14 +47,14 @@ public class FlightController {
         return ResponseEntity.ok().body(dto);
     }
 
-    // R07-1
+    // R07 - 1
     @GetMapping("/searchflights")
     public ResponseEntity<List<R07ResDTO1>> getClientRequestflights(@RequestBody R07QueDTO1 r07QueDTO1) {
         List<R07ResDTO1> dto = flightService.getClientRequestflights(r07QueDTO1);
         return ResponseEntity.ok().body(dto);
     }
 
-    // R07 passo 2
+    // R07 - 2
     @GetMapping("/{id}")
     public ResponseEntity<R07ResDTO2> getFlight(@PathVariable(value = "id") String flightId) {
         R07ResDTO2 dto = flightService.getFlight(flightId);
@@ -63,8 +64,9 @@ public class FlightController {
 
     // R11
     @GetMapping("/flights")
-    public ResponseEntity<?> getflights() {
-        return new ResponseEntity<>(flightService.getflights(), HttpStatus.OK);
+    public ResponseEntity<List<R11ResDTO>> getflights() {
+        List<R11ResDTO> dto = flightService.getflights();
+        return ResponseEntity.ok().body(dto);
     }
 
     // R15

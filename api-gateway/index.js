@@ -128,16 +128,11 @@ app.get('/bookingquery/bookedflights/:id', (req, res, next) => {
 
 
 // R03
-
 // app.get('/api-composition/combined-info/:id', validateTokenProxy, async (req, res) => {
 app.get('/api-composition/combined-info/:id', async (req, res) => {
 
     try {
         const userId = req.params.id;
-
-        console.log("\n\nR03 - API COMPOSITION:\n\n");
-
-        console.log("User ID: ", userId);
 
         // Fazendo as duas primeiras requisições em paralelo
         const [balanceResponse, clientBookingsResponse] = await Promise.all([
@@ -147,25 +142,15 @@ app.get('/api-composition/combined-info/:id', async (req, res) => {
             axios.get(`http://localhost:8095/bookingquery/client-bookings/${userId}`)
         ]);
 
-        // Verificando os status das respostas
-        console.log("Client service response status: ", balanceResponse.status);
-        console.log("Booking query service response status: ", clientBookingsResponse.status);
-
         // Extraindo os dados
         const balance = balanceResponse.data;
         const clientBookings = clientBookingsResponse.data;
-
-        console.log("\n\nBalance data: ", balance);
-        console.log("Client Bookings data: ", clientBookings);
 
         // Extraindo os códigos de voo das reservas
         const flightCodes = clientBookings.map(flight => flight.flightCode).join(',');
 
         // Fazendo a terceira requisição com os códigos de voo
         const flightDetailsResponse = await axios.get(`http://localhost:8093/flight/client-flights?flightCodes=${flightCodes}`);
-
-        console.log("Flight details response status: ", flightDetailsResponse.status);
-        console.log("Flight details data: ", flightDetailsResponse.data);
 
         const flights = flightDetailsResponse.data;
 
@@ -229,17 +214,8 @@ app.get('/booking/:id', async (req, res) => {
 
         ]);
 
-        // Verificando os status das respostas
-        console.log("Client service response status: ", bookingResponse.status);
-
         // Extraindo os dados
         const booking = bookingResponse.data;
-
-
-        console.log("\n\nDADOS DA RESERVA: ", booking);
-        res.status(200);
-
-        // **
 
         // Extraindo o código de voo da reserva
         const flightCode = booking.flightCode;
@@ -302,7 +278,6 @@ app.get('/miles-statement/:id', async (req, res) => {
             axios.get(`http://localhost:8091/client/miles-statement/${userId}`)
         ]);
 
-
         // Extraindo os dados
         const clientData = transactionsResponse.data;
 
@@ -312,10 +287,14 @@ app.get('/miles-statement/:id', async (req, res) => {
             .map(transaction => transaction.transactionId);
 
         // Fazendo a segunda requisição em booking query service com os ids das transacões?
-        const flihgtCodes = await axios.get(`http://localhost:8095/booking-query/flight-codes?transactionIds=${bookingTranIds}`);
+        const bookingQueryResponse = await axios.get(`http://localhost:8095/booking-query/flight-codes?transactionIds=${bookingTranIds}`);
 
-        
-        console.log(flihgtCodes.data);
+        flightCodes = bookingQueryResponse.data;
+
+        // agora ir para o serviço de voos 
+        const flightDetailsResponse = await axios.get(`http://localhost:8093/flight/client-flights?flightCodes=${flightCodes}`);
+
+        console.log(flightDetailsResponse.data);
 
         res.status(200).json(clientData);
 

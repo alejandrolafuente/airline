@@ -39,35 +39,45 @@ public class SagasHandler {
 
             Map<?, ?> map = (Map<?, ?>) object;
 
-            if ("UpdateSeatsCommand".equals(map.get("messageType"))) {
+            String messageType = (String) map.get("messageType");
 
-                UpdateSeatsCommand updateSeatsCommand = objectMapper.convertValue(map, UpdateSeatsCommand.class);
+            switch (messageType) {
 
-                SeatsUpdatedEvent seatsUpdatedEvent = sagaService.updateSeats(updateSeatsCommand);
+                case "UpdateSeatsCommand" -> {
 
-                var message = objectMapper.writeValueAsString(seatsUpdatedEvent);
+                    UpdateSeatsCommand updateSeatsCommand = objectMapper.convertValue(map, UpdateSeatsCommand.class);
 
-                rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+                    SeatsUpdatedEvent seatsUpdatedEvent = sagaService.updateSeats(updateSeatsCommand);
 
-            } else if ("CompFlightCommand".equals(map.get("messageType"))) {
+                    var message = objectMapper.writeValueAsString(seatsUpdatedEvent);
 
-                CompFlightCommand compFlightCommand = objectMapper.convertValue(map, CompFlightCommand.class);
+                    rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+                    break;
+                }
 
-                FlightCompletedEvent flightCompletedEvent = sagaService.completeFlight(compFlightCommand);
+                case "CompFlightCommand" -> {
 
-                var message = objectMapper.writeValueAsString(flightCompletedEvent);
+                    CompFlightCommand compFlightCommand = objectMapper.convertValue(map, CompFlightCommand.class);
 
-                rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+                    FlightCompletedEvent flightCompletedEvent = sagaService.completeFlight(compFlightCommand);
 
-            } else if ("CancelFlightCommand".equals(map.get("messageType"))) {
+                    var message = objectMapper.writeValueAsString(flightCompletedEvent);
 
-                CancelFlightCommand cancelFlightCommand = objectMapper.convertValue(map, CancelFlightCommand.class);
+                    rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+                    break;
+                }
 
-                FlightCancelledEvent flightCancelledEvent = sagaService.cancelFlight(cancelFlightCommand);
+                case "CancelFlightCommand" -> {
 
-                var message = objectMapper.writeValueAsString(flightCancelledEvent);
+                    CancelFlightCommand cancelFlightCommand = objectMapper.convertValue(map, CancelFlightCommand.class);
 
-                rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+                    FlightCancelledEvent flightCancelledEvent = sagaService.cancelFlight(cancelFlightCommand);
+
+                    var message = objectMapper.writeValueAsString(flightCancelledEvent);
+
+                    rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+                    break;
+                }
 
             }
 

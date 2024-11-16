@@ -92,6 +92,15 @@ public class SagasController {
 
     }
 
+    // R13 - Cancelamento do Voo
+    @PutMapping("/cancel-flight/{id}")
+    public ResponseEntity<?> cancelFlight(@PathVariable("id") String flightId) throws JsonProcessingException {
+
+        cancelFlightSaga.handleRequest(flightId);
+
+        return new ResponseEntity<>("Flight cancelled, check flight, booking and client data bases", HttpStatus.OK);
+    }
+
     // R14 - Realização do Voo
     @PutMapping("/complete-flight/{id}")
     public ResponseEntity<?> completeFlight(@PathVariable("id") String flightId) throws JsonProcessingException {
@@ -101,12 +110,4 @@ public class SagasController {
         return new ResponseEntity<>("Flight Completed, check flight and booking data bases", HttpStatus.OK);
     }
 
-    // R13 - Cancelamento do Voo
-    @PutMapping("/cancel-flight/{id}")
-    public ResponseEntity<?> cancelFlight(@PathVariable("id") String flightId) throws JsonProcessingException {
-
-        cancelFlightSaga.handleRequest(flightId);
-
-        return new ResponseEntity<>("Flight cancelled, check flight, booking and client data bases", HttpStatus.OK);
-    }
 }

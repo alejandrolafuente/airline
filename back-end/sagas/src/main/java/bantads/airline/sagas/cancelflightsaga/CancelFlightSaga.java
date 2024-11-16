@@ -25,7 +25,7 @@ public class CancelFlightSaga {
 
     public void handleRequest(String flightId) throws JsonProcessingException {
 
-        // 1 ir para servico de voo e atualizar o voo de "CONFIRMED" para "COMPLETED"
+        // 1 ir para servico de voo e atualizar o voo de "CONFIRMED" para "CANCELLED"
         CancelFlightCommand cancelFlightCommand = CancelFlightCommand.builder()
                 .flightId(flightId)
                 .messageType("CancelFlightCommand")
