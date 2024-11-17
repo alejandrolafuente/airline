@@ -8,6 +8,7 @@ import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R04ResDTO;
 import bantads.airline.dto.response.R07ResDTO1;
 import bantads.airline.dto.response.R07ResDTO2;
+import bantads.airline.dto.response.R09ResDTO;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 
@@ -24,6 +25,9 @@ public interface FlightService {
 
     // R07 - 2
     R07ResDTO2 getFlight(String flightID);
+
+    // R09 - 2
+    R09ResDTO searchFlight(String flightCode);
 
     // R11
     List<R11ResDTO> getflights();

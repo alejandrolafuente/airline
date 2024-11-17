@@ -47,6 +47,7 @@ public class BookingQueryAPI {
         return ResponseEntity.ok().body(dto);
     }
 
+    // R09 - 1
     @GetMapping("/search-booking/{code}")
     public ResponseEntity<R09ResDTO> searchBooking(@PathVariable(value = "code") String bookingCode) {
         R09ResDTO dto = bookingQueryService.searchBooking(bookingCode);

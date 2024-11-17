@@ -21,6 +21,7 @@ import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R04ResDTO;
 import bantads.airline.dto.response.R07ResDTO1;
 import bantads.airline.dto.response.R07ResDTO2;
+import bantads.airline.dto.response.R09ResDTO;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.exceptions.FlightNotFoundException;
@@ -173,6 +174,16 @@ public class FlightServiceImpl implements FlightService {
         return null;
     }
 
+    // R09 - 2
+    @Override
+    public R09ResDTO searchFlight(String flightCode) {
+
+        Flight flight = flightRepository.getFlightByCode(flightCode)
+                .orElseThrow(() -> new FlightNotFoundException("Flight with code " + flightCode + " not found."));
+
+        return new R09ResDTO(flight);
+    }
+
     // R11
     @Override
     public List<R11ResDTO> getflights() {
@@ -270,5 +281,4 @@ public class FlightServiceImpl implements FlightService {
         // Converter para UTC
         return localDateTime.withZoneSameInstant(ZoneOffset.UTC);
     }
-
 }

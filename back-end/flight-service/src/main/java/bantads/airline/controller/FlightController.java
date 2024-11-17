@@ -20,6 +20,7 @@ import bantads.airline.dto.response.R03ResDTO;
 import bantads.airline.dto.response.R04ResDTO;
 import bantads.airline.dto.response.R07ResDTO1;
 import bantads.airline.dto.response.R07ResDTO2;
+import bantads.airline.dto.response.R09ResDTO;
 import bantads.airline.dto.response.R11ResDTO;
 import bantads.airline.dto.response.R15ResDTO;
 import bantads.airline.service.FlightService;
@@ -60,6 +61,13 @@ public class FlightController {
         R07ResDTO2 dto = flightService.getFlight(flightId);
         return ResponseEntity.ok().body(dto);
 
+    }
+
+    // R09 - 2
+    @GetMapping("/search-flight/{code}")
+    public ResponseEntity<R09ResDTO> searchFlightFlight(@PathVariable(value = "code") String flightCode) {
+        R09ResDTO dto = flightService.searchFlight(flightCode);
+        return ResponseEntity.ok().body(dto);
     }
 
     // R11
