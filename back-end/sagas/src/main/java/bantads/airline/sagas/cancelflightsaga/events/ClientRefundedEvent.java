@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ClientRefundedEvent {
+    private String saga;
     private String name;
     private BigDecimal refundMoney;
     private Integer refundMiles;

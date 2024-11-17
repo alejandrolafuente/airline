@@ -15,6 +15,7 @@ import bantads.airline.sagas.cancelbookinsaga.commands.FreeSeatsCommand;
 import bantads.airline.sagas.cancelbookinsaga.commands.RefundClientCommand;
 import bantads.airline.sagas.cancelbookinsaga.events.AvailableSeatsEvent;
 import bantads.airline.sagas.cancelbookinsaga.events.BookingCanByIdEvent;
+import bantads.airline.sagas.cancelflightsaga.events.ClientRefundedEvent;
 
 @Component
 public class CancelBookingSaga {
@@ -68,6 +69,7 @@ public class CancelBookingSaga {
         // 3 ir para o serviço de cliente e fazer a transacao de ressarcimento,
         // atualizar saldo também
         RefundClientCommand command = RefundClientCommand.builder()
+                .saga("CancelBookingSaga")
                 .userId(this.userId)
                 .refundMoney(this.moneySpent)
                 .refundMiles(this.milesSpent)
@@ -77,6 +79,16 @@ public class CancelBookingSaga {
         var message = objectMapper.writeValueAsString(command);
 
         rabbitTemplate.convertAndSend("ClientRequestChannel", message);
+    }
+
+    public void handleClientRefundedEvent(ClientRefundedEvent event) {
+
+        System.out.println("FIM DA SAGA DE CANCELAMENTO DE RESERVA, CLIENTE RESSARCIDO: ");
+        System.out.println("SAGA: " + event.getSaga());
+        System.out.println("NOME: " + event.getName());
+        System.out.println("DINHEIRO DEVOLVIDO: " + event.getRefundMoney());
+        System.out.println("MILHAS DEVOLVIDAS: " + event.getRefundMiles());
+        System.out.println("NOVO SALDO DE MILHAS: " + event.getNewBalance());
     }
 
 }

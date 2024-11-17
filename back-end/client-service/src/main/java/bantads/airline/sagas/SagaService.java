@@ -144,8 +144,8 @@ public class SagaService {
                 return event;
         }
 
-        // R08, R13 
-        @Transactional 
+        // R08, R13
+        @Transactional
         public ClientRefundedEvent refundClient(RefundClientCommand refundClientCommand) {
 
                 Client client = clientRepository.getClientByUserId(refundClientCommand.getUserId()).orElseThrow(null);
@@ -162,11 +162,12 @@ public class SagaService {
                 transaction = milesTransactionRepository.save(transaction);
 
                 // updates balance
-                client.setMiles(client.getMiles() + refundClientCommand.getRefundMiles());
+                client.setMiles(client.getMiles() + transaction.getMilesQuantity());
 
                 client = clientRepository.save(client);
 
                 ClientRefundedEvent clientRefundedEvent = ClientRefundedEvent.builder()
+                                .saga(refundClientCommand.getSaga())
                                 .name(client.getName())
                                 .refundMoney(transaction.getMoneyValue())
                                 .refundMiles(transaction.getMilesQuantity())

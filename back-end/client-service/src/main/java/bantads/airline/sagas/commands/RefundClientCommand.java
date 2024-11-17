@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class RefundClientCommand {
+    private String saga;
     private String userId;
     private BigDecimal refundMoney;
     private Integer refundMiles;
