@@ -18,9 +18,11 @@ import com.airline.repository.BookingRepository;
 import com.airline.repository.BookingStatusRep;
 import com.airline.repository.StatusChangeRepository;
 import com.airline.sagas.commands.BookingCommand;
+import com.airline.sagas.commands.CancelBookingByIdCommand;
 import com.airline.sagas.commands.CancelBookingCommand;
 import com.airline.sagas.commands.CompleteBookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
+import com.airline.sagas.events.BookingCanByIdEvent;
 import com.airline.sagas.events.BookingCancelledEvent;
 import com.airline.sagas.events.BookingCreatedEvent;
 import com.airline.sagas.events.BookingsCompletedEvent;
@@ -100,7 +102,52 @@ public class SagaService {
 
     }
 
-    // R13 - Cancelamento do Voo
+    // R08 - 1
+    @Transactional
+    public BookingCanByIdEvent cancelSingleBooking(CancelBookingByIdCommand command) throws JsonProcessingException {
+
+        Booking booking = bookingRepository.findById(command.getBookingId()).orElseThrow(null);
+
+        // muda de status de 'BOOKED' para 'CANCELLED'
+        BookingStatus initialStatus = booking.getBookingStatus();
+
+        // Atualiza a reserva com o status "CANCELLED"
+        booking.setBookingStatus(bookingStatusRep.findByStatusCode(3));
+
+        booking = bookingRepository.save(booking);
+
+        // Cria registro de histórico
+        BookingStatus finalStatus = booking.getBookingStatus();
+
+        StatusChangeHist newHistory = StatusChangeHist.builder()
+                .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                .booking(booking)
+                .initialStatus(initialStatus)
+                .finalStatus(finalStatus)
+                .build();
+
+        newHistory = statusChangeRepository.save(newHistory);
+
+        // Prepara a mensagem para o serviço de consulta:
+        Command commandMessage = new Command(newHistory);
+
+        String message = objectMapper.writeValueAsString(commandMessage);
+        rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
+
+        // prepara o retorno para sagas
+        BookingCanByIdEvent event = BookingCanByIdEvent.builder()
+                .flightCode(booking.getFlightCode())
+                .moneySpent(booking.getMoneySpent())
+                .milesSpent(booking.getMilesSpent())
+                .numberOfSeats(booking.getNumberOfSeats())
+                .userId(booking.getUserId())
+                .messageType("BookingCanByIdEvent")
+                .build();
+
+        return event;
+    }
+
+    // R13 - 2
     @Transactional
     public BookingCancelledEvent cancelBookings(CancelBookingCommand cancelBookingCommand)
             throws JsonProcessingException {
@@ -121,7 +168,7 @@ public class SagaService {
 
                 // Cria registro de histórico
                 BookingStatus finalStatus = booking.getBookingStatus();
-                
+
                 StatusChangeHist newHistory = StatusChangeHist.builder()
                         .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
                         .booking(booking)
@@ -132,20 +179,7 @@ public class SagaService {
                 newHistory = statusChangeRepository.save(newHistory);
 
                 // Prepara a mensagem para o serviço de consulta:
-                Command commandMessage = Command.builder()
-                        .bookingId(newHistory.getBooking().getBookingId().toString())
-                        .changeId(newHistory.getId().toString())
-                        .changeDate(newHistory.getChangeDate())
-                        .iStatusCommandId(newHistory.getInitialStatus().getStatusId().toString())
-                        .iStatusCode(newHistory.getInitialStatus().getStatusCode())
-                        .iStatusAcronym(newHistory.getInitialStatus().getStatusAcronym())
-                        .iStatusDescription(newHistory.getInitialStatus().getStatusDescription())
-                        .fStatusCommandId(newHistory.getFinalStatus().getStatusId().toString())
-                        .fStatusCode(newHistory.getFinalStatus().getStatusCode())
-                        .fStatusAcronym(newHistory.getFinalStatus().getStatusAcronym())
-                        .fStatusDescription(newHistory.getFinalStatus().getStatusDescription())
-                        .messageType("SynCommand")
-                        .build();
+                Command commandMessage = new Command(newHistory);
 
                 String message = objectMapper.writeValueAsString(commandMessage);
                 rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
@@ -196,20 +230,7 @@ public class SagaService {
                 newHistory = statusChangeRepository.save(newHistory);
 
                 // Prepara a mensagem para o serviço de consulta
-                Command commandMessage = Command.builder()
-                        .bookingId(newHistory.getBooking().getBookingId().toString())
-                        .changeId(newHistory.getId().toString())
-                        .changeDate(newHistory.getChangeDate())
-                        .iStatusCommandId(newHistory.getInitialStatus().getStatusId().toString())
-                        .iStatusCode(newHistory.getInitialStatus().getStatusCode())
-                        .iStatusAcronym(newHistory.getInitialStatus().getStatusAcronym())
-                        .iStatusDescription(newHistory.getInitialStatus().getStatusDescription())
-                        .fStatusCommandId(newHistory.getFinalStatus().getStatusId().toString())
-                        .fStatusCode(newHistory.getFinalStatus().getStatusCode())
-                        .fStatusAcronym(newHistory.getFinalStatus().getStatusAcronym())
-                        .fStatusDescription(newHistory.getFinalStatus().getStatusDescription())
-                        .messageType("SynCommand")
-                        .build();
+                Command commandMessage = new Command(newHistory);
 
                 String message = objectMapper.writeValueAsString(commandMessage);
                 rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);

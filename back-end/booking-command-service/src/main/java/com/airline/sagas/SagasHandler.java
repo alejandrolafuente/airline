@@ -11,6 +11,7 @@ import com.airline.sagas.commands.CancelBookingByIdCommand;
 import com.airline.sagas.commands.CancelBookingCommand;
 import com.airline.sagas.commands.CompleteBookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
+import com.airline.sagas.events.BookingCanByIdEvent;
 import com.airline.sagas.events.BookingCancelledEvent;
 import com.airline.sagas.events.BookingCreatedEvent;
 import com.airline.sagas.events.BookingsCompletedEvent;
@@ -45,12 +46,12 @@ public class SagasHandler {
 
                 case "CreateBookingCommand" -> {
 
-                    CreateBookingCommand createBookingCommand = objectMapper.convertValue(map,
+                    CreateBookingCommand command = objectMapper.convertValue(map,
                             CreateBookingCommand.class);
 
-                    BookingCreatedEvent bookingCreatedEvent = sagaService.insertBooking(createBookingCommand);
+                    BookingCreatedEvent event = sagaService.insertBooking(command);
 
-                    var message = objectMapper.writeValueAsString(bookingCreatedEvent);
+                    var message = objectMapper.writeValueAsString(event);
 
                     rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
                     break;
@@ -58,13 +59,11 @@ public class SagasHandler {
 
                 case "CompleteBookingCommand" -> {
 
-                    CompleteBookingCommand completeBookingCommand = objectMapper.convertValue(map,
-                            CompleteBookingCommand.class);
+                    CompleteBookingCommand command = objectMapper.convertValue(map, CompleteBookingCommand.class);
 
-                    BookingsCompletedEvent bookingsCompletedEvent = sagaService
-                            .completeBookings(completeBookingCommand);
+                    BookingsCompletedEvent event = sagaService.completeBookings(command);
 
-                    var message = objectMapper.writeValueAsString(bookingsCompletedEvent);
+                    var message = objectMapper.writeValueAsString(event);
 
                     rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
                     break;
@@ -72,12 +71,12 @@ public class SagasHandler {
 
                 case "CancelBookingCommand" -> {
 
-                    CancelBookingCommand cancelBookingCommand = objectMapper.convertValue(map,
+                    CancelBookingCommand command = objectMapper.convertValue(map,
                             CancelBookingCommand.class);
 
-                    BookingCancelledEvent bookingCancelledEvent = sagaService.cancelBookings(cancelBookingCommand);
+                    BookingCancelledEvent event = sagaService.cancelBookings(command);
 
-                    var message = objectMapper.writeValueAsString(bookingCancelledEvent);
+                    var message = objectMapper.writeValueAsString(event);
 
                     rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
                     break;
@@ -85,10 +84,16 @@ public class SagasHandler {
 
                 case "CancelBookingByIdCommand" -> {
 
-                    CancelBookingByIdCommand cancelBookingByIdCommand = objectMapper.convertValue(map,
+                    CancelBookingByIdCommand command = objectMapper.convertValue(map,
                             CancelBookingByIdCommand.class);
 
+                    BookingCanByIdEvent event = sagaService.cancelSingleBooking(command);
+
+                    var message = objectMapper.writeValueAsString(event);
+
+                    rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
                     break;
+
                 }
             }
         }
