@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.cancelbookinsaga.commands.CancelBookingByIdCommand;
+import bantads.airline.sagas.cancelbookinsaga.commands.FreeSeatsCommand;
 import bantads.airline.sagas.cancelbookinsaga.events.BookingCanByIdEvent;
 
 @Component
@@ -36,6 +37,16 @@ public class CancelBookingSaga {
     }
 
     public void handleBookingCanByIdEvent(BookingCanByIdEvent event) throws JsonProcessingException {
-        
+
+        // 2 ir para o servico de voo e liberar poltronas ocupadas
+        FreeSeatsCommand command = FreeSeatsCommand.builder()
+                .flightCode(event.getFlightCode())
+                .numberOfSeats(event.getNumberOfSeats())
+                .messageType("FreeSeatsCommand")
+                .build();
+
+        var message = objectMapper.writeValueAsString(command);
+
+        rabbitTemplate.convertAndSend("FlightRequestChannel", message);
     }
 }
