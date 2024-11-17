@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
 import bantads.airline.sagas.bookingsaga.events.BookingCreatedEvent;
+import bantads.airline.sagas.cancelbookinsaga.CancelBookingSaga;
+import bantads.airline.sagas.cancelbookinsaga.events.BookingCanByIdEvent;
 import bantads.airline.sagas.cancelflightsaga.CancelFlightSaga;
 import bantads.airline.sagas.cancelflightsaga.events.BookingCancelledEvent;
 
@@ -26,6 +28,9 @@ public class BookCommandReturnChannelListener {
 
     @Autowired
     private CancelFlightSaga cancelFlightSaga;
+
+    @Autowired
+    private CancelBookingSaga cancelBookingSaga;
 
     @RabbitListener(queues = "BookingCommandReturnChannel")
     public void handleCommandResponses(String receivedMessage) throws JsonMappingException, JsonProcessingException {
@@ -42,9 +47,9 @@ public class BookCommandReturnChannelListener {
 
                 case "BookingCreatedEvent" -> {
 
-                    BookingCreatedEvent bookingCreatedEvent = objectMapper.convertValue(map, BookingCreatedEvent.class);
+                    BookingCreatedEvent event = objectMapper.convertValue(map, BookingCreatedEvent.class);
 
-                    bookingSAGA.handleBookingCreatedEvent(bookingCreatedEvent);
+                    bookingSAGA.handleBookingCreatedEvent(event);
 
                     break;
 
@@ -52,13 +57,19 @@ public class BookCommandReturnChannelListener {
 
                 case "BookingCancelledEvent" -> {
 
-                    BookingCancelledEvent BookingCancelledEvent = objectMapper.convertValue(map,
-                            BookingCancelledEvent.class);
+                    BookingCancelledEvent event = objectMapper.convertValue(map, BookingCancelledEvent.class);
 
-                    cancelFlightSaga.handleBookingCancelledEvent(BookingCancelledEvent);
+                    cancelFlightSaga.handleBookingCancelledEvent(event);
 
                     break;
 
+                }
+
+                case "BookingCanByIdEvent" -> {
+
+                    BookingCanByIdEvent event = objectMapper.convertValue(map, BookingCanByIdEvent.class);
+
+                    cancelBookingSaga.handleBookingCanByIdEvent(event);
                 }
 
                 default -> {

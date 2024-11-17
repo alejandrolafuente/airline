@@ -65,20 +65,7 @@ public class CommandServiceImpl implements CommandService {
         newHistory = statusChangeRepository.save(newHistory);
 
         // Prepara a mensagem para o serviço de consulta
-        Command commandMessage = Command.builder()
-                .bookingId(newHistory.getBooking().getBookingId().toString())
-                .changeId(newHistory.getId().toString())
-                .changeDate(newHistory.getChangeDate())
-                .iStatusCommandId(newHistory.getInitialStatus().getStatusId().toString())
-                .iStatusCode(newHistory.getInitialStatus().getStatusCode())
-                .iStatusAcronym(newHistory.getInitialStatus().getStatusAcronym())
-                .iStatusDescription(newHistory.getInitialStatus().getStatusDescription())
-                .fStatusCommandId(newHistory.getFinalStatus().getStatusId().toString())
-                .fStatusCode(newHistory.getFinalStatus().getStatusCode())
-                .fStatusAcronym(newHistory.getFinalStatus().getStatusAcronym())
-                .fStatusDescription(newHistory.getFinalStatus().getStatusDescription())
-                .messageType("SynCommand")
-                .build();
+        Command commandMessage = new Command(newHistory);
 
         String message = objectMapper.writeValueAsString(commandMessage);
         rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);

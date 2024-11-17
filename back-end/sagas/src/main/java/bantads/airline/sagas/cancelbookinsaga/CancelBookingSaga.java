@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.cancelbookinsaga.commands.CancelBookingByIdCommand;
+import bantads.airline.sagas.cancelbookinsaga.events.BookingCanByIdEvent;
 
 @Component
 public class CancelBookingSaga {
@@ -32,5 +33,9 @@ public class CancelBookingSaga {
 
         rabbitTemplate.convertAndSend("BookingCommandRequestChannel", message);
 
+    }
+
+    public void handleBookingCanByIdEvent(BookingCanByIdEvent event) throws JsonProcessingException {
+        
     }
 }

@@ -132,6 +132,7 @@ public class SagaService {
         Command commandMessage = new Command(newHistory);
 
         String message = objectMapper.writeValueAsString(commandMessage);
+        
         rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
 
         // prepara o retorno para sagas

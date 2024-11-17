@@ -68,11 +68,12 @@ public class BookingQueryServImpl implements BookingQueryService {
         return listR06ResDTO;
     }
 
-    // R10, R12: requests from cqrs
+    // R10, R08,  R12: requests from cqrs
     // R14: request from saga
     @Override
     public void syncronizeDBs(Command command) {
 
+        // 1. atualiza o status da reserva
         BookingQuery bookingQuery = bookingQueryRepository.findByBookingCommandId(command.getBookingId());
 
         bookingQuery.setStatusCommandId(command.getFStatusCommandId());
@@ -82,6 +83,7 @@ public class BookingQueryServImpl implements BookingQueryService {
 
         bookingQuery = bookingQueryRepository.save(bookingQuery);
 
+        // 2. cria um registro "espelho" da mudança de estado 
         StatChangHistQuery statChangHistQuery = StatChangHistQuery.builder()
                 .commandChangeId(command.getChangeId())
                 .changeDate(command.getChangeDate())
