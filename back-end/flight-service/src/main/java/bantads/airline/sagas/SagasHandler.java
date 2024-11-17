@@ -13,7 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.commands.CancelFlightCommand;
 import bantads.airline.sagas.commands.CompFlightCommand;
+import bantads.airline.sagas.commands.FreeSeatsCommand;
 import bantads.airline.sagas.commands.UpdateSeatsCommand;
+import bantads.airline.sagas.events.AvailableSeatsEvent;
 import bantads.airline.sagas.events.FlightCancelledEvent;
 import bantads.airline.sagas.events.FlightCompletedEvent;
 import bantads.airline.sagas.events.SeatsUpdatedEvent;
@@ -45,11 +47,11 @@ public class SagasHandler {
 
                 case "UpdateSeatsCommand" -> {
 
-                    UpdateSeatsCommand updateSeatsCommand = objectMapper.convertValue(map, UpdateSeatsCommand.class);
+                    UpdateSeatsCommand command = objectMapper.convertValue(map, UpdateSeatsCommand.class);
 
-                    SeatsUpdatedEvent seatsUpdatedEvent = sagaService.updateSeats(updateSeatsCommand);
+                    SeatsUpdatedEvent event = sagaService.updateSeats(command);
 
-                    var message = objectMapper.writeValueAsString(seatsUpdatedEvent);
+                    var message = objectMapper.writeValueAsString(event);
 
                     rabbitTemplate.convertAndSend("FlightReturnChannel", message);
                     break;
@@ -57,11 +59,11 @@ public class SagasHandler {
 
                 case "CompFlightCommand" -> {
 
-                    CompFlightCommand compFlightCommand = objectMapper.convertValue(map, CompFlightCommand.class);
+                    CompFlightCommand command = objectMapper.convertValue(map, CompFlightCommand.class);
 
-                    FlightCompletedEvent flightCompletedEvent = sagaService.completeFlight(compFlightCommand);
+                    FlightCompletedEvent event = sagaService.completeFlight(command);
 
-                    var message = objectMapper.writeValueAsString(flightCompletedEvent);
+                    var message = objectMapper.writeValueAsString(event);
 
                     rabbitTemplate.convertAndSend("FlightReturnChannel", message);
                     break;
@@ -69,13 +71,26 @@ public class SagasHandler {
 
                 case "CancelFlightCommand" -> {
 
-                    CancelFlightCommand cancelFlightCommand = objectMapper.convertValue(map, CancelFlightCommand.class);
+                    CancelFlightCommand command = objectMapper.convertValue(map, CancelFlightCommand.class);
 
-                    FlightCancelledEvent flightCancelledEvent = sagaService.cancelFlight(cancelFlightCommand);
+                    FlightCancelledEvent event = sagaService.cancelFlight(command);
 
-                    var message = objectMapper.writeValueAsString(flightCancelledEvent);
+                    var message = objectMapper.writeValueAsString(event);
 
                     rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+                    break;
+                }
+
+                case "FreeSeatsCommand" -> {
+
+                    FreeSeatsCommand command = objectMapper.convertValue(map, FreeSeatsCommand.class);
+
+                    AvailableSeatsEvent event = sagaService.freeSeats(command);
+
+                    var message = objectMapper.writeValueAsString(event);
+
+                    rabbitTemplate.convertAndSend("FlightReturnChannel", message);
+
                     break;
                 }
 

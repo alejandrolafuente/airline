@@ -144,8 +144,8 @@ public class SagaService {
                 return event;
         }
 
-        // R13 - cancelamento de voo - ressarcir cliente
-        @Transactional // verificar esta anotacao!
+        // R08, R13 
+        @Transactional 
         public ClientRefundedEvent refundClient(RefundClientCommand refundClientCommand) {
 
                 Client client = clientRepository.getClientByUserId(refundClientCommand.getUserId()).orElseThrow(null);

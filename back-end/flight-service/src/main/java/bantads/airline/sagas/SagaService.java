@@ -4,12 +4,15 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import bantads.airline.model.Flight;
 import bantads.airline.repository.FlightRepository;
 import bantads.airline.sagas.commands.CancelFlightCommand;
 import bantads.airline.sagas.commands.CompFlightCommand;
+import bantads.airline.sagas.commands.FreeSeatsCommand;
 import bantads.airline.sagas.commands.UpdateSeatsCommand;
+import bantads.airline.sagas.events.AvailableSeatsEvent;
 import bantads.airline.sagas.events.FlightCancelledEvent;
 import bantads.airline.sagas.events.FlightCompletedEvent;
 import bantads.airline.sagas.events.SeatsUpdatedEvent;
@@ -20,6 +23,7 @@ public class SagaService {
     @Autowired
     private FlightRepository flightRepository;
 
+    @Transactional
     public SeatsUpdatedEvent updateSeats(UpdateSeatsCommand updateSeatsCommand) {
 
         Flight flight = flightRepository.findById(updateSeatsCommand.getFlightId()).orElse(null);
@@ -37,7 +41,28 @@ public class SagaService {
         return seatsUpdatedEvent;
     }
 
+    // R08 - 2
+    @Transactional
+    public AvailableSeatsEvent freeSeats(FreeSeatsCommand command) {
+
+        Flight flight = flightRepository.getFlightByCode(command.getFlightCode()).orElseThrow(null);
+
+        flight.setOccupiedSeats(flight.getOccupiedSeats() - command.getNumberOfSeats());
+
+        flight = flightRepository.save(flight);
+
+        AvailableSeatsEvent event = AvailableSeatsEvent.builder()
+                .flightCode(flight.getCode())
+                .flightId(flight.getFlightId())
+                .occupiedSeats(flight.getOccupiedSeats())
+                .messageType("AvailableSeatsEvent")
+                .build();
+
+        return event;
+    }
+
     // R13 - cancel flight
+    @Transactional
     public FlightCancelledEvent cancelFlight(CancelFlightCommand cancelFlightCommand) {
 
         Flight flight = flightRepository.findById(cancelFlightCommand.getFlightId()).orElse(null);
@@ -55,6 +80,7 @@ public class SagaService {
     }
 
     // R14 - complete flight
+    @Transactional
     public FlightCompletedEvent completeFlight(CompFlightCommand compFlightCommand) {
 
         Flight flight = flightRepository.findById(UUID.fromString(compFlightCommand.getFlightId())).orElse(null);

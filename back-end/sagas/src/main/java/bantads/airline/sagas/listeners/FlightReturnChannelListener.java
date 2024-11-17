@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
 import bantads.airline.sagas.bookingsaga.events.SeatsUpdatedEvent;
+import bantads.airline.sagas.cancelbookinsaga.CancelBookingSaga;
+import bantads.airline.sagas.cancelbookinsaga.events.AvailableSeatsEvent;
 import bantads.airline.sagas.cancelflightsaga.CancelFlightSaga;
 import bantads.airline.sagas.cancelflightsaga.events.FlightCancelledEvent;
 import bantads.airline.sagas.completeflightsaga.CompleteFlightSaga;
@@ -32,6 +34,9 @@ public class FlightReturnChannelListener {
     @Autowired
     private CancelFlightSaga cancelFlightSaga;
 
+    @Autowired
+    private CancelBookingSaga cancelBookingSaga;
+
     @RabbitListener(queues = "FlightReturnChannel")
     public void handleFlightResponses(String receivedMessage) throws JsonMappingException, JsonProcessingException {
 
@@ -47,29 +52,37 @@ public class FlightReturnChannelListener {
 
                 case "SeatsUpdatedEvent" -> {
 
-                    SeatsUpdatedEvent seatsUpdatedEvent = objectMapper.convertValue(map, SeatsUpdatedEvent.class);
+                    SeatsUpdatedEvent event = objectMapper.convertValue(map, SeatsUpdatedEvent.class);
 
-                    bookingSAGA.handleSeatsUpdatedEvent(seatsUpdatedEvent);
+                    bookingSAGA.handleSeatsUpdatedEvent(event);
 
                     break;
                 }
 
                 case "FlightCompletedEvent" -> {
 
-                    FlightCompletedEvent flightCompletedEvent = objectMapper.convertValue(map,
+                    FlightCompletedEvent event = objectMapper.convertValue(map,
                             FlightCompletedEvent.class);
 
-                    completeFlightSaga.handleFlightCompletedEvent(flightCompletedEvent);
+                    completeFlightSaga.handleFlightCompletedEvent(event);
 
                     break;
                 }
 
                 case "FlightCancelledEvent" -> {
 
-                    FlightCancelledEvent flightCancelledEvent = objectMapper.convertValue(map,
-                            FlightCancelledEvent.class);
+                    FlightCancelledEvent event = objectMapper.convertValue(map, FlightCancelledEvent.class);
 
-                    cancelFlightSaga.handleFlightCancelledEvent(flightCancelledEvent);
+                    cancelFlightSaga.handleFlightCancelledEvent(event);
+
+                    break;
+                }
+
+                case "AvailableSeatsEvent" -> {
+
+                    AvailableSeatsEvent event = objectMapper.convertValue(map, AvailableSeatsEvent.class);
+
+                    cancelBookingSaga.handleAvailableSeatsEvent(event);
 
                     break;
                 }

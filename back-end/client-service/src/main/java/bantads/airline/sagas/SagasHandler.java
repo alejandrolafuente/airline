@@ -41,38 +41,47 @@ public class SagasHandler {
 
             Map<?, ?> map = (Map<?, ?>) object;
 
-            if ("CreateClientCommand".equals(map.get("messageType"))) {
+            String messageType = (String) map.get("messageType");
 
-                CreateClientCommand createClientCommand = objectMapper.convertValue(map, CreateClientCommand.class);
+            switch (messageType) {
 
-                ClientCreatedEvent clientCreatedEvent = sagaService.saveNewClient(createClientCommand);
+                case "CreateClientCommand" -> {
 
-                var resMsg = objectMapper.writeValueAsString(clientCreatedEvent);
+                    CreateClientCommand command = objectMapper.convertValue(map, CreateClientCommand.class);
 
-                rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
+                    ClientCreatedEvent event = sagaService.saveNewClient(command);
 
-            } else if ("UpdateMilesCommand".equals(map.get("messageType"))) {
+                    var resMsg = objectMapper.writeValueAsString(event);
 
-                UpdateMilesCommand updateMilesCommand = objectMapper.convertValue(map, UpdateMilesCommand.class);
+                    rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
+                    break;
+                }
 
-                MilesUpdatedEvent milesUpdatedEvent = sagaService.updateMiles(updateMilesCommand);
+                case "UpdateMilesCommand" -> {
 
-                var resMsg = objectMapper.writeValueAsString(milesUpdatedEvent);
+                    UpdateMilesCommand command = objectMapper.convertValue(map, UpdateMilesCommand.class);
 
-                rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
+                    MilesUpdatedEvent event = sagaService.updateMiles(command);
 
-            } else if ("RefundClientCommand".equals(map.get("messageType"))) {
+                    var resMsg = objectMapper.writeValueAsString(event);
 
-                RefundClientCommand refundClientCommand = objectMapper.convertValue(map, RefundClientCommand.class);
+                    rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
+                    break;
+                }
 
-                ClientRefundedEvent clientRefundedEvent = sagaService.refundClient(refundClientCommand);
+                case "RefundClientCommand" -> {
 
-                var resMsg = objectMapper.writeValueAsString(clientRefundedEvent);
+                    RefundClientCommand command = objectMapper.convertValue(map, RefundClientCommand.class);
 
-                rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
+                    ClientRefundedEvent event = sagaService.refundClient(command);
+
+                    var resMsg = objectMapper.writeValueAsString(event);
+
+                    rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
+                    break;
+                }
 
             }
-
         }
     }
 
