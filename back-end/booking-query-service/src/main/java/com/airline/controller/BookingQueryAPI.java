@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.airline.dto.response.R03ResDTO;
 import com.airline.dto.response.R04ResDTO;
+import com.airline.dto.response.R09ResDTO;
 import com.airline.service.BookingQueryService;
 
 @RestController
@@ -43,6 +44,12 @@ public class BookingQueryAPI {
     @GetMapping("/flight-codes")
     public ResponseEntity<List<String>> getFlightCodes(@RequestParam List<UUID> transactionIds) {
         List<String> dto = bookingQueryService.getFlightCodes(transactionIds);
+        return ResponseEntity.ok().body(dto);
+    }
+
+    @GetMapping("/search-booking/{code}")
+    public ResponseEntity<R09ResDTO> searchBooking(@PathVariable(value = "code") String bookingCode) {
+        R09ResDTO dto = bookingQueryService.searchBooking(bookingCode);
         return ResponseEntity.ok().body(dto);
     }
 }

@@ -124,7 +124,7 @@ app.get('/bookingquery/bookedflights/:id', (req, res, next) => {
     bookingQueryServiceProxy(req, res, next);
 });
 
-// ------------------- API COMPOSITION
+// ------------------------------------  API COMPOSITION -------------------------------------
 
 
 // R03
@@ -313,6 +313,34 @@ app.get('/miles-statement/:id', async (req, res) => {
             res.status(500).send({ message: 'Error fetching data', error: error.message || error });
         }
     }
+});
+
+// R09
+app.get('/search-booking/:code', async (req, res) => {
+
+    try {
+
+        const userId = req.params.id;
+
+        const [transactionsResponse] = await Promise.all([
+            axios.get(`http://localhost:8091/client/miles-statement/${userId}`)
+        ]);
+
+
+    } catch (error) {
+        if (error.response && error.response.data) {
+            // Caso a resposta contenha dados de erro customizados, os repassa ao front
+            const { status, data } = error.response;
+            console.error("Custom Error: ", data);
+            res.status(status).send(data);
+        } else {
+            // Caso contrário, responde com um erro genérico
+            console.error("Error: ", error.message || error);
+            res.status(500).send({ message: 'Error fetching data', error: error.message || error });
+        }
+    }
+
+
 });
 
 // *********************************************************************************
