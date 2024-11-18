@@ -22,8 +22,23 @@ public class R09ResDTO {
     private String flightDate;
     private String flighTime;
     private String flightStatus;
+    private Boolean checkInAvailable;
 
     public R09ResDTO(Flight flight) {
+
+        // gets the current date in UTC
+        ZonedDateTime currentDate = ZonedDateTime.now(ZoneId.of("UTC"));
+
+        // calculates the next 48 hours
+        ZonedDateTime futureDate = currentDate.plusHours(48);
+
+        if ((flight.getFlightDate().isAfter(currentDate) || flight.getFlightDate().isEqual(currentDate)) &&
+                (flight.getFlightDate().isBefore(futureDate) || flight.getFlightDate().isEqual(futureDate))) {
+
+            checkInAvailable = true;
+        } else {
+            checkInAvailable = false;
+        }
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 

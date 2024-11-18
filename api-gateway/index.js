@@ -320,12 +320,17 @@ app.get('/search-booking/:code', async (req, res) => {
 
     try {
 
-        const userId = req.params.id;
+        const bookingCode = req.params.code;
 
-        const [transactionsResponse] = await Promise.all([
-            axios.get(`http://localhost:8091/client/miles-statement/${userId}`)
+        const [bookingQuery] = await Promise.all([
+            axios.get(`http://localhost:8095/booking-query/search-booking/${bookingCode}`)
         ]);
 
+        const bookingData = bookingQuery.data;
+
+        console.log(bookingData);
+
+        res.status(200).json(bookingData);
 
     } catch (error) {
         if (error.response && error.response.data) {
