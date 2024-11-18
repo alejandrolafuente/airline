@@ -77,7 +77,7 @@ public class CommandServiceImpl implements CommandService {
         // dto de resposta para o cliente
         R10R12ResDTO dto = R10R12ResDTO.builder()
                 .bookingId(newHistory.getBooking().getBookingId())
-                .bookingCode(newHistory.getBooking().getFlightCode())
+                .bookingCode(newHistory.getBooking().getBookingCode())
                 .initialStatus(newHistory.getInitialStatus().getStatusDescription())
                 .currentStatus(newHistory.getFinalStatus().getStatusDescription())
                 .build();
