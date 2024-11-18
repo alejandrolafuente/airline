@@ -43,7 +43,6 @@ public class FlightController {
     // R04
     @GetMapping("/booking-flight/{code}")
     public ResponseEntity<R04ResDTO> getBookingFlight(@PathVariable(value = "code") String flightCode) {
-
         R04ResDTO dto = flightService.getBookingFlight(flightCode);
         return ResponseEntity.ok().body(dto);
     }
