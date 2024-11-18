@@ -328,18 +328,25 @@ app.get('/search-booking/:code', async (req, res) => {
 
         const bookingData = bookingQuery.data;
 
-        console.log(bookingData);
+        const flightCode = bookingData.flightCode;
 
-        res.status(200).json(bookingData);
+        const flightQuery = await axios.get(`http://localhost:8093/flight/search-flight/${flightCode}`);
+
+        const flightData = flightQuery.data;
+
+        const combinedData = {
+            ...bookingData,
+            ...flightData
+        };
+
+        res.status(200).json(combinedData);
 
     } catch (error) {
         if (error.response && error.response.data) {
-            // Caso a resposta contenha dados de erro customizados, os repassa ao front
             const { status, data } = error.response;
             console.error("Custom Error: ", data);
             res.status(status).send(data);
         } else {
-            // Caso contrário, responde com um erro genérico
             console.error("Error: ", error.message || error);
             res.status(500).send({ message: 'Error fetching data', error: error.message || error });
         }
