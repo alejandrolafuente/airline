@@ -68,12 +68,16 @@ public class ClientReturnChannelListener {
 
                 case "ClientRefundedEvent" -> {
 
-                    ClientRefundedEvent event = objectMapper.convertValue(map,
-                            ClientRefundedEvent.class);
+                    ClientRefundedEvent event = objectMapper.convertValue(map, ClientRefundedEvent.class);
 
-                    if (event.getSaga() == "CancelFlightSaga") {
+                    String saga = event.getSaga();
+
+                    if ("CancelFlightSaga".equals(saga)) {
+
                         cancelFlightSaga.handleClientRefundedEvent(event);
-                    } else if (event.getSaga() == "CancelBookingSaga") {
+
+                    } else if ("CancelBookingSaga".equals(saga)) {
+
                         cancelBookingSaga.handleClientRefundedEvent(event);
                     }
 
