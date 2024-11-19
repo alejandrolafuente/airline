@@ -61,7 +61,7 @@ public class SagaService {
         return event;
     }
 
-    // R13 - cancel flight
+    // R13 - 1
     @Transactional
     public FlightCancelledEvent cancelFlight(CancelFlightCommand cancelFlightCommand) {
 

@@ -1,4 +1,4 @@
-package bantads.airline.sagas.cancelflightsaga.commands;
+package com.airline.sagas.commands;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CancelBookingCommand {
+public class CancelBookingsCommand {
     private String flightCode;
     private String messageType;
 }

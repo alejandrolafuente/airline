@@ -111,11 +111,13 @@ public class SagasController {
 
     // R13 - Cancelamento do Voo
     @PutMapping("/cancel-flight/{id}")
-    public ResponseEntity<?> cancelFlight(@PathVariable("id") UUID flightId) throws JsonProcessingException {
+    public ResponseEntity<GenResDTO> cancelFlight(@PathVariable("id") UUID flightId) throws JsonProcessingException {
 
         cancelFlightSaga.handleRequest(flightId);
 
-        return new ResponseEntity<>("Flight cancelled, check flight, booking and client data bases", HttpStatus.OK);
+        GenResDTO dto = new GenResDTO("Flight Cancelled");
+
+        return ResponseEntity.ok().body(dto);
     }
 
     // R14 - Realização do Voo

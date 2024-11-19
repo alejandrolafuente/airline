@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.airline.sagas.commands.CancelBookingByIdCommand;
-import com.airline.sagas.commands.CancelBookingCommand;
+import com.airline.sagas.commands.CancelBookingsCommand;
 import com.airline.sagas.commands.CompleteBookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
 import com.airline.sagas.events.BookingCanByIdEvent;
@@ -68,11 +68,12 @@ public class SagasHandler {
                     rabbitTemplate.convertAndSend("BookingCommandReturnChannel", message);
                     break;
                 }
+                
+                // R13 - 2
+                case "CancelBookingsCommand" -> { // using Flight Code
 
-                case "CancelBookingCommand" -> {
-
-                    CancelBookingCommand command = objectMapper.convertValue(map,
-                            CancelBookingCommand.class);
+                    CancelBookingsCommand command = objectMapper.convertValue(map,
+                            CancelBookingsCommand.class);
 
                     BookingCancelledEvent event = sagaService.cancelBookings(command);
 

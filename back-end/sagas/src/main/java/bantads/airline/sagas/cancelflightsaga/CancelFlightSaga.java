@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import bantads.airline.sagas.cancelflightsaga.commands.CancelBookingCommand;
+import bantads.airline.sagas.cancelflightsaga.commands.CancelBookingsCommand;
 import bantads.airline.sagas.cancelflightsaga.commands.CancelFlightCommand;
 import bantads.airline.sagas.cancelflightsaga.commands.RefundClientCommand;
 import bantads.airline.sagas.cancelflightsaga.events.BookingCancelledEvent;
@@ -27,7 +27,8 @@ public class CancelFlightSaga {
 
     public void handleRequest(UUID flightId) throws JsonProcessingException {
 
-        // 1 ir para servico de voo e atualizar o voo de "CONFIRMED" para "CANCELLED"
+        // 1. ir para servico de voo e atualizar o Status do voo de "CONFIRMED" para
+        // "CANCELLED"
         CancelFlightCommand cancelFlightCommand = CancelFlightCommand.builder()
                 .flightId(flightId)
                 .messageType("CancelFlightCommand")
@@ -41,10 +42,11 @@ public class CancelFlightSaga {
 
     public void handleFlightCancelledEvent(FlightCancelledEvent flightCancelledEvent) throws JsonProcessingException {
 
-        // 2 ir para o serviço de reserva e mudar o Estado, laço aqui
-        CancelBookingCommand cancelBookingCommand = CancelBookingCommand.builder()
+        // 2. ir para o serviço de command reserva e mudar o Status de TODAS as reservas
+        // vinculadas com este voo de 'BOOKED'/'CHECK-IN' para 'CANCELLED', laço aqui
+        CancelBookingsCommand cancelBookingCommand = CancelBookingsCommand.builder()
                 .flightCode(flightCancelledEvent.getFlightCode())
-                .messageType("CancelBookingCommand")
+                .messageType("CancelBookingsCommand")
                 .build();
 
         var message = objectMapper.writeValueAsString(cancelBookingCommand);
@@ -53,14 +55,18 @@ public class CancelFlightSaga {
 
     }
 
-    public void handleBookingCancelledEvent(BookingCancelledEvent bookingCancelledEvent)
-            throws JsonProcessingException {
+    public void handleBookingCancelledEvent(BookingCancelledEvent event) throws JsonProcessingException {
 
-        RefundClientCommand refundClientCommand = new RefundClientCommand(bookingCancelledEvent);
+        // 3. ir par ao serviço cliente e ressarcir
+        RefundClientCommand command = RefundClientCommand.builder()
+                .saga("CancelFlightSaga")
+                .userId(event.getUserId())
+                .refundMoney(event.getRefundMoney())
+                .refundMiles(event.getRefundMiles())
+                .messageType("RefundClientCommand")
+                .build();
 
-        refundClientCommand.setMessageType("RefundClientCommand");
-
-        var message = objectMapper.writeValueAsString(refundClientCommand);
+        var message = objectMapper.writeValueAsString(command);
 
         rabbitTemplate.convertAndSend("ClientRequestChannel", message);
 
@@ -68,6 +74,7 @@ public class CancelFlightSaga {
 
     public void handleClientRefundedEvent(ClientRefundedEvent clientRefundedEvent) {
 
+        // 4. mensagem de finalizacao da saga
         System.out.println("FIM DA SAGA DE CANCELAMENTO DE VOO, CLIENTE RESSARCIDO: ");
         System.out.println("NOME: " + clientRefundedEvent.getName());
         System.out.println("DINHEIRO DEVOLVIDO: " + clientRefundedEvent.getRefundMoney());

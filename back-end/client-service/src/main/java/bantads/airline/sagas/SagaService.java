@@ -146,15 +146,15 @@ public class SagaService {
 
         // R08, R13
         @Transactional
-        public ClientRefundedEvent refundClient(RefundClientCommand refundClientCommand) {
+        public ClientRefundedEvent refundClient(RefundClientCommand command) {
 
-                Client client = clientRepository.getClientByUserId(refundClientCommand.getUserId()).orElseThrow(null);
+                Client client = clientRepository.getClientByUserId(command.getUserId()).orElseThrow(null);
 
                 MilesTransaction transaction = MilesTransaction.builder()
                                 .client(client)
                                 .transactionDate(ZonedDateTime.now(ZoneId.of("UTC")))
-                                .moneyValue(refundClientCommand.getRefundMoney())
-                                .milesQuantity(refundClientCommand.getRefundMiles())
+                                .moneyValue(command.getRefundMoney())
+                                .milesQuantity(command.getRefundMiles())
                                 .transactionType("INPUT")
                                 .description("MILES REFUND")
                                 .build();
@@ -167,7 +167,7 @@ public class SagaService {
                 client = clientRepository.save(client);
 
                 ClientRefundedEvent clientRefundedEvent = ClientRefundedEvent.builder()
-                                .saga(refundClientCommand.getSaga())
+                                .saga(command.getSaga())
                                 .name(client.getName())
                                 .refundMoney(transaction.getMoneyValue())
                                 .refundMiles(transaction.getMilesQuantity())

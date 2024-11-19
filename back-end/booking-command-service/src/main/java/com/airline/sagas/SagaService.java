@@ -19,7 +19,7 @@ import com.airline.repository.BookingStatusRep;
 import com.airline.repository.StatusChangeRepository;
 import com.airline.sagas.commands.BookingCommand;
 import com.airline.sagas.commands.CancelBookingByIdCommand;
-import com.airline.sagas.commands.CancelBookingCommand;
+import com.airline.sagas.commands.CancelBookingsCommand;
 import com.airline.sagas.commands.CompleteBookingCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
 import com.airline.sagas.events.BookingCanByIdEvent;
@@ -132,7 +132,7 @@ public class SagaService {
         Command commandMessage = new Command(newHistory);
 
         String message = objectMapper.writeValueAsString(commandMessage);
-        
+
         rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
 
         // prepara o retorno para sagas
@@ -150,51 +150,48 @@ public class SagaService {
 
     // R13 - 2
     @Transactional
-    public BookingCancelledEvent cancelBookings(CancelBookingCommand cancelBookingCommand)
+    public BookingCancelledEvent cancelBookings(CancelBookingsCommand cancelBookingCommand)
             throws JsonProcessingException {
 
         List<Booking> relatedBookings = bookingRepository.findByFlightCode(cancelBookingCommand.getFlightCode());
 
         for (Booking booking : relatedBookings) {
 
-            // cancela somente voos confirmados os que estao com estado check-in
-            if (booking.getBookingStatus().getStatusCode() == 1 || booking.getBookingStatus().getStatusCode() == 2) {
+            BookingStatus initialStatus = booking.getBookingStatus();
 
-                BookingStatus initialStatus = booking.getBookingStatus();
+            // Atualiza a reserva com o status "CANCELLED"
+            booking.setBookingStatus(bookingStatusRep.findByStatusCode(3));
 
-                // Atualiza a reserva com o status "CANCELLED"
-                booking.setBookingStatus(bookingStatusRep.findByStatusCode(3));
+            booking = bookingRepository.save(booking);
 
-                booking = bookingRepository.save(booking);
+            // Cria registro de histórico
+            BookingStatus finalStatus = booking.getBookingStatus();
 
-                // Cria registro de histórico
-                BookingStatus finalStatus = booking.getBookingStatus();
+            StatusChangeHist newHistory = StatusChangeHist.builder()
+                    .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                    .booking(booking)
+                    .initialStatus(initialStatus)
+                    .finalStatus(finalStatus)
+                    .build();
 
-                StatusChangeHist newHistory = StatusChangeHist.builder()
-                        .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
-                        .booking(booking)
-                        .initialStatus(initialStatus)
-                        .finalStatus(finalStatus)
-                        .build();
+            newHistory = statusChangeRepository.save(newHistory);
 
-                newHistory = statusChangeRepository.save(newHistory);
+            // Prepara a mensagem para o serviço de consulta:
+            Command command = new Command(newHistory);
 
-                // Prepara a mensagem para o serviço de consulta:
-                Command commandMessage = new Command(newHistory);
+            String message = objectMapper.writeValueAsString(command);
+            rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
 
-                String message = objectMapper.writeValueAsString(commandMessage);
-                rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
+            // prepara o retorno para sagas, o cliente que precisa ressarcir:
+            BookingCancelledEvent bookingCancelledEvent = BookingCancelledEvent.builder()
+                    .userId(booking.getUserId())
+                    .refundMoney(booking.getMoneySpent())
+                    .refundMiles(booking.getMilesSpent())
+                    .messageType("BookingCancelledEvent")
+                    .build();
 
-                // prepara o retorno para sagas, o cliente que precisa ressarcir:
-                BookingCancelledEvent bookingCancelledEvent = BookingCancelledEvent.builder()
-                        .userId(booking.getUserId())
-                        .refundMoney(booking.getMoneySpent())
-                        .refundMiles(booking.getMilesSpent())
-                        .messageType("BookingCancelledEvent")
-                        .build();
+            return bookingCancelledEvent;
 
-                return bookingCancelledEvent;
-            }
         }
 
         return null;

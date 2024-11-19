@@ -80,8 +80,7 @@ public class BookingQueryServImpl implements BookingQueryService {
         return new R09ResDTO(booking);
     }
 
-    // R10, R08, R12: requests from cqrs
-    // R14: request from saga
+    // R10, R08, R12, R13, R14
     @Override
     public void syncronizeDBs(Command command) {
 
