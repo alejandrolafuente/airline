@@ -122,11 +122,13 @@ public class SagasController {
 
     // R14 - Realização do Voo
     @PutMapping("/complete-flight/{id}")
-    public ResponseEntity<?> completeFlight(@PathVariable("id") String flightId) throws JsonProcessingException {
+    public ResponseEntity<GenResDTO> completeFlight(@PathVariable("id") UUID flightId) throws JsonProcessingException {
 
         this.completeFlightSaga.handleRequest(flightId);
 
-        return new ResponseEntity<>("Flight Completed, check flight and booking data bases", HttpStatus.OK);
+        GenResDTO dto = new GenResDTO("Flight Completed");
+
+        return ResponseEntity.ok().body(dto);
     }
 
 }

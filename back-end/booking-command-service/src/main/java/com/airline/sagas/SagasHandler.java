@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.airline.sagas.commands.CancelBookingByIdCommand;
 import com.airline.sagas.commands.CancelBookingsCommand;
-import com.airline.sagas.commands.CompleteBookingCommand;
+import com.airline.sagas.commands.CompleteBookingsCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
 import com.airline.sagas.events.BookingCanByIdEvent;
 import com.airline.sagas.events.BookingCancelledEvent;
@@ -57,9 +57,9 @@ public class SagasHandler {
                     break;
                 }
 
-                case "CompleteBookingCommand" -> {
+                case "CompleteBookingsCommand" -> {
 
-                    CompleteBookingCommand command = objectMapper.convertValue(map, CompleteBookingCommand.class);
+                    CompleteBookingsCommand command = objectMapper.convertValue(map, CompleteBookingsCommand.class);
 
                     BookingsCompletedEvent event = sagaService.completeBookings(command);
 

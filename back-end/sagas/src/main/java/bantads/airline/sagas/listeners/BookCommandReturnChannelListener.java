@@ -16,6 +16,8 @@ import bantads.airline.sagas.cancelbookinsaga.CancelBookingSaga;
 import bantads.airline.sagas.cancelbookinsaga.events.BookingCanByIdEvent;
 import bantads.airline.sagas.cancelflightsaga.CancelFlightSaga;
 import bantads.airline.sagas.cancelflightsaga.events.BookingCancelledEvent;
+import bantads.airline.sagas.completeflightsaga.CompleteFlightSaga;
+import bantads.airline.sagas.completeflightsaga.events.BookingsCompletedEvent;
 
 @Component
 public class BookCommandReturnChannelListener {
@@ -31,6 +33,9 @@ public class BookCommandReturnChannelListener {
 
     @Autowired
     private CancelBookingSaga cancelBookingSaga;
+
+    @Autowired
+    private CompleteFlightSaga completeFlightSaga;
 
     @RabbitListener(queues = "BookingCommandReturnChannel")
     public void handleCommandResponses(String receivedMessage) throws JsonMappingException, JsonProcessingException {
@@ -70,6 +75,13 @@ public class BookCommandReturnChannelListener {
                     BookingCanByIdEvent event = objectMapper.convertValue(map, BookingCanByIdEvent.class);
 
                     cancelBookingSaga.handleBookingCanByIdEvent(event);
+                }
+
+                case "BookingsCompletedEvent" -> {
+
+                    BookingsCompletedEvent event = objectMapper.convertValue(map, BookingsCompletedEvent.class);
+
+                    completeFlightSaga.handleBookingsCompletedEvent(event);
                 }
 
                 default -> {

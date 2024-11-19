@@ -20,7 +20,7 @@ import com.airline.repository.StatusChangeRepository;
 import com.airline.sagas.commands.BookingCommand;
 import com.airline.sagas.commands.CancelBookingByIdCommand;
 import com.airline.sagas.commands.CancelBookingsCommand;
-import com.airline.sagas.commands.CompleteBookingCommand;
+import com.airline.sagas.commands.CompleteBookingsCommand;
 import com.airline.sagas.commands.CreateBookingCommand;
 import com.airline.sagas.events.BookingCanByIdEvent;
 import com.airline.sagas.events.BookingCancelledEvent;
@@ -199,43 +199,55 @@ public class SagaService {
 
     // R14 - Realização do Voo
     @Transactional
-    public BookingsCompletedEvent completeBookings(CompleteBookingCommand completeBookingCommand)
+    public BookingsCompletedEvent completeBookings(CompleteBookingsCommand completeBookingCommand)
             throws JsonProcessingException {
-
-        // pergunta: pegar todas as reservas ou somente as que estao no estado BOARDED?
 
         List<Booking> relatedBookings = bookingRepository.findByFlightCode(completeBookingCommand.getFlightCode());
 
         for (Booking booking : relatedBookings) {
 
-            if (booking.getBookingStatus().getStatusCode() == 4) {
+            BookingStatus initialStatus = booking.getBookingStatus();
 
-                BookingStatus initialStatus = booking.getBookingStatus();
+            // Atualiza a reserva com o status "COMPLETED" ou 'NOT COMPLETED'
 
-                // Atualiza a reserva com o status "COMPLETED"
-                booking.setBookingStatus(bookingStatusRep.findByStatusCode(5));
-                booking = bookingRepository.save(booking);
+            // **TERMINAR ESTE PASSP COM OS CONDICIONAIS ABAIXO COMENTADOS:
 
-                // Cria registro de histórico
-                BookingStatus finalStatus = booking.getBookingStatus();
-                StatusChangeHist newHistory = StatusChangeHist.builder()
-                        .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
-                        .booking(booking)
-                        .initialStatus(initialStatus)
-                        .finalStatus(finalStatus)
-                        .build();
+            // if ("BOARDED".equals(booking.getBookingStatus().getStatusDescription())) {
+            // booking.setBookingStatus(bookingStatusRep.findByStatusCode(5));
+            // } else if () {
 
-                newHistory = statusChangeRepository.save(newHistory);
+            // }
 
-                // Prepara a mensagem para o serviço de consulta
-                Command commandMessage = new Command(newHistory);
+            booking.setBookingStatus(bookingStatusRep.findByStatusCode(5));
 
-                String message = objectMapper.writeValueAsString(commandMessage);
-                rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
-            }
+            booking = bookingRepository.save(booking);
+
+            // Cria registro de histórico
+            BookingStatus finalStatus = booking.getBookingStatus();
+
+            StatusChangeHist newHistory = StatusChangeHist.builder()
+                    .changeDate(ZonedDateTime.now(ZoneId.of("UTC")))
+                    .booking(booking)
+                    .initialStatus(initialStatus)
+                    .finalStatus(finalStatus)
+                    .build();
+
+            newHistory = statusChangeRepository.save(newHistory);
+
+            // Prepara a mensagem para o serviço de consulta
+            Command command = new Command(newHistory);
+
+            String message = objectMapper.writeValueAsString(command);
+            rabbitTemplate.convertAndSend("BookingQueryRequestChannel", message);
+
         }
 
-        return null;
+        BookingsCompletedEvent event = BookingsCompletedEvent.builder()
+                .flightCode(completeBookingCommand.getFlightCode())
+                .messageType("BookingsCompletedEvent")
+                .build();
+
+        return event;
     }
 
     public String generateBookingcode() {

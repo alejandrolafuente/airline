@@ -1,7 +1,5 @@
 package bantads.airline.sagas;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +81,7 @@ public class SagaService {
     @Transactional
     public FlightCompletedEvent completeFlight(CompFlightCommand compFlightCommand) {
 
-        Flight flight = flightRepository.findById(UUID.fromString(compFlightCommand.getFlightId())).orElse(null);
+        Flight flight = flightRepository.findById(compFlightCommand.getFlightId()).orElse(null);
 
         flight.setFlightStatus("COMPLETED");
 

@@ -1,5 +1,7 @@
 package bantads.airline.sagas.commands;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CompFlightCommand {
-    private String flightId;
+    private UUID flightId;
     private String messageType;
 }

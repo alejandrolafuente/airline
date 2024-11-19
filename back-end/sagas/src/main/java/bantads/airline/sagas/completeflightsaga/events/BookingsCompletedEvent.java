@@ -1,4 +1,4 @@
-package bantads.airline.sagas.completeflightsaga.commands;
+package bantads.airline.sagas.completeflightsaga.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CompleteBookingCommand {
+public class BookingsCompletedEvent {
     private String flightCode;
     private String messageType;
 }

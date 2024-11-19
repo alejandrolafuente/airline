@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CompleteBookingCommand {
+public class CompleteBookingsCommand {
     private String flightCode;
     private String messageType;
 }
