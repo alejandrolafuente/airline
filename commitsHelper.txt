@@ -24,6 +24,62 @@ Um fluxo padrão para desenvolvimento versionado é:
 - "Ah, eu fui trabalhando aqui e percebi que esqueci de commitar, agora vou enviar tudo de uma vez com o título 'update'". - Não faça isso. Foi isso que trouxe a gente pro cenário de MUITO mais trabalho pra arrumar. O jeito descrito aqui é o principal modelo de produção das empresas, é bom irem se acostumando a fazer pequenas modificações e commitar com mais frequência
 
 
+// ****************************************************************************************************
+
+Passo 1: Atualizar a branch master local com a versão remota
+
+Primeiro, atualize a sua branch master local para garantir que ela esteja sincronizada com a master remota:
+
+    git fetch origin master
+    git checkout master
+    git pull origin master
+
+Isso garante que a branch master local tenha as mesmas alterações da master remota.
+Passo 2: Voltar para a sua branch GERAL_BRANCH
+
+Agora, volte para a branch na qual você está trabalhando (GERAL_BRANCH):
+
+    git checkout GERAL_BRANCH
+
+Passo 3: Fazer o merge da master local na sua branch
+
+Com a master local já sincronizada com a versão remota, agora faça o merge dela na sua branch atual:
+
+    git merge master
+
+Se houver conflitos, resolva-os, adicione os arquivos corrigidos, e finalize o merge:
+
+    git add <arquivo>
+    git commit
+
+4. Enviar as alterações para o repositório remoto
+
+Agora, envie a branch GERAL_BRANCH atualizada para o GitHub:
+
+    git push origin GERAL_BRANCH
+
+// *************************************** DOCKER *****************************************************************
+
+- stopando todos os containers:
+
+    docker stop $(docker ps -q)
+
+- startando todos os containers:
+
+    docker start $(docker ps -a -q)
+
+- Remover todos os containers e todas as imagens:
+
+    docker rm -f $(sudo docker ps -a -q)
+
+    docker rmi -f $(sudo docker images -a -q)
+
+- IP: 
+
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <nome-do-container>
+
+
+
 
 
 
