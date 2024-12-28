@@ -62,6 +62,16 @@
             "projectName": "booking-command-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-EmployeeServiceApplication<employee-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.airline.EmployeeServiceApplication",
+            "projectName": "employee-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
