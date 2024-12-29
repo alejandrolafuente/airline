@@ -26,6 +26,7 @@ public class ManageRegisterQuery {
     private ObjectMapper objectMapper;
 
     private final Map<String, CompletableFuture<ManageRegisterRes>> futureMap = new ConcurrentHashMap<>();
+    
 
     public CompletableFuture<ManageRegisterRes> manageQuery(String cpf, String email) throws JsonProcessingException {
 

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import bantads.airline.dto.request.BookingQueryDTO;
+import bantads.airline.dto.request.NewEmployeeDTO;
 import bantads.airline.dto.request.SelfRegDTO;
 import bantads.airline.dto.response.GenResDTO;
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
@@ -55,6 +56,7 @@ public class SagasController {
     @Autowired
     private ManageRegisterQuery manageRegisterQuery;
 
+    // R01
     @PostMapping("/register")
     public ResponseEntity<?> registerRequest(@RequestBody SelfRegDTO selfRegDTO)
             throws JsonProcessingException, InterruptedException, ExecutionException {
@@ -63,9 +65,7 @@ public class SagasController {
 
             return new ResponseEntity<>("Invalid CPF!", HttpStatus.BAD_REQUEST);
         }
-        // else {
-        // return new ResponseEntity<>("CPF is valid!", HttpStatus.OK);
-        // }
+
         CompletableFuture<ManageRegisterRes> future = manageRegisterQuery.manageQuery(selfRegDTO.getCpf(),
                 selfRegDTO.getEmail());
 
@@ -80,6 +80,33 @@ public class SagasController {
         } else {
 
             return new ResponseEntity<>(res.getResponse(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    // R17
+    @PostMapping("/add-employee")
+    public ResponseEntity<GenResDTO> registerEmployee(@RequestBody NewEmployeeDTO newEmployeeDTO)
+            throws JsonProcessingException, InterruptedException, ExecutionException {
+
+        if (!validateCPF.validateCPF(newEmployeeDTO.getCpf())) {// if cpf not valid...
+            GenResDTO dto = new GenResDTO("Invalid CPF!");
+            return ResponseEntity.badRequest().body(dto);
+        }
+
+        CompletableFuture<ManageRegisterRes> future = manageRegisterQuery.manageQuery(newEmployeeDTO.getCpf(),
+                newEmployeeDTO.getEmail());
+
+        // awaits for response in blocking mode
+        ManageRegisterRes res = future.get();
+
+        if (res.getStartSaga()) {
+            // this.selfRegisterSAGA.handleRequest(selfRegDTO);
+            GenResDTO dto = new GenResDTO("Your request has been sent, check your email");
+            return ResponseEntity.ok().body(dto);
+        } else {
+            GenResDTO dto = new GenResDTO("Bad request");
+            return ResponseEntity.badRequest().body(dto);
         }
 
     }
@@ -106,7 +133,7 @@ public class SagasController {
         GenResDTO dto = new GenResDTO("Booking Cancelled");
 
         return ResponseEntity.ok().body(dto);
-        
+
     }
 
     // R13 - Cancelamento do Voo
