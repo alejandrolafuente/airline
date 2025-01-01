@@ -27,8 +27,6 @@ public class SagasHandler {
     @RabbitListener(queues = "VerifyEmployeeRequestChannel")
     public void verifyClient(String msg) throws JsonProcessingException, JsonMappingException {
 
-        // VerifyClientQuery verifyClientQuery = objectMapper.readValue(msg,
-        // VerifyClientQuery.class);
         VerifyEmployeeQuery query = objectMapper.readValue(msg, VerifyEmployeeQuery.class);
 
         ManageRegisterRes res = sagaService.verifyClient(query);

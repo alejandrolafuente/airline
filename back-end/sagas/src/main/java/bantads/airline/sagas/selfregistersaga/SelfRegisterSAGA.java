@@ -41,6 +41,7 @@ public class SelfRegisterSAGA {
                 .email(this.selfRegDTO.getEmail())
                 .messageType("CreateUserCommand")
                 .build();
+                
         var sendingMessage = objectMapper.writeValueAsString(createUserCommand);
 
         rabbitTemplate.convertAndSend("AuthRequestChannel", sendingMessage);

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import bantads.airline.collection.User;
 import bantads.airline.repository.UserRepository;
+import bantads.airline.sagas.commands.CreaEmpUserCommand;
 import bantads.airline.sagas.commands.CreateUserCommand;
 import bantads.airline.sagas.events.UserCreatedEvent;
 
@@ -29,6 +30,7 @@ public class AuthService {
         return "User added to the system";
     }
 
+    // R01
     public UserCreatedEvent saveNewUserRequest(CreateUserCommand newUserRequest) {
 
         String pswd = generateRamdomPassword();
@@ -47,6 +49,30 @@ public class AuthService {
                 .userId(newUser.getId())
                 .userPswd(pswd)
                 .messageType("UserCreatedEvent")
+                .build();
+
+        return event;
+    }
+
+    // R17
+    public UserCreatedEvent newEmpUserRequest(CreaEmpUserCommand command) {
+
+        String pswd = generateRamdomPassword();
+
+        User user = User.builder()
+                .name(command.getName())
+                .login(command.getEmail())
+                .password(passwordEncoder.encode(pswd))
+                .role("EMPLOYEE")
+                .userStatus("ACTIVE")
+                .build();
+
+        user = userRepository.save(user);
+
+        UserCreatedEvent event = UserCreatedEvent.builder()
+                .userId(user.getId())
+                .userPswd(pswd)
+                .messageType("EmpployeeUserCreatedEvent")
                 .build();
 
         return event;
@@ -78,5 +104,4 @@ public class AuthService {
         return sb.toString();
 
     }
-
 }

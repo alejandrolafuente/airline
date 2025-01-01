@@ -25,6 +25,7 @@ import bantads.airline.sagas.bookingsaga.BookingSAGA;
 import bantads.airline.sagas.cancelbookinsaga.CancelBookingSaga;
 import bantads.airline.sagas.cancelflightsaga.CancelFlightSaga;
 import bantads.airline.sagas.completeflightsaga.CompleteFlightSaga;
+import bantads.airline.sagas.registeremployeesaga.RegisteremployeeSaga;
 import bantads.airline.sagas.selfregistersaga.ManageRegisterQuery;
 import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
 import bantads.airline.sagas.selfregistersaga.dto.ManageRegisterRes;
@@ -52,6 +53,9 @@ public class SagasController {
 
     @Autowired
     private CancelFlightSaga cancelFlightSaga;
+
+    @Autowired
+    private RegisteremployeeSaga registeremployeeSaga;
 
     @Autowired
     private ManageRegisterQuery manageRegisterQuery;
@@ -101,11 +105,12 @@ public class SagasController {
         ManageRegisterRes res = future.get();
 
         if (res.getStartSaga()) {
-            // this.selfRegisterSAGA.handleRequest(selfRegDTO);
+            System.out.println(res.getResponse());
+            this.registeremployeeSaga.handleRequest(newEmployeeDTO);
             GenResDTO dto = new GenResDTO("Your request has been sent, check your email");
             return ResponseEntity.ok().body(dto);
         } else {
-            GenResDTO dto = new GenResDTO("Bad request");
+            GenResDTO dto = new GenResDTO(res.getResponse());
             return ResponseEntity.badRequest().body(dto);
         }
 

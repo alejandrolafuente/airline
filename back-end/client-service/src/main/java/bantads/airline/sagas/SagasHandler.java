@@ -54,6 +54,7 @@ public class SagasHandler {
                     var resMsg = objectMapper.writeValueAsString(event);
 
                     rabbitTemplate.convertAndSend("ClientReturnChannel", resMsg);
+                    
                     break;
                 }
 

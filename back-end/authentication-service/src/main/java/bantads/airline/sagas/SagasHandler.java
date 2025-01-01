@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import bantads.airline.sagas.commands.CreaEmpUserCommand;
 import bantads.airline.sagas.commands.CreateUserCommand;
 import bantads.airline.sagas.events.UserCreatedEvent;
 import bantads.airline.securityservice.AuthService;
@@ -35,17 +36,38 @@ public class SagasHandler {
 
             Map<?, ?> map = (Map<?, ?>) object;
 
-            if ("CreateUserCommand".equals(map.get("messageType"))) {
+            String messageType = (String) map.get("messageType");
 
-                CreateUserCommand createUserCommand = objectMapper.convertValue(map, CreateUserCommand.class);
+            switch (messageType) {
 
-                UserCreatedEvent userCreatedEvent = authService.saveNewUserRequest(createUserCommand);
+                // R01
+                case "CreateUserCommand" -> {
 
-                var resMsg = objectMapper.writeValueAsString(userCreatedEvent);
+                    CreateUserCommand command = objectMapper.convertValue(map, CreateUserCommand.class);
 
-                rabbitTemplate.convertAndSend("AuthReturnChannel", resMsg);
+                    UserCreatedEvent event = authService.saveNewUserRequest(command);
+
+                    var resMsg = objectMapper.writeValueAsString(event);
+
+                    rabbitTemplate.convertAndSend("AuthReturnChannel", resMsg);
+
+                    break;
+                }
+
+                case "CreateEmployeeUserCommand" -> {
+
+                    CreaEmpUserCommand command = objectMapper.convertValue(map, CreaEmpUserCommand.class);
+
+                    UserCreatedEvent event = authService.newEmpUserRequest(command);
+
+                    var resMsg = objectMapper.writeValueAsString(event);
+
+                    rabbitTemplate.convertAndSend("AuthReturnChannel", resMsg);
+
+                    break;
+                }
+
             }
-
         }
 
     }
