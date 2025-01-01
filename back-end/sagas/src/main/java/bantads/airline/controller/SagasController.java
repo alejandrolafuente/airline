@@ -94,7 +94,7 @@ public class SagasController {
             return ResponseEntity.badRequest().body(dto);
         }
 
-        CompletableFuture<ManageRegisterRes> future = manageRegisterQuery.manageQuery(newEmployeeDTO.getCpf(),
+        CompletableFuture<ManageRegisterRes> future = manageRegisterQuery.newEmployeeQuery(newEmployeeDTO.getCpf(),
                 newEmployeeDTO.getEmail());
 
         // awaits for response in blocking mode
