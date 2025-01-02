@@ -9,9 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.dto.request.NewEmployeeDTO;
 import bantads.airline.sagas.registeremployeesaga.commands.CreaEmpUserCommand;
+import bantads.airline.sagas.registeremployeesaga.commands.CreateEmployeeCommand;
+import bantads.airline.sagas.registeremployeesaga.events.EmpUserCreatedEvent;
 
 @Component
-public class RegisteremployeeSaga {
+public class RegisterEmployeeSaga {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -19,10 +21,16 @@ public class RegisteremployeeSaga {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private NewEmployeeDTO newEmployeeDTO;
+
+    private String userPassword;
+
     // @Autowired
     // private EmailService emailService;
 
     public void handleRequest(NewEmployeeDTO newEmployeeDTO) throws JsonProcessingException {
+
+        this.newEmployeeDTO = newEmployeeDTO;
 
         CreaEmpUserCommand command = CreaEmpUserCommand.builder()
                 .name(newEmployeeDTO.getName())
@@ -34,6 +42,24 @@ public class RegisteremployeeSaga {
 
         rabbitTemplate.convertAndSend("AuthRequestChannel", sendingMessage);
 
+    }
+
+    public void handleUserCreatedEvent(EmpUserCreatedEvent event) throws JsonProcessingException {
+
+        this.userPassword = event.getUserPswd();
+
+        CreateEmployeeCommand command = CreateEmployeeCommand.builder()
+                .userID(event.getUserId())
+                .name(newEmployeeDTO.getName())
+                .cpf(newEmployeeDTO.getCpf())
+                .email(newEmployeeDTO.getEmail())
+                .phoneNumber(newEmployeeDTO.getPhoneNumber())
+                .messageType("CreateEmployeeCommand")
+                .build();
+
+        var message = objectMapper.writeValueAsString(command);
+
+        rabbitTemplate.convertAndSend("EmployeeRequestChannel", message);
     }
 
 }

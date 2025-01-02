@@ -1,10 +1,14 @@
 package com.airline.sagas;
 
+import java.util.Map;
+
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import com.airline.sagas.commands.CreateEmployeeCommand;
+import com.airline.sagas.events.EmployeeCreatedEvent;
 import com.airline.sagas.queries.ManageRegisterRes;
 import com.airline.sagas.queries.VerifyEmployeeQuery;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,4 +40,32 @@ public class SagasHandler {
         rabbitTemplate.convertAndSend("VerifyEmployeeReturnChannel", resMsg);
     }
 
+    @RabbitListener(queues = "EmployeeRequestChannel")
+    public void handleMessage(String msg) throws JsonProcessingException, JsonMappingException {
+
+        Object object = objectMapper.readValue(msg, Object.class);
+
+        if (object instanceof Map) {
+
+            Map<?, ?> map = (Map<?, ?>) object;
+
+            String messageType = (String) map.get("messageType");
+
+            switch (messageType) {
+
+                case "CreateEmployeeCommand" -> {
+
+                    CreateEmployeeCommand command = objectMapper.convertValue(map, CreateEmployeeCommand.class);
+
+                    EmployeeCreatedEvent event = sagaService.saveNewEmployee(command);
+
+                    String resMsg = objectMapper.writeValueAsString(event);
+
+                    rabbitTemplate.convertAndSend("EmployeeReturnChannel", resMsg);
+
+                    break;
+                }
+            }
+        }
+    }
 }

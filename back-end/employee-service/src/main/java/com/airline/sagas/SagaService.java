@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.airline.model.Employee;
 import com.airline.repository.EmployeeRepository;
+import com.airline.sagas.commands.CreateEmployeeCommand;
+import com.airline.sagas.events.EmployeeCreatedEvent;
 import com.airline.sagas.queries.ManageRegisterRes;
 import com.airline.sagas.queries.VerifyEmployeeQuery;
 
@@ -59,6 +61,27 @@ public class SagaService {
                 .response("Must start Register Employee SAGA")
                 .startSaga(true)
                 .build();
+    }
+
+    public EmployeeCreatedEvent saveNewEmployee(CreateEmployeeCommand command) {
+
+        Employee employee = Employee.builder()
+                .userId(command.getUserID())
+                .name(command.getName())
+                .cpf(command.getCpf())
+                .email(command.getEmail())
+                .phoneNumber(command.getPhoneNumber())
+                .status("ACTIVE ")
+                .build();
+
+        employee = employeeRepository.save(employee);
+
+        EmployeeCreatedEvent event = EmployeeCreatedEvent.builder()
+                .email(employee.getEmail())
+                .messageType("EmployeeCreatedEvent")
+                .build();
+
+        return event;
     }
 
 }

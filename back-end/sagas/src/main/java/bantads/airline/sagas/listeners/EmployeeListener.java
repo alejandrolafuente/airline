@@ -11,23 +11,18 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.registeremployeesaga.RegisterEmployeeSaga;
-import bantads.airline.sagas.registeremployeesaga.events.EmpUserCreatedEvent;
-import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
 import bantads.airline.sagas.selfregistersaga.events.UserCreatedEvent;
 
 @Component
-public class AuthReturnChannelListener {
+public class EmployeeListener {
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    private SelfRegisterSAGA selfRegisterSAGA;
-
-    @Autowired
     private RegisterEmployeeSaga registerEmployeeSaga;
 
-    @RabbitListener(queues = "AuthReturnChannel")
+    @RabbitListener(queues = "EmployeeReturnChannel")
     public void handleAuthResponses(String receivedMessage) throws JsonMappingException, JsonProcessingException {
 
         Object object = objectMapper.readValue(receivedMessage, Object.class);
@@ -40,19 +35,13 @@ public class AuthReturnChannelListener {
 
             switch (messageType) {
 
-                case "UserCreatedEvent" -> {
-                    UserCreatedEvent event = objectMapper.convertValue(map, UserCreatedEvent.class);
-                    selfRegisterSAGA.handleUserCreatedEvent(event);
-                    break;
-                }
-
-                case "EmployeeUserCreatedEvent" -> {
-                    EmpUserCreatedEvent event = objectMapper.convertValue(map, EmpUserCreatedEvent.class);
-                    registerEmployeeSaga.handleUserCreatedEvent(event);
+                case "EmployeeCreatedEvent" -> {
+                    // UserCreatedEvent event = objectMapper.convertValue(map, UserCreatedEvent.class);
+                    // selfRegisterSAGA.handleUserCreatedEvent(event);
                     break;
                 }
             }
-
         }
+
     }
 }

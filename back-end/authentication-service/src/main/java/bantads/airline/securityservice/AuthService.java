@@ -72,7 +72,7 @@ public class AuthService {
         UserCreatedEvent event = UserCreatedEvent.builder()
                 .userId(user.getId())
                 .userPswd(pswd)
-                .messageType("EmpployeeUserCreatedEvent")
+                .messageType("EmployeeUserCreatedEvent")
                 .build();
 
         return event;
