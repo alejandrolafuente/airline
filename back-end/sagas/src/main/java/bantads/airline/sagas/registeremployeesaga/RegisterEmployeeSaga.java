@@ -11,6 +11,8 @@ import bantads.airline.dto.request.NewEmployeeDTO;
 import bantads.airline.sagas.registeremployeesaga.commands.CreaEmpUserCommand;
 import bantads.airline.sagas.registeremployeesaga.commands.CreateEmployeeCommand;
 import bantads.airline.sagas.registeremployeesaga.events.EmpUserCreatedEvent;
+import bantads.airline.sagas.registeremployeesaga.events.EmployeeCreatedEvent;
+import bantads.airline.sagas.selfregistersaga.emailservice.EmailService;
 
 @Component
 public class RegisterEmployeeSaga {
@@ -25,8 +27,8 @@ public class RegisterEmployeeSaga {
 
     private String userPassword;
 
-    // @Autowired
-    // private EmailService emailService;
+    @Autowired
+    private EmailService emailService;
 
     public void handleRequest(NewEmployeeDTO newEmployeeDTO) throws JsonProcessingException {
 
@@ -60,6 +62,15 @@ public class RegisterEmployeeSaga {
         var message = objectMapper.writeValueAsString(command);
 
         rabbitTemplate.convertAndSend("EmployeeRequestChannel", message);
+    }
+
+    public void handleEmployeeCreatedEvent(EmployeeCreatedEvent event) {
+
+        String subject = "AIRLINE: YOU HAVE BEEN REGISTERED";
+
+        String message = "Your airline system password is " + this.userPassword;
+
+        this.emailService.sendApproveEmail(event.getEmail(), subject, message);
     }
 
 }

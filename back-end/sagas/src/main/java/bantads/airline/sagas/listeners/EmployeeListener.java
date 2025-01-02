@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.registeremployeesaga.RegisterEmployeeSaga;
-import bantads.airline.sagas.selfregistersaga.events.UserCreatedEvent;
+import bantads.airline.sagas.registeremployeesaga.events.EmployeeCreatedEvent;
 
 @Component
 public class EmployeeListener {
@@ -36,8 +36,8 @@ public class EmployeeListener {
             switch (messageType) {
 
                 case "EmployeeCreatedEvent" -> {
-                    // UserCreatedEvent event = objectMapper.convertValue(map, UserCreatedEvent.class);
-                    // selfRegisterSAGA.handleUserCreatedEvent(event);
+                    EmployeeCreatedEvent event = objectMapper.convertValue(map, EmployeeCreatedEvent.class);
+                    registerEmployeeSaga.handleEmployeeCreatedEvent(event);
                     break;
                 }
             }
