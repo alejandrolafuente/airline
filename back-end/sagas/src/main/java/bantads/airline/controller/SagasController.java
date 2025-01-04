@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import bantads.airline.dto.request.BookingQueryDTO;
 import bantads.airline.dto.request.NewEmployeeDTO;
+import bantads.airline.dto.request.PutEmpDTO;
 import bantads.airline.dto.request.SelfRegDTO;
 import bantads.airline.dto.response.GenResDTO;
 import bantads.airline.sagas.bookingsaga.BookingSAGA;
@@ -29,6 +30,7 @@ import bantads.airline.sagas.registeremployeesaga.RegisterEmployeeSaga;
 import bantads.airline.sagas.selfregistersaga.ManageRegisterQuery;
 import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
 import bantads.airline.sagas.selfregistersaga.dto.ManageRegisterRes;
+import bantads.airline.sagas.updateemployeesaga.UpdateEmpSaga;
 import bantads.airline.utils.ValidateCPF;
 
 @RestController
@@ -58,6 +60,9 @@ public class SagasController {
     private RegisterEmployeeSaga registerEmployeeSaga;
 
     @Autowired
+    private UpdateEmpSaga updateEmpSaga;
+
+    @Autowired
     private ManageRegisterQuery manageRegisterQuery;
 
     // R01
@@ -84,34 +89,6 @@ public class SagasController {
         } else {
 
             return new ResponseEntity<>(res.getResponse(), HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
-    // R17
-    @PostMapping("/add-employee")
-    public ResponseEntity<GenResDTO> registerEmployee(@RequestBody NewEmployeeDTO newEmployeeDTO)
-            throws JsonProcessingException, InterruptedException, ExecutionException {
-
-        if (!validateCPF.validateCPF(newEmployeeDTO.getCpf())) {// if cpf not valid...
-            GenResDTO dto = new GenResDTO("Invalid CPF!");
-            return ResponseEntity.badRequest().body(dto);
-        }
-
-        CompletableFuture<ManageRegisterRes> future = manageRegisterQuery.newEmployeeQuery(newEmployeeDTO.getCpf(),
-                newEmployeeDTO.getEmail());
-
-        // awaits for response in blocking mode
-        ManageRegisterRes res = future.get();
-
-        if (res.getStartSaga()) {
-            System.out.println(res.getResponse());
-            this.registerEmployeeSaga.handleRequest(newEmployeeDTO);
-            GenResDTO dto = new GenResDTO("Your request has been sent, check your email");
-            return ResponseEntity.ok().body(dto);
-        } else {
-            GenResDTO dto = new GenResDTO(res.getResponse());
-            return ResponseEntity.badRequest().body(dto);
         }
 
     }
@@ -159,6 +136,45 @@ public class SagasController {
         this.completeFlightSaga.handleRequest(flightId);
 
         GenResDTO dto = new GenResDTO("Flight Completed");
+
+        return ResponseEntity.ok().body(dto);
+    }
+
+    // R17
+    @PostMapping("/add-employee")
+    public ResponseEntity<GenResDTO> registerEmployee(@RequestBody NewEmployeeDTO newEmployeeDTO)
+            throws JsonProcessingException, InterruptedException, ExecutionException {
+
+        if (!validateCPF.validateCPF(newEmployeeDTO.getCpf())) {// if cpf not valid...
+            GenResDTO dto = new GenResDTO("Invalid CPF!");
+            return ResponseEntity.badRequest().body(dto);
+        }
+
+        CompletableFuture<ManageRegisterRes> future = manageRegisterQuery.newEmployeeQuery(newEmployeeDTO.getCpf(),
+                newEmployeeDTO.getEmail());
+
+        // awaits for response in blocking mode
+        ManageRegisterRes res = future.get();
+
+        if (res.getStartSaga()) {
+            System.out.println(res.getResponse());
+            this.registerEmployeeSaga.handleRequest(newEmployeeDTO);
+            GenResDTO dto = new GenResDTO("Your request has been sent, check your email");
+            return ResponseEntity.ok().body(dto);
+        } else {
+            GenResDTO dto = new GenResDTO(res.getResponse());
+            return ResponseEntity.badRequest().body(dto);
+        }
+    }
+
+    // R18
+    @PutMapping("/update/{id}")
+    public ResponseEntity<GenResDTO> updateEmployee(@PathVariable("id") String userId, @RequestBody PutEmpDTO putEmpDTO)
+            throws JsonProcessingException {
+
+        this.updateEmpSaga.handleRequest(putEmpDTO);
+
+        GenResDTO dto = new GenResDTO("Employee Data Updated");
 
         return ResponseEntity.ok().body(dto);
     }
