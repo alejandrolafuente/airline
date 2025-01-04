@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import com.airline.sagas.commands.CreateEmployeeCommand;
+import com.airline.sagas.commands.UpdateEmployeeCommand;
+import com.airline.sagas.events.EmpUpdatedEvent;
 import com.airline.sagas.events.EmployeeCreatedEvent;
 import com.airline.sagas.queries.ManageRegisterRes;
 import com.airline.sagas.queries.VerifyEmployeeQuery;
@@ -53,11 +55,26 @@ public class SagasHandler {
 
             switch (messageType) {
 
+                // R17
                 case "CreateEmployeeCommand" -> {
 
                     CreateEmployeeCommand command = objectMapper.convertValue(map, CreateEmployeeCommand.class);
 
                     EmployeeCreatedEvent event = sagaService.saveNewEmployee(command);
+
+                    String resMsg = objectMapper.writeValueAsString(event);
+
+                    rabbitTemplate.convertAndSend("EmployeeReturnChannel", resMsg);
+
+                    break;
+                }
+
+                // R18
+                case "UpdateEmployeeCommand" -> {
+
+                    UpdateEmployeeCommand command = objectMapper.convertValue(map, UpdateEmployeeCommand.class);
+
+                    EmpUpdatedEvent event = sagaService.updateEmployee(command);
 
                     String resMsg = objectMapper.writeValueAsString(event);
 

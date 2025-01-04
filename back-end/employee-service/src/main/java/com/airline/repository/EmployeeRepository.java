@@ -20,4 +20,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
     // native query with native param
     @Query(value = "SELECT * FROM employee_table e WHERE e.email = :email", nativeQuery = true)
     Employee getEmployeeByEmail(@Param("email") String email);
+
+    Employee findByUserId(String userId);
 }

@@ -15,6 +15,7 @@ public class UpdateEmployeeCommand {
     private String name;
     private String email;
     private String phoneNumber;
+    private String messageType;
 
     public UpdateEmployeeCommand(PutEmpDTO entity) {
         this.userID = entity.getUserID();

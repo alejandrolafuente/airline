@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.airline.model.Employee;
 import com.airline.repository.EmployeeRepository;
 import com.airline.sagas.commands.CreateEmployeeCommand;
+import com.airline.sagas.commands.UpdateEmployeeCommand;
+import com.airline.sagas.events.EmpUpdatedEvent;
 import com.airline.sagas.events.EmployeeCreatedEvent;
 import com.airline.sagas.queries.ManageRegisterRes;
 import com.airline.sagas.queries.VerifyEmployeeQuery;
@@ -16,7 +18,7 @@ public class SagaService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    // R17
+    // R17 - 1
     public ManageRegisterRes verifyClient(VerifyEmployeeQuery query) {
 
         // 1. verfify by cpf and email both
@@ -63,6 +65,7 @@ public class SagaService {
                 .build();
     }
 
+    // R17 - 2
     public EmployeeCreatedEvent saveNewEmployee(CreateEmployeeCommand command) {
 
         Employee employee = Employee.builder()
@@ -82,6 +85,24 @@ public class SagaService {
                 .build();
 
         return event;
+    }
+
+    // R18
+    public EmpUpdatedEvent updateEmployee(UpdateEmployeeCommand command) {
+
+        EmpUpdatedEvent event = new EmpUpdatedEvent();
+
+        Employee employee = employeeRepository.findByUserId(command.getUserID());
+
+        if ((employee.getName() != command.getName()) || (employee.getEmail() != command.getEmail())) {
+            event.setProceedSaga(true);
+        }
+
+        employee.setName(command.getName());
+        employee.setEmail(command.getEmail());
+        employee.setPhoneNumber(command.getPhoneNumber());
+
+        return null;
     }
 
 }

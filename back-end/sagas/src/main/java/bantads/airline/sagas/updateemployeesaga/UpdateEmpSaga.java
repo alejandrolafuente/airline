@@ -23,7 +23,9 @@ public class UpdateEmpSaga {
 
         UpdateEmployeeCommand command = new UpdateEmployeeCommand(dto);
 
-        //1. vai para o serviço Employee e Atualiza
+        // 1. vai para o serviço Employee e Atualiza
+
+        command.setMessageType("UpdateEmployeeCommand");
 
         var sendingMessage = objectMapper.writeValueAsString(command);
 

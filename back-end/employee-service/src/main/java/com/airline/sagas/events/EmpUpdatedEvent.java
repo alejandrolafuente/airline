@@ -1,4 +1,4 @@
-package com.airline.sagas.commands;
+package com.airline.sagas.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateEmployeeCommand {
-    private String userID;
+public class EmpUpdatedEvent {
+    private Boolean proceedSaga;
     private String name;
     private String email;
-    private String phoneNumber;
-    private String messageType;
 }
