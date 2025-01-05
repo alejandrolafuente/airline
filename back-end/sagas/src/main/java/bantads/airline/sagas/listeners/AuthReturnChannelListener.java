@@ -10,6 +10,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import bantads.airline.sagas.deletemployeesaga.DelEmpSaga;
+import bantads.airline.sagas.deletemployeesaga.events.UserDeletedEvent;
 import bantads.airline.sagas.registeremployeesaga.RegisterEmployeeSaga;
 import bantads.airline.sagas.registeremployeesaga.events.EmpUserCreatedEvent;
 import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
@@ -31,6 +33,9 @@ public class AuthReturnChannelListener {
 
     @Autowired
     private UpdateEmpSaga updateEmpSaga;
+
+    @Autowired
+    private DelEmpSaga delEmpSaga;
 
     @RabbitListener(queues = "AuthReturnChannel")
     public void handleAuthResponses(String receivedMessage) throws JsonMappingException, JsonProcessingException {
@@ -61,6 +66,13 @@ public class AuthReturnChannelListener {
                 case "UpEmpUserEvent" -> {
                     UpEmpUserEvent event = objectMapper.convertValue(map, UpEmpUserEvent.class);
                     updateEmpSaga.handleEmpUserUpEvent(event);
+                    break;
+                }
+
+                // R18
+                case "UserDeletedEvent" -> {
+                    UserDeletedEvent event = objectMapper.convertValue(map, UserDeletedEvent.class);
+                    delEmpSaga.handleuserDeletedEvent(event);
                     break;
                 }
             }

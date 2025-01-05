@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,6 +27,7 @@ import bantads.airline.sagas.bookingsaga.BookingSAGA;
 import bantads.airline.sagas.cancelbookinsaga.CancelBookingSaga;
 import bantads.airline.sagas.cancelflightsaga.CancelFlightSaga;
 import bantads.airline.sagas.completeflightsaga.CompleteFlightSaga;
+import bantads.airline.sagas.deletemployeesaga.DelEmpSaga;
 import bantads.airline.sagas.registeremployeesaga.RegisterEmployeeSaga;
 import bantads.airline.sagas.selfregistersaga.ManageRegisterQuery;
 import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
@@ -61,6 +63,9 @@ public class SagasController {
 
     @Autowired
     private UpdateEmpSaga updateEmpSaga;
+
+    @Autowired
+    private DelEmpSaga delEmpSaga;
 
     @Autowired
     private ManageRegisterQuery manageRegisterQuery;
@@ -175,6 +180,17 @@ public class SagasController {
         this.updateEmpSaga.handleRequest(putEmpDTO);
 
         GenResDTO dto = new GenResDTO("Employee Data Updated");
+
+        return ResponseEntity.ok().body(dto);
+    }
+
+    // R19
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<GenResDTO> removeEmployee(@PathVariable("id") String userId) throws JsonProcessingException{
+
+        this.delEmpSaga.handleRequest(userId);
+
+        GenResDTO dto = new GenResDTO("Employee with user id " + userId + " was deleted");
 
         return ResponseEntity.ok().body(dto);
     }
