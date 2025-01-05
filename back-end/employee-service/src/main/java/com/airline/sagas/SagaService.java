@@ -96,13 +96,21 @@ public class SagaService {
 
         if ((employee.getName() != command.getName()) || (employee.getEmail() != command.getEmail())) {
             event.setProceedSaga(true);
+        } else {
+            event.setProceedSaga(false);
         }
 
         employee.setName(command.getName());
         employee.setEmail(command.getEmail());
         employee.setPhoneNumber(command.getPhoneNumber());
 
-        return null;
+        employee = employeeRepository.save(employee);
+
+        event.setName(employee.getName());
+        event.setEmail(employee.getEmail());
+        event.setMessagetype("EmpUpdatedEvent");
+        
+        return event;
     }
 
 }

@@ -5,11 +5,14 @@ import java.security.SecureRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import bantads.airline.collection.User;
 import bantads.airline.repository.UserRepository;
 import bantads.airline.sagas.commands.CreaEmpUserCommand;
 import bantads.airline.sagas.commands.CreateUserCommand;
+import bantads.airline.sagas.commands.UpEmpUserCommand;
+import bantads.airline.sagas.events.UpEmpUserEvent;
 import bantads.airline.sagas.events.UserCreatedEvent;
 
 @Service
@@ -31,6 +34,7 @@ public class AuthService {
     }
 
     // R01
+    @Transactional
     public UserCreatedEvent saveNewUserRequest(CreateUserCommand newUserRequest) {
 
         String pswd = generateRamdomPassword();
@@ -55,6 +59,7 @@ public class AuthService {
     }
 
     // R17
+    @Transactional
     public UserCreatedEvent newEmpUserRequest(CreaEmpUserCommand command) {
 
         String pswd = generateRamdomPassword();
@@ -73,6 +78,25 @@ public class AuthService {
                 .userId(user.getId())
                 .userPswd(pswd)
                 .messageType("EmployeeUserCreatedEvent")
+                .build();
+
+        return event;
+    }
+
+    // R18
+    @Transactional
+    public UpEmpUserEvent updateEmployee(UpEmpUserCommand command) {
+
+        User user = userRepository.findById(command.getUserId()).orElse(null);
+
+        user.setName(command.getName());
+        user.setLogin(command.getEmail());
+
+        user = userRepository.save(user);
+
+        UpEmpUserEvent event = UpEmpUserEvent.builder()
+                .userId(user.getId())
+                .messageType("UpEmpUserEvent")
                 .build();
 
         return event;
@@ -104,4 +128,5 @@ public class AuthService {
         return sb.toString();
 
     }
+
 }

@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.commands.CreaEmpUserCommand;
 import bantads.airline.sagas.commands.CreateUserCommand;
+import bantads.airline.sagas.commands.UpEmpUserCommand;
+import bantads.airline.sagas.events.UpEmpUserEvent;
 import bantads.airline.sagas.events.UserCreatedEvent;
 import bantads.airline.securityservice.AuthService;
 
@@ -59,6 +61,20 @@ public class SagasHandler {
                     CreaEmpUserCommand command = objectMapper.convertValue(map, CreaEmpUserCommand.class);
 
                     UserCreatedEvent event = authService.newEmpUserRequest(command);
+
+                    var resMsg = objectMapper.writeValueAsString(event);
+
+                    rabbitTemplate.convertAndSend("AuthReturnChannel", resMsg);
+
+                    break;
+                }
+
+                //R18
+                case "UpEmpUserCommand" -> {
+
+                    UpEmpUserCommand command = objectMapper.convertValue(map, UpEmpUserCommand.class);
+
+                    UpEmpUserEvent event = authService.updateEmployee(command);
 
                     var resMsg = objectMapper.writeValueAsString(event);
 

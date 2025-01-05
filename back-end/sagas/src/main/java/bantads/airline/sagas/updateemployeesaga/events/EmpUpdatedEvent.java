@@ -1,4 +1,4 @@
-package com.airline.sagas.events;
+package bantads.airline.sagas.updateemployeesaga.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,5 +13,5 @@ public class EmpUpdatedEvent {
     private Boolean proceedSaga;
     private String name;
     private String email;
-    private String messagetype;
+    private String messageType;
 }

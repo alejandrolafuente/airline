@@ -14,6 +14,8 @@ import bantads.airline.sagas.registeremployeesaga.RegisterEmployeeSaga;
 import bantads.airline.sagas.registeremployeesaga.events.EmpUserCreatedEvent;
 import bantads.airline.sagas.selfregistersaga.SelfRegisterSAGA;
 import bantads.airline.sagas.selfregistersaga.events.UserCreatedEvent;
+import bantads.airline.sagas.updateemployeesaga.UpdateEmpSaga;
+import bantads.airline.sagas.updateemployeesaga.events.UpEmpUserEvent;
 
 @Component
 public class AuthReturnChannelListener {
@@ -26,6 +28,9 @@ public class AuthReturnChannelListener {
 
     @Autowired
     private RegisterEmployeeSaga registerEmployeeSaga;
+
+    @Autowired
+    private UpdateEmpSaga updateEmpSaga;
 
     @RabbitListener(queues = "AuthReturnChannel")
     public void handleAuthResponses(String receivedMessage) throws JsonMappingException, JsonProcessingException {
@@ -49,6 +54,13 @@ public class AuthReturnChannelListener {
                 case "EmployeeUserCreatedEvent" -> {
                     EmpUserCreatedEvent event = objectMapper.convertValue(map, EmpUserCreatedEvent.class);
                     registerEmployeeSaga.handleUserCreatedEvent(event);
+                    break;
+                }
+
+                // R18
+                case "UpEmpUserEvent" -> {
+                    UpEmpUserEvent event = objectMapper.convertValue(map, UpEmpUserEvent.class);
+                    updateEmpSaga.handleEmpUserUpEvent(event);
                     break;
                 }
             }

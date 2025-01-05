@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bantads.airline.sagas.registeremployeesaga.RegisterEmployeeSaga;
 import bantads.airline.sagas.registeremployeesaga.events.EmployeeCreatedEvent;
+import bantads.airline.sagas.updateemployeesaga.UpdateEmpSaga;
+import bantads.airline.sagas.updateemployeesaga.events.EmpUpdatedEvent;
 
 @Component
 public class EmployeeListener {
@@ -21,6 +23,9 @@ public class EmployeeListener {
 
     @Autowired
     private RegisterEmployeeSaga registerEmployeeSaga;
+
+    @Autowired
+    private UpdateEmpSaga updateEmpSaga;
 
     @RabbitListener(queues = "EmployeeReturnChannel")
     public void handleAuthResponses(String receivedMessage) throws JsonMappingException, JsonProcessingException {
@@ -40,6 +45,13 @@ public class EmployeeListener {
                     registerEmployeeSaga.handleEmployeeCreatedEvent(event);
                     break;
                 }
+
+                case "EmpUpdatedEvent" -> {
+                    EmpUpdatedEvent event = objectMapper.convertValue(map, EmpUpdatedEvent.class);
+                    updateEmpSaga.handleEmpUpdatedEvent(event);
+                    break;
+                }
+                    
             }
         }
 
