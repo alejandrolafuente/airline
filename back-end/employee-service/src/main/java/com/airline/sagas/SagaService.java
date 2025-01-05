@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import com.airline.model.Employee;
 import com.airline.repository.EmployeeRepository;
 import com.airline.sagas.commands.CreateEmployeeCommand;
+import com.airline.sagas.commands.DeleteEmpCommand;
 import com.airline.sagas.commands.UpdateEmployeeCommand;
+import com.airline.sagas.events.EmpDeletedEvent;
 import com.airline.sagas.events.EmpUpdatedEvent;
 import com.airline.sagas.events.EmployeeCreatedEvent;
 import com.airline.sagas.queries.ManageRegisterRes;
@@ -109,7 +111,26 @@ public class SagaService {
         event.setName(employee.getName());
         event.setEmail(employee.getEmail());
         event.setMessagetype("EmpUpdatedEvent");
-        
+
+        return event;
+    }
+
+    // R19
+    public EmpDeletedEvent deleteEmployee(DeleteEmpCommand command) {
+
+        Employee employee = employeeRepository.findByUserId(command.getUserId());
+
+        employee.setStatus(command.getUserStatus());
+
+        employee = employeeRepository.save(employee);
+
+        EmpDeletedEvent event = EmpDeletedEvent.builder()
+                .userId(employee.getUserId())
+                .name(employee.getName())
+                .employeeStatus(employee.getStatus())
+                .messageType("EmpDeletedEvent")
+                .build();
+
         return event;
     }
 

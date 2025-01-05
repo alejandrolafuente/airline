@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import com.airline.sagas.commands.CreateEmployeeCommand;
+import com.airline.sagas.commands.DeleteEmpCommand;
 import com.airline.sagas.commands.UpdateEmployeeCommand;
+import com.airline.sagas.events.EmpDeletedEvent;
 import com.airline.sagas.events.EmpUpdatedEvent;
 import com.airline.sagas.events.EmployeeCreatedEvent;
 import com.airline.sagas.queries.ManageRegisterRes;
@@ -75,6 +77,20 @@ public class SagasHandler {
                     UpdateEmployeeCommand command = objectMapper.convertValue(map, UpdateEmployeeCommand.class);
 
                     EmpUpdatedEvent event = sagaService.updateEmployee(command);
+
+                    String resMsg = objectMapper.writeValueAsString(event);
+
+                    rabbitTemplate.convertAndSend("EmployeeReturnChannel", resMsg);
+
+                    break;
+                }
+
+                // R19
+                case "DeleteEmpCommand" -> {
+
+                    DeleteEmpCommand command = objectMapper.convertValue(map, DeleteEmpCommand.class);
+
+                    EmpDeletedEvent event = sagaService.deleteEmployee(command);
 
                     String resMsg = objectMapper.writeValueAsString(event);
 

@@ -11,9 +11,11 @@ import bantads.airline.collection.User;
 import bantads.airline.repository.UserRepository;
 import bantads.airline.sagas.commands.CreaEmpUserCommand;
 import bantads.airline.sagas.commands.CreateUserCommand;
+import bantads.airline.sagas.commands.DeleteUserCommand;
 import bantads.airline.sagas.commands.UpEmpUserCommand;
 import bantads.airline.sagas.events.UpEmpUserEvent;
 import bantads.airline.sagas.events.UserCreatedEvent;
+import bantads.airline.sagas.events.UserDeletedEvent;
 
 @Service
 public class AuthService {
@@ -97,6 +99,25 @@ public class AuthService {
         UpEmpUserEvent event = UpEmpUserEvent.builder()
                 .userId(user.getId())
                 .messageType("UpEmpUserEvent")
+                .build();
+
+        return event;
+    }
+
+    // R19
+    @Transactional
+    public UserDeletedEvent deleteEmployee(DeleteUserCommand command) {
+
+        User user = userRepository.findById(command.getUserId()).orElse(null);
+
+        user.setUserStatus("INACTIVE");
+
+        user = userRepository.save(user);
+
+        UserDeletedEvent event = UserDeletedEvent.builder()
+                .userId(user.getId())
+                .userStatus(user.getUserStatus())
+                .messageType("UserDeletedEvent")
                 .build();
 
         return event;
