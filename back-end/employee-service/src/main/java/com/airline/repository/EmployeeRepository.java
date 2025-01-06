@@ -1,5 +1,6 @@
 package com.airline.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,4 +23,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
     Employee getEmployeeByEmail(@Param("email") String email);
 
     Employee findByUserId(String userId);
+
+    @Query(value = "SELECT * FROM employee_table e WHERE e.status = 'ACTIVE' ORDER BY e.name", nativeQuery = true)
+    List<Employee> getActiveEmpoyees();
 }
