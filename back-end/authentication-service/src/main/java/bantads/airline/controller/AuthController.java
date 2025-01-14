@@ -54,21 +54,29 @@ public class AuthController {
             Optional<User> optionalUser = userService.findBylogin(authRequestDTO.getLogin());
 
             if (optionalUser.isPresent()) {
+
                 User user = optionalUser.get();
-                LoginReturnDTO response = LoginReturnDTO.builder()
-                        .userId(user.getId())
-                        .token(userToken)
-                        .name(user.getName())
-                        .login(user.getLogin())
-                        .role(user.getRole())
-                        .build();
-                return response;
+
+                if ("ACTIVE".equals(user.getUserStatus())) {
+                    LoginReturnDTO response = LoginReturnDTO.builder()
+                            .userId(user.getId())
+                            .token(userToken)
+                            .name(user.getName())
+                            .login(user.getLogin())
+                            .role(user.getRole())
+                            .build();
+
+                    return response;
+                } else {
+                    throw new RuntimeException("Invalid access");
+                }
+
             } else {
                 // throw new RuntimeException("User not found");
-                throw new RuntimeException("invalid access");
+                throw new RuntimeException("Invalid access");
             }
         } else {
-            throw new RuntimeException("invalid access");
+            throw new RuntimeException("Invalid access");
         }
     }
 
