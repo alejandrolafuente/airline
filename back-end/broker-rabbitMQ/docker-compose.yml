@@ -1,8 +1,7 @@
-version: '3.8'
+version: '3.9'
 services:
-  rabbitmq:
+  rabbit-server:
     container_name: broker
-    #image: rabbitmq:3.10-management
     image: rabbitmq:4.0-management
     ports:
       - "5672:5672"
@@ -13,4 +12,4 @@ services:
       bash -c "rabbitmq-server & 
                sleep 10 && 
                rabbitmqctl import_definitions /etc/rabbitmq/definitions.json &&
-               tail -f /dev/null"
+               tail -f /dev/null"    
