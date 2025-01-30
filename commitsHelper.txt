@@ -70,9 +70,13 @@ Agora, envie a branch GERAL_BRANCH atualizada para o GitHub:
 
 - Remover todos os containers e todas as imagens:
 
-    docker rm -f $(sudo docker ps -a -q)
+    docker rm -f $(docker ps -a -q)
 
-    docker rmi -f $(sudo docker images -a -q)
+    docker rmi -f $(docker images -a -q)
+
+- Remover por status:
+
+    docker rm -f $(docker ps -f status=exited -q)
 
 - IP: 
 
