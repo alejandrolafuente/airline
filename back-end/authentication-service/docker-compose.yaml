@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  auth-server:
+    container_name: java-auth-cont
+    image: java-auth-image:1.0.0
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - MONGO_HOST=mongo-server
+      - MONGO_PORT=27017
+      - MONGO_DATABASE=authdb
+      - MONGO_USERNAME=admin
+      - MONGO_PASSWORD=password
+    networks:
+      - auth-network
+    depends_on:
+      - mongo-server
+
+  mongo-server:
+    container_name: mongo-db
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - volume-mongo:/data/db
+    networks:
+      - auth-network
+
+networks:
+  auth-network:
+
+volumes:
+  volume-mongo:

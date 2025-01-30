@@ -12,4 +12,6 @@ services:
       bash -c "rabbitmq-server & 
                sleep 10 && 
                rabbitmqctl import_definitions /etc/rabbitmq/definitions.json &&
-               tail -f /dev/null"    
+               tail -f /dev/null"
+networks:
+  auth-network:    
