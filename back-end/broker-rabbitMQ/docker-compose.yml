@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   rabbit-server:
-    container_name: broker
+    container_name: rabbit-server
     image: rabbitmq:4.0-management
     ports:
       - "5672:5672"
@@ -13,5 +13,7 @@ services:
                sleep 10 && 
                rabbitmqctl import_definitions /etc/rabbitmq/definitions.json &&
                tail -f /dev/null"
+    networks:
+      - client-network
 networks:
-  auth-network:    
+  client-network:    
