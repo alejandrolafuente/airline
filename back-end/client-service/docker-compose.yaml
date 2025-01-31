@@ -30,6 +30,7 @@ services:
       - client-network
 networks:
   client-network:
+    external: true
 
 volumes:
   client-volume:
