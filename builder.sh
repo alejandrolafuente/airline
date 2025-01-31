@@ -10,6 +10,12 @@ docker-compose up -d
 
 cd ..
 
+cd sagas
+
+docker-compose up -d
+
+cd ..
+
 cd client-service
 
 docker-compose up -d

@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  sagas-server:
+    container_name: sagas-server
+    image: sagas-image:1.0.0
+    build: .
+    ports:
+      - 8087:8080
+    networks:
+      - client-network
+networks:
+  client-network:
+    external: true
