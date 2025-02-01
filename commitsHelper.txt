@@ -68,11 +68,15 @@ Agora, envie a branch GERAL_BRANCH atualizada para o GitHub:
 
     docker start $(docker ps -a -q)
 
-- Remover todos os containers e todas as imagens:
+- Remover todos os containers, imagens, volumes  e redes:
 
     docker rm -f $(docker ps -a -q)
 
     docker rmi -f $(docker images -a -q)
+
+    docker volume rm $(docker volume ls -q)
+
+    docker network ls --filter type=custom --format '{{.ID}}' | xargs -r docker network rm
 
 - Remover por status:
 

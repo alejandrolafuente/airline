@@ -5,9 +5,9 @@ services:
     image: sagas-image:1.0.0
     build: .
     ports:
-      - 8087:8080
+      - 8087:8087
     networks:
-      - client-network
+      - sagas-network
 networks:
-  client-network:
+  sagas-network:
     external: true

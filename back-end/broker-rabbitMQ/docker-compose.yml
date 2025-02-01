@@ -15,7 +15,13 @@ services:
                tail -f /dev/null"
     networks:
       - client-network
+      - sagas-network
+      - auth-network
       
 networks:
   client-network:    
+    external: true
+  sagas-network:
+    external: true
+  auth-network:
     external: true

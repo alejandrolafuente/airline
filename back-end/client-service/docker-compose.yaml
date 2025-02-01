@@ -6,7 +6,7 @@ services:
     image: client-image:1.0.0
     build: .
     ports:
-      - 8091:8080
+      - 8091:8091
     environment:
       - DATABASE_URL=jdbc:postgresql://client-db:5432/ClientDB
       - DATABASE_USERNAME=postgres
@@ -28,6 +28,7 @@ services:
       - client-volume:/var/lib/postgresql/data
     networks:
       - client-network
+      
 networks:
   client-network:
     external: true

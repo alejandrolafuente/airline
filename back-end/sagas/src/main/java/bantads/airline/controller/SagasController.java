@@ -75,6 +75,8 @@ public class SagasController {
     public ResponseEntity<?> registerRequest(@RequestBody SelfRegDTO selfRegDTO)
             throws JsonProcessingException, InterruptedException, ExecutionException {
 
+        System.out.println("REQUEST: " + selfRegDTO);
+
         if (!validateCPF.validateCPF(selfRegDTO.getCpf())) {// if cpf not valid...
 
             return new ResponseEntity<>("Invalid CPF!", HttpStatus.BAD_REQUEST);
@@ -186,7 +188,7 @@ public class SagasController {
 
     // R19
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<GenResDTO> removeEmployee(@PathVariable("id") String userId) throws JsonProcessingException{
+    public ResponseEntity<GenResDTO> removeEmployee(@PathVariable("id") String userId) throws JsonProcessingException {
 
         this.delEmpSaga.handleRequest(userId);
 
