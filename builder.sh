@@ -45,3 +45,9 @@ cd ..
 cd employee-service
 
 docker-compose up -d
+
+cd ..
+
+cd pgadmin
+
+docker-compose up -d
