@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  pgadmin-server:
+    image: dpage/pgadmin4
+    container_name: pgadmin-server
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dac@email.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "5050:80"
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json  # Monte o arquivo de configuração
+    networks:
+      - employee-network
+      - client-network
+networks:
+  employee-network:
+    external: true
+  client-network:
+    external: true
