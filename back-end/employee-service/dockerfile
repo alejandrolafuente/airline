@@ -2,6 +2,6 @@ FROM openjdk:21-jdk
 
 WORKDIR /app
 
-COPY target/flight-service-0.0.1-SNAPSHOT.jar /app/java-app.jar
+COPY target/employee-service-0.0.1-SNAPSHOT.jar /app/java-app.jar
 
 ENTRYPOINT ["java", "-jar", "java-app.jar"]

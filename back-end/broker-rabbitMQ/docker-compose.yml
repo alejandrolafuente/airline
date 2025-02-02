@@ -17,6 +17,8 @@ services:
       - client-network
       - sagas-network
       - auth-network
+      - flight-network
+      - employee-network
       
 networks:
   client-network:    
@@ -24,4 +26,8 @@ networks:
   sagas-network:
     external: true
   auth-network:
+    external: true
+  flight-network:
+    external: true
+  employee-network:
     external: true

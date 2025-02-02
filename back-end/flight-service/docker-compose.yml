@@ -1,24 +1,37 @@
 version: "3.9"
 
 services:
-  java_app:
-    container_name: java_app
-    image: al-flight-java_app:1.0.0 
+  flight-server:
+    container_name: flight-server
+    image: flight-image:1.0.0
     build: .
-    ports: 
-      - 8084:8084
+    ports:
+      - 8093:8093
     environment:
-      - DATABASE_URL=jdbc:postgresql://java_db:5432/flight
+      - DATABASE_URL=jdbc:postgresql://flight-db:5432/FlightDB
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
-    depends_on: 
-      - java_db
-  java_db:
-    container_name: java_db
-    image: postgres:latest
+    networks:
+      - flight-network
+    depends_on:
+      - flight-db
+  flight-db:
+    container_name: flight-db
+    image: postgres
     ports:
-      - 5442:5432
+      - 5434:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: flight
+      POSTGRES_DB: FlightDB
+    volumes:
+      - flight-volume:/var/lib/postgresql/data
+    networks:
+      - flight-network
+      
+networks:
+  flight-network:
+    external: true
+
+volumes:
+  flight-volume:
