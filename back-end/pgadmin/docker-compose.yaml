@@ -15,6 +15,8 @@ services:
       - employee-network
       - client-network
       - command-network
+      - query-network
+      - flight-network
 
 networks:
   employee-network:
@@ -22,4 +24,8 @@ networks:
   client-network:
     external: true
   command-network:
+    external: true
+  query-network:
+    external: true
+  flight-network:
     external: true

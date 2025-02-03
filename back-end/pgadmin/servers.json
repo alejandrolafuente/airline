@@ -29,6 +29,26 @@
             "Username": "postgres",
             "Password": "postgres",
             "SSLMode": "prefer"
+        },
+        "4": {
+            "Name": "query-server",
+            "Group": "Servers",
+            "Host": "query-db",
+            "Port": 5432,
+            "MaintenanceDB": "postgres",
+            "Username": "postgres",
+            "Password": "postgres",
+            "SSLMode": "prefer"
+        },
+        "5": {
+            "Name": "flight-server",
+            "Group": "Servers",
+            "Host": "flight-db",
+            "Port": 5432,
+            "MaintenanceDB": "postgres",
+            "Username": "postgres",
+            "Password": "postgres",
+            "SSLMode": "prefer"
         }
     }
 }

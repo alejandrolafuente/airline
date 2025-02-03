@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  query-server:
+    container_name: query-server
+    image: query-image:1.0.0
+    build: .
+    ports:
+      - 8095:8095
+    environment:
+      - DATABASE_URL=jdbc:postgresql://query-db:5432/QueryDB
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+    networks:
+      - query-network
+    depends_on:
+      - query-db
+  query-db:
+    container_name: query-db
+    image: postgres
+    ports:
+      - 5437:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: QueryDB
+    volumes:
+      - query-volume:/var/lib/postgresql/data
+    networks:
+      - query-network
+      
+networks:
+  query-network:
+    external: true
+
+volumes:
+  query-volume:

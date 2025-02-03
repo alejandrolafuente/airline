@@ -14,6 +14,8 @@ docker network create employee-network
 
 docker network create command-network
 
+docker network create query-network
+
 cd back-end/broker-rabbitMQ
 
 docker-compose up -d
@@ -51,6 +53,12 @@ docker-compose up -d
 cd ..
 
 cd booking-command-service
+
+docker-compose up -d
+
+cd ..
+
+cd booking-query-service
 
 docker-compose up -d
 
