@@ -22,7 +22,7 @@
 
 - Uma vez no PgAdmin, para conectar a cada banco de dados a senha é a mesma: postgres
 
-TECNOLOGIAS USADAS NO PROJETO:
+3. TECNOLOGIAS USADAS NO PROJETO:
 
 - Docker, Spring Java, Angular, Node JS, RabbitMQ, PostgreSQL, Mongo DB, PgAdmin
 
