@@ -19,6 +19,16 @@
             "Username": "postgres",
             "Password": "postgres",
             "SSLMode": "prefer"
+        },
+        "3": {
+            "Name": "command-server",
+            "Group": "Servers",
+            "Host": "command-db",
+            "Port": 5432,
+            "MaintenanceDB": "postgres",
+            "Username": "postgres",
+            "Password": "postgres",
+            "SSLMode": "prefer"
         }
     }
 }

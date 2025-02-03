@@ -19,6 +19,7 @@ services:
       - auth-network
       - flight-network
       - employee-network
+      - command-network
       
 networks:
   client-network:    
@@ -30,4 +31,6 @@ networks:
   flight-network:
     external: true
   employee-network:
+    external: true
+  command-network:
     external: true

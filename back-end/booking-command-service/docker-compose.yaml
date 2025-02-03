@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  command-server:
+    container_name: command-server
+    image: command-image:1.0.0
+    build: .
+    ports:
+      - 8094:8094
+    environment:
+      - DATABASE_URL=jdbc:postgresql://command-db:5432/CommandDB
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+    networks:
+      - command-network
+    depends_on:
+      - command-db
+  command-db:
+    container_name: command-db
+    image: postgres
+    ports:
+      - 5436:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: CommandDB
+    volumes:
+      - command-volume:/var/lib/postgresql/data
+    networks:
+      - command-network
+      
+networks:
+  command-network:
+    external: true
+
+volumes:
+  command-volume:

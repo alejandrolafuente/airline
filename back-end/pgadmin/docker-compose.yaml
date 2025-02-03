@@ -14,8 +14,12 @@ services:
     networks:
       - employee-network
       - client-network
+      - command-network
+
 networks:
   employee-network:
     external: true
   client-network:
+    external: true
+  command-network:
     external: true
