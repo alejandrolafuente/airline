@@ -65,7 +65,7 @@ public class SagaService {
 
         do {
             bookingCode = generateBookingcode();
-        } while (bookingRepository.getBookingByCode(bookingCode) != null);
+        } while (bookingRepository.getBookingByCode(bookingCode).isPresent());
 
         Booking booking = Booking.builder()
                 .bookingCode(bookingCode)
