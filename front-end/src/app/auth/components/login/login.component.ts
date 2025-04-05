@@ -56,7 +56,7 @@ export class LoginComponent {
             if (user.role == "CLIENT") {
               this.router.navigate(["/client/home/" + user.userId]);
             }
-            // else if (user.role == "CLIENT") {//goes to account-read service
+            // else if (user.role == "EMPLOYEE") {//goes to account-read service
             //   this.router.navigate(["/client/" + user.userId]);
             // }
             // calls auth.guard.ts when activating route

@@ -28,7 +28,7 @@ app.options('*', cors(corsOptions));
 
 // PROXIES
 
-const authServiceProxy = httpProxy('http://localhost:8090');
+const authServiceProxy = httpProxy('http://localhost:8080');
 
 const flightServiceProxy = httpProxy('http://localhost:8093');
 
@@ -129,7 +129,7 @@ app.get('/bookingquery/bookedflights/:id', (req, res, next) => {
 
 // R03
 // app.get('/api-composition/combined-info/:id', validateTokenProxy, async (req, res) => {
-app.get('/api-composition/combined-info/:id', async (req, res) => {
+app.get('/client/home/:id', async (req, res) => {
 
     try {
         const userId = req.params.id;

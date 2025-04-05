@@ -11,7 +11,7 @@ const LS_LOGIN_KEY: string = "loggedUser";
 })
 export class LoginService {
 
-  BASE_URL = "http://localhost:8080";
+  BASE_URL = "http://localhost:3000";
 
   httpOptions = {
     headers: new HttpHeaders({
