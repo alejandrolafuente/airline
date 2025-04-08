@@ -24,57 +24,43 @@ cd ..
 
 cd sagas
 
-./mvnw clean package
-
-docker-compose up -d
+docker compose up -d --build # --build força a reconstrução da imagem
 
 cd ..
 
 cd authentication-service
 
-./mvnw clean package -DskipTests
-
-docker-compose up -d
+docker-compose up -d --build
 
 cd ..
 
 cd client-service
 
-./mvnw clean package -DskipTests
-
-docker-compose up -d
+docker-compose up -d --build
 
 cd ..
 
 cd flight-service
 
-./mvnw clean package -DskipTests
-
-docker-compose up -d
+docker-compose up -d --build
 
 cd ..
 
 cd employee-service
 
-./mvnw clean package -DskipTests
-
-docker-compose up -d
+docker-compose up -d --build
 
 cd ..
 
 cd booking-command-service
 
-./mvnw clean package -DskipTests
-
-docker-compose up -d
+docker-compose up -d --build
 
 cd ..
 
 cd booking-query-service
 
-./mvnw clean package -DskipTests
-
-docker-compose up -d
+docker-compose up -d --build
 
 cd ..
 
