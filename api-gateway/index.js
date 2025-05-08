@@ -53,7 +53,7 @@ const validateTokenProxy = (req, res, next) => {
         method: 'GET'
     };
 
-    const validationReq = http.request('http://localhost:8090/auth/validate', validationReqOptions, (validationRes) => {
+    const validationReq = http.request('http://localhost:8080/auth/validate', validationReqOptions, (validationRes) => {
         let data = '';
         validationRes.on('data', (chunk) => {
             data += chunk;

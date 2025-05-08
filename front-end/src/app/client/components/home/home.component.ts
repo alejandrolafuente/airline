@@ -3,11 +3,12 @@ import { ClientLogin } from '../../../models/client-login/client-login.model';
 import { ActivatedRoute } from '@angular/router';
 import { ClientService } from '../../service/client.service';
 import { ClientBooking } from '../../../models/client-booking/client-booking.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -31,6 +32,7 @@ export class HomeComponent implements OnInit {
   getClientData(): void {
     this.clientService.getClientData<ClientLogin>(this.clientId).subscribe({
       next: (clientData: ClientLogin) => {
+        console.log(clientData);
         this.balance = clientData.balance;
         this.clientBookings = clientData.clientBookings;
       },
