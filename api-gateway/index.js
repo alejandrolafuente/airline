@@ -129,7 +129,7 @@ app.get('/bookingquery/bookedflights/:id', (req, res, next) => {
 
 // R03
 // app.get('/api-composition/combined-info/:id', validateTokenProxy, async (req, res) => {
-app.get('/client/home/:id', async (req, res) => {
+app.get('/client/home/:id', validateTokenProxy, async (req, res) => {
 
     try {
         const userId = req.params.id;
