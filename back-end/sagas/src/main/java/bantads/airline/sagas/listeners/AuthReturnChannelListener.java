@@ -69,7 +69,7 @@ public class AuthReturnChannelListener {
                     break;
                 }
 
-                // R18
+                // R19
                 case "UserDeletedEvent" -> {
                     UserDeletedEvent event = objectMapper.convertValue(map, UserDeletedEvent.class);
                     delEmpSaga.handleuserDeletedEvent(event);

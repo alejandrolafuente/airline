@@ -85,27 +85,3 @@ Agora, envie a branch GERAL_BRANCH atualizada para o GitHub:
 - IP: 
 
 docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <nome-do-container>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
