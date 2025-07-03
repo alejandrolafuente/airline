@@ -4,8 +4,8 @@ services:
     container_name: rabbit-server
     image: rabbitmq:4.0-management
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "${RABBIT_PORT}:5672"       # Variável para AMQP
+      - "${RABBIT_MGMT_PORT}:15672" # Variável para Management UI
     volumes:
       - ./rabbit_definitions.json:/etc/rabbitmq/definitions.json
     command: >
