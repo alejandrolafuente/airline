@@ -1,5 +1,4 @@
 #!/bin/bash
-# esta sendo construido, nao usar este script!
 chmod +x builder.sh
 
 docker network create sagas-network
@@ -31,17 +30,19 @@ export RABBIT_MGMT_PORT=$(find_free_port 15672)
 
 echo "Usando portas: RabbitMQ AMQP=${RABBIT_PORT}, Management=${RABBIT_MGMT_PORT}"
 
-# cd back-end/broker-rabbitMQ
+cd back-end/broker-rabbitMQ
 
-# docker-compose up -d
-
-docker-compose -f back-end/broker-rabbitMQ/docker-compose.yml up -d
+docker-compose up -d
 
 cd ..
 
-# cd sagas
+export SAGAS_PORT=$(find_free_port 8080)
 
-# docker compose up -d --build # --build força a reconstrução da imagem
+cd sagas
+
+docker compose up -d --build # --build força a reconstrução da imagem
+
+echo "Sagas service rodando em: ${SAGAS_PORT}"
 
 # cd ..
 

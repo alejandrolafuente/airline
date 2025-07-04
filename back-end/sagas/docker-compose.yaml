@@ -5,7 +5,7 @@ services:
     image: sagas-image:1.0.0
     build: .
     ports:
-      - 8087:8087
+      - ${SAGAS_PORT}:8087
     networks:
       - sagas-network
 networks:
